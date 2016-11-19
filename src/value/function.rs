@@ -3,11 +3,8 @@ use libc::{c_void, c_ushort};
 use chakra_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
+use util;
 use super::{Value, Object};
-
-struct FunctionThunk {
-    callback: *mut FunctionCallback,
-}
 
 /// The information passed to `FunctionCallback` closures.
 #[derive(Clone, Debug)]
@@ -23,7 +20,8 @@ pub struct CallbackInfo {
 }
 
 /// Callback type for functions.
-pub type FunctionCallback = Fn(&ContextGuard, &CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
+pub type FunctionCallback =
+    Fn(&ContextGuard, &mut CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
 
 /// A JavaScript function object.
 #[derive(Clone, Debug)]
@@ -31,17 +29,18 @@ pub struct Function(JsValueRef);
 
 impl Function {
     /// Creates an anonymous function
-    pub fn new(_guard: &ContextGuard, callback: Box<FunctionCallback>) -> Result<Self> {
-        let mut reference = JsValueRef::new();
-        let thunk = Box::new(FunctionThunk { callback: Box::into_raw(callback) });
+    pub fn new(_guard: &ContextGuard, callback: Box<FunctionCallback>) -> Self {
+        Self::create(callback, |context, reference| unsafe {
+            JsCreateFunction(Some(Self::callback), context, reference)
+        })
+    }
 
-        unsafe {
-            // TODO: Handle optional names (`JsCreateNamedFunction`, fn with_name)
-            jstry!(JsCreateFunction(Some(Self::callback),
-                                    Box::into_raw(thunk) as *mut _,
-                                    &mut reference));
-            Ok(Function(reference))
-        }
+    /// Creates a named function
+    pub fn with_name(guard: &ContextGuard, name: &str, callback: Box<FunctionCallback>) -> Self {
+        Self::create(callback, |context, reference| unsafe {
+            let name = super::String::from_str(guard, name);
+            JsCreateNamedFunction(name.as_raw(), Some(Self::callback), context, reference)
+        })
     }
 
     /// Creates a function from a raw pointer.
@@ -64,31 +63,48 @@ impl Function {
     }
 
     /// Calls a function as a constructor and returns the result.
-    pub fn construct(&self, _guard: &ContextGuard, this: &Value, arguments: &[Value]) -> Result<Value> {
-        self.invoke(_guard, this, arguments, true)
+    pub fn construct(&self, _guard: &ContextGuard, this: &Value, args: &[Value]) -> Result<Value> {
+        self.invoke(_guard, this, args, true)
     }
 
     /// Invokes a function and returns the result.
     fn invoke(&self,
-              _guard: &ContextGuard,
+              guard: &ContextGuard,
               this: &Value,
               arguments: &[Value],
-              is_construct_call: bool) -> Result<Value> {
+              constructor: bool) -> Result<Value> {
         // Combine the context with the arguments
         let mut forward = vec![this.as_raw()];
         forward.extend(arguments.iter().map(|value| value.as_raw()));
 
-        let api = if is_construct_call {
+        let api = if constructor {
             JsConstructObject
         } else {
             JsCallFunction
         };
 
         unsafe {
-            // TODO: handle exceptions!
             let mut result = JsValueRef::new();
-            jstry!(api(self.0, forward.as_mut_ptr(), forward.len() as c_ushort, &mut result));
-            Ok(Value::from_raw(result))
+            let code = api(self.0, forward.as_mut_ptr(), forward.len() as c_ushort, &mut result);
+            util::handle_exception(guard, code).map(|_| Value::from_raw(result))
+        }
+    }
+
+    /// Prevents boilerplate code in constructors.
+    fn create<T>(callback: Box<FunctionCallback>, initialize: T) -> Self
+        where T : FnOnce(*mut c_void, &mut JsValueRef) -> JsErrorCode {
+        // Because a boxed callback can be a fat pointer, it needs to be wrapped
+        // in an additional Box to ensure it fits in a single pointer.
+        let wrapper = Box::into_raw(Box::new(callback));
+
+        unsafe {
+            let mut reference = JsValueRef::new();
+            jsassert!(initialize(wrapper as *mut _, &mut reference));
+            let function = Function::from_raw(reference);
+
+            // Ensure the heap objects are freed
+            function.set_collect_callback(Box::new(move |_| { Box::from_raw(wrapper); }));
+            function
         }
     }
 
@@ -97,16 +113,17 @@ impl Function {
                                 is_construct_call: bool,
                                 arguments: *mut JsValueRef,
                                 len: c_ushort,
-                                state: *mut c_void) -> JsValueRef {
-        // TODO: When and how should the heap memory be freed.
-        let thunk = unsafe { (state as *mut FunctionThunk).as_ref().unwrap() };
+                                data: *mut c_void) -> JsValueRef {
+        // This memory is cleaned up during object collection
+        let callback = data as *mut Box<FunctionCallback>;
 
         unsafe {
+            // There is always an active context in this case
             let guard = Context::get_current().unwrap();
 
             // Construct the callback information object
             let arguments = slice::from_raw_parts_mut(arguments, len as usize);
-            let info = CallbackInfo {
+            let mut info = CallbackInfo {
                 is_construct_call: is_construct_call,
                 arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
                 callee: Value::from_raw(callee),
@@ -114,11 +131,11 @@ impl Function {
             };
 
             // Call the user supplied callback
-            match (*thunk.callback)(&guard, &info) {
+            match (*callback)(&guard, &mut info) {
                 Ok(value) => value.as_raw(),
                 Err(error) => {
                     // TODO: what is best to return here? Undefined or exception.
-                    assert_eq!(JsSetException(error.as_raw()), JsErrorCode::NoError);
+                    jsassert!(JsSetException(error.as_raw()));
                     error.as_raw()
                 },
             }

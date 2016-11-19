@@ -34,8 +34,7 @@ impl Context {
 
     /// Binds the context to the current scope.
     ///
-    /// Within this scope, functionality that relies on implicit contexts will
-    /// work.
+    /// The majority of APIs require an active context.
     pub fn make_current<'a>(&'a self) -> Result<ContextGuard<'a>> {
         self.enter().map(|_| ContextGuard::<'a> {
             context: self.clone(),
@@ -109,7 +108,7 @@ impl<'a> ContextGuard<'a> {
         self.context.clone()
     }
 
-    /// Returns the context's global object.
+    /// Returns the active context's global object.
     pub fn global(&self) -> Result<value::Object> {
         let mut value = JsValueRef::new();
         unsafe {

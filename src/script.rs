@@ -3,6 +3,7 @@ use chakra_sys::*;
 use error::*;
 use context::ContextGuard;
 use value;
+use util;
 
 pub struct Script;
 
@@ -21,20 +22,19 @@ impl Script {
         let buffer = unsafe {
             // It's assumed that ChakraCore engine does not modify the code buffer.
             let slice = slice::from_raw_parts_mut(bytes.as_ptr() as *mut u8, bytes.len());
-            value::Value::from_external_slice(guard, slice)
-        }?;
+            value::ArrayBuffer::from_slice(guard, slice)
+        };
 
         let mut identifier = 1;
         let mut result = JsValueRef::new();
 
         unsafe {
-            // TODO: handle exceptions!
-            jstry!(JsRun(buffer.as_raw(),
-                         &mut identifier,
-                         name.as_raw(),
-                         JsParseScriptAttributeNone,
-                         &mut result));
-            Ok(value::Value::from_raw(result))
+            let code = JsRun(buffer.as_raw(),
+                             &mut identifier,
+                             name.as_raw(),
+                             JsParseScriptAttributeNone,
+                             &mut result);
+            util::handle_exception(guard, code).map(|_| value::Value::from_raw(result))
         }
     }
 }

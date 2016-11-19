@@ -1,8 +1,9 @@
 use context::ContextGuard;
 use chakra_sys::*;
 
-pub use self::function::Function;
+pub use self::array::*;
 pub use self::boolean::Boolean;
+pub use self::function::Function;
 pub use self::number::Number;
 pub use self::object::Object;
 pub use self::string::String;
@@ -11,6 +12,7 @@ pub use self::value::Value;
 // Modules
 pub mod function;
 pub mod object;
+mod array;
 mod boolean;
 mod number;
 mod string;
@@ -20,7 +22,7 @@ mod value;
 pub fn false_(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
-        assert_eq!(JsGetFalseValue(&mut value), JsErrorCode::NoError);
+        jsassert!(JsGetFalseValue(&mut value));
         Value::from_raw(value)
     }
 }
@@ -29,7 +31,7 @@ pub fn false_(_guard: &ContextGuard) -> Value {
 pub fn true_(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
-        assert_eq!(JsGetTrueValue(&mut value), JsErrorCode::NoError);
+        jsassert!(JsGetTrueValue(&mut value));
         Value::from_raw(value)
     }
 }
@@ -38,7 +40,7 @@ pub fn true_(_guard: &ContextGuard) -> Value {
 pub fn null(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
-        assert_eq!(JsGetNullValue(&mut value), JsErrorCode::NoError);
+        jsassert!(JsGetNullValue(&mut value));
         Value::from_raw(value)
     }
 }
@@ -47,7 +49,7 @@ pub fn null(_guard: &ContextGuard) -> Value {
 pub fn undefined(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
-        assert_eq!(JsGetUndefinedValue(&mut value), JsErrorCode::NoError);
+        jsassert!(JsGetUndefinedValue(&mut value));
         Value::from_raw(value)
     }
 }

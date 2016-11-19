@@ -1,7 +1,7 @@
 use error::*;
 use chakra_sys::*;
 
-/// An isolated instance of the `ChakraCore` engine.
+/// An isolated instance of the `JSRT`.
 pub struct Runtime(JsRuntimeHandle);
 
 impl Runtime {
@@ -12,9 +12,15 @@ impl Runtime {
         Ok(Runtime(handle))
     }
 
-    /// Sets the runtime's memory limitation.
+    /// Sets the runtime's memory limit.
     pub fn set_memory_limit(&self, limit: usize) -> Result<()> {
         jstry!(unsafe { JsSetRuntimeMemoryLimit(self.as_raw(), limit) });
+        Ok(())
+    }
+
+    /// Performs a full garbage collection.
+    pub fn collect(&self) -> Result<()> {
+        jstry!(unsafe { JsCollectGarbage(self.as_raw()) });
         Ok(())
     }
 
@@ -27,7 +33,7 @@ impl Runtime {
 impl Drop for Runtime {
     fn drop(&mut self) {
         unsafe {
-            assert_eq!(JsDisposeRuntime(self.0), JsErrorCode::NoError);
+            jsassert!(JsDisposeRuntime(self.0));
         }
     }
 }

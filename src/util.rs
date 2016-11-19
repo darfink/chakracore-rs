@@ -1,7 +1,9 @@
 use std::ptr;
 use chakra_sys::*;
 use error::*;
+use context::ContextGuard;
 
+/// Type for `JsCreateStringUtf8` & `JsCreatePropertyIdUtf8`
 pub type StringCallback =
     unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usize) -> JsErrorCode;
 
@@ -20,4 +22,18 @@ pub fn to_string_impl(reference: JsRef,
         // Assume the result is valid UTF-8
         Ok(String::from_utf8_unchecked(buffer))
     }
+}
+
+pub fn handle_exception(_guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
+    match code {
+        JsErrorCode::NoError => return Ok(()),
+        JsErrorCode::ScriptException => {
+            // TODO: Use an exception with stack trace.
+            let mut reference = JsValueRef::new();
+            jsassert!(unsafe { JsGetAndClearException(&mut reference) });
+        },
+        _ => (),
+    }
+
+    Err(format!("ChakraCore call failed with {:?}", code).into())
 }

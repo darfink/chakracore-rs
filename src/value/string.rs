@@ -3,6 +3,7 @@ use context::ContextGuard;
 use error::*;
 use super::Value;
 
+/// A JavaScript string.
 #[derive(Clone, Debug)]
 pub struct String(JsValueRef);
 
@@ -21,10 +22,7 @@ impl String {
     pub fn from_str(_guard: &ContextGuard, string: &str) -> Self {
         let mut value = JsValueRef::new();
         unsafe {
-            assert_eq!(JsCreateStringUtf8(string.as_ptr(),
-                                          string.len(),
-                                          &mut value),
-                       JsErrorCode::NoError);
+            jsassert!(JsCreateStringUtf8(string.as_ptr(), string.len(), &mut value));
             String(value)
         }
     }
@@ -37,8 +35,8 @@ impl String {
     }
 
     /// Converts a JavaScript string to a native string.
-    pub fn to_string(&self) -> Result<::std::string::String> {
-        ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8)
+    pub fn value(&self) -> ::std::string::String {
+        ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8).unwrap()
     }
 }
 

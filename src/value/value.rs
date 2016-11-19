@@ -1,15 +1,16 @@
-use std::{fmt, mem, ptr};
+use std::{fmt, mem};
 use chakra_sys::*;
 use context::{Context, ContextGuard};
-use error::*;
 
 macro_rules! downcast {
     ($predicate:ident, $predicate_doc:expr, $result:ident) => {
         #[doc=$predicate_doc]
         pub fn $predicate(&self) -> bool {
-            self.get_type().unwrap() == JsValueType::$result
+            // TODO: Account for type hierarchy (e.g a `Function` is an `Object`).
+            self.get_type() == JsValueType::$result
         }
     };
+
     ($predicate:ident, $predicate_doc:expr,
      $conversion:ident, $conversion_doc:expr, $result:ident) => {
         downcast!($predicate, $predicate_doc, $result);
@@ -28,9 +29,9 @@ macro_rules! downcast {
 macro_rules! nativecast {
     ($name:ident, $name_doc:expr, $result:ident, $into:ident, $represent:ident, $native:ident) => {
         #[doc=$name_doc]
-        pub fn $name(&self, _guard: &ContextGuard) -> Result<$result> {
+        pub fn $name(&self, _guard: &ContextGuard) -> $result {
             match self.clone().$into() {
-                None => self.$represent(_guard)?,
+                None => self.$represent(_guard),
                 Some(value) => value,
             }.$native()
         }
@@ -40,17 +41,46 @@ macro_rules! nativecast {
 macro_rules! representation {
     ($name:ident, $name_doc:expr, $result:ident, $function:ident) => {
         #[doc=$name_doc]
-        pub fn $name(&self, _guard: &ContextGuard) -> Result<super::$result> {
+        pub fn $name(&self, _guard: &ContextGuard) -> super::$result {
             let mut value = JsValueRef::new();
             unsafe {
-                jstry!($function(self.as_raw(), &mut value));
-                Ok(super::$result::from_raw(value))
+                jsassert!($function(self.as_raw(), &mut value));
+                super::$result::from_raw(value)
             }
         }
 
     }
 }
 
+/// A JavaScript value, base class for all types.
+///
+/// All values are tied to a specific context and cannot be reused between. The
+/// underlying object is represented only as a `JsValueRef`, a pointer to a
+/// ChakraCore value.
+///
+/// This type implements the `Debug` trait, but it should be used carefully. It
+/// assumes there is an active context (the same as the value was created with).
+///
+/// Do not get intimidated by all conversion functions. They are very simple
+/// underneath. There are three different type of conversions:
+///
+/// > `into_*`
+/// >> These do not modify an data. They only check the type of the
+/// underlying value. If the value is the targetted type (e.g `Object`), the
+/// underlying pointer is copied and returned wrapped in an `Object`.
+///
+/// > `to_*_convert`
+/// >> These are utility functions to easily retrieve a native representation of
+/// the internal value. The actions performed are straightforward: `into_*() ->
+/// [*_representation()] -> value()`. A call to `*_representation` is only
+/// performed if necessary (i.e a string is not redundantly converted to a
+/// string).
+///
+/// > `*_representation`
+/// >> These create a new value casted to a specific type using JavaScript
+/// semantics. For example; calling `number_representation` on an `Object`
+/// results in a `Number(NaN)`. Casting a `Boolean(false)` using
+/// `string_representation` results in a `String('false')`.
 #[derive(Clone)]
 pub struct Value(JsValueRef);
 
@@ -61,70 +91,103 @@ impl Value {
     }
 
     // Converts a value to another custom type
-    downcast!(is_string,
-              "Returns true if this value is a `String`.",
-              into_string,
-              "Converts the value to a `String`.",
-              String);
+    downcast!(is_undefined,
+              "Returns true if this value is `undefined`.",
+              Undefined);
+    downcast!(is_null,
+              "Returns true if this value is `null`.",
+              Null);
     downcast!(is_number,
               "Returns true if this value is a `Number`.",
               into_number,
-              "Converts the value to a `Number`.",
+              "Converts the type to a `Number`. Does not affect the underlying value.",
               Number);
+    downcast!(is_string,
+              "Returns true if this value is a `String`.",
+              into_string,
+              "Converts the type to a `String`. Does not affect the underlying value.",
+              String);
     downcast!(is_boolean,
               "Returns true if this value is a `Boolean`.",
               into_boolean,
-              "Converts the value to a `Boolean`.",
+              "Converts the type to a `Boolean`. Does not affect the underlying value.",
               Boolean);
+    downcast!(is_object,
+              "Returns true if this value is an `Object`.",
+              into_object,
+              "Converts the type to an `Object`. Does not affect the underlying value.",
+              Object);
+    downcast!(is_function,
+              "Returns true if this value is a `Function`.",
+              into_function,
+              "Converts the type to a `Function`. Does not affect the underlying value.",
+              Function);
+    downcast!(is_array,
+              "Returns true if this value is an `Array`.",
+              into_array,
+              "Converts the type to an `Array`. Does not affect the underlying value.",
+              Array);
+    downcast!(is_array_buffer,
+              "Returns true if this value is an `ArrayBuffer`.",
+              into_array_buffer,
+              "Converts the type to an `ArrayBuffer`. Does not affect the underlying value.",
+              ArrayBuffer);
 
     // Converts a value to a native type
     nativecast!(
         to_string_convert,
         "Transforms the value to a native string, containing the value's string representation.",
-        String, into_string, string_representation, to_string);
+        String, into_string, string_representation, value);
     nativecast!(
         to_integer_convert,
         "Transforms the value to a native string, containing the value's integer representation.",
-        i32, into_number, number_representation, to_integer);
+        i32, into_number, number_representation, value);
     nativecast!(
         to_double_convert,
         "Transforms the value to a native `f64`, containing the value's floating point representation.",
-        f64, into_number, number_representation, to_double);
+        f64, into_number, number_representation, value_double);
     nativecast!(
         to_boolean_convert,
         "Transforms the value to a native boolean, containing the value's bool representation.",
-        bool, into_boolean, boolean_representation, to_bool);
+        bool, into_boolean, boolean_representation, value);
 
     // Converts a value to the JavaScript expression of another type
     representation!(
         boolean_representation,
-        "Converts the value to its `JavaScript` boolean representation.",
+        "Creates a new boolean with this value represented as `Boolean`.",
         Boolean, JsConvertValueToBoolean);
     representation!(
-        string_representation,
-        "Converts the value to its `JavaScript` string representation.",
-        String, JsConvertValueToString);
-    representation!(
         number_representation,
-        "Converts the value to its `JavaScript` number representation.",
+        "Creates a new number with this value represented as `Number`.",
         Number, JsConvertValueToNumber);
-
-    /// Creates an array buffer, wrapping external data.
-    pub unsafe fn from_external_slice<T: Sized>(_guard: &ContextGuard,
-                                                data: &mut [T]) -> Result<Value> {
-        let base = data.as_mut_ptr() as *mut _;
-        let size = (data.len() * mem::size_of::<T>()) as usize as _;
-
-        let mut buffer = JsValueRef::new();
-        jstry!(JsCreateExternalArrayBuffer(base, size, None, ptr::null_mut(), &mut buffer));
-        Ok(Value(buffer))
-    }
+    representation!(
+        object_representation,
+        "Creates a new object with this value represented as `Object`.",
+        Object, JsConvertValueToObject);
+    representation!(
+        string_representation,
+        "Creates a new string with this value represented as `String`.",
+        String, JsConvertValueToString);
 
     /// Returns the type of the value.
-    pub fn get_type(&self) -> Result<JsValueType> {
+    pub fn get_type(&self) -> JsValueType {
         let mut value_type = JsValueType::Undefined;
-        jstry!(unsafe { JsGetValueType(self.as_raw(), &mut value_type) });
-        Ok(value_type)
+        jsassert!(unsafe { JsGetValueType(self.as_raw(), &mut value_type) });
+        value_type
+    }
+
+    /// Compare two values for equality (`==`).
+    pub fn equals(&self, _guard: &ContextGuard, that: &Value) -> bool {
+        let mut result = false;
+        jsassert!(unsafe { JsEquals(self.as_raw(), that.as_raw(), &mut result) });
+        result
+    }
+
+    /// Compare two values for strict equality (`===`).
+    pub fn strict_equals(&self, _guard: &ContextGuard, that: &Value) -> bool {
+        let mut result = false;
+        jsassert!(unsafe { JsStrictEquals(self.as_raw(), that.as_raw(), &mut result) });
+        result
     }
 
     /// Returns the underlying raw pointer.
@@ -133,14 +196,21 @@ impl Value {
     }
 }
 
+impl PartialEq for Value {
+    /// Use sparingly (prefer `equals`), this relies on an implicit context.
+    fn eq(&self, other: &Value) -> bool {
+        let guard = unsafe { Context::get_current().unwrap() };
+        self.strict_equals(&guard, other)
+    }
+}
+
 impl fmt::Debug for Value {
-    /// Only use for debugging, it relies on an implicit active context and uses
-    /// several unwraps.
+    /// Only use for debugging, it relies on an implicit active context and uses unwrap.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let guard = unsafe { Context::get_current().unwrap() };
-        let output = self.to_string_convert(&guard).unwrap();
+        let output = self.to_string_convert(&guard);
 
-        let value_type = self.get_type().unwrap();
+        let value_type = self.get_type();
         match value_type {
             JsValueType::String => write!(f, "Value({:?}: '{}')", value_type, output),
             _ => write!(f, "Value({:?}: {})", value_type, output),

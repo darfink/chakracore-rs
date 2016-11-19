@@ -15,8 +15,8 @@ impl PropertyId {
     /// If a property identifier with this name has already been created, it
     /// will return it instead of creating a new one.
     ///
-    /// Reuse property identifiers as much as possible. For each new one, the
-    /// string is copied and converted to UTF-16.
+    /// Reuse property identifiers as much as possible. For constructor call,
+    /// the string is copied and converted to UTF-16.
     pub fn from_str(_guard: &ContextGuard, name: &str) -> PropertyId {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();
