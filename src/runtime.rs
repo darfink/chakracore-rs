@@ -1,6 +1,7 @@
 use error::*;
 use chakra_sys::*;
 
+/// An isolated instance of the `ChakraCore` engine.
 pub struct Runtime(JsRuntimeHandle);
 
 impl Runtime {
@@ -9,6 +10,12 @@ impl Runtime {
         let mut handle = JsRuntimeHandle::new();
         jstry!(unsafe { JsCreateRuntime(JsRuntimeAttributeNone, None, &mut handle) });
         Ok(Runtime(handle))
+    }
+
+    /// Sets the runtime's memory limitation.
+    pub fn set_memory_limit(&self, limit: usize) -> Result<()> {
+        jstry!(unsafe { JsSetRuntimeMemoryLimit(self.as_raw(), limit) });
+        Ok(())
     }
 
     /// Returns the underlying raw pointer behind this runtime.

@@ -3,7 +3,7 @@ use libc::{c_void, c_ushort};
 use chakra_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
-use super::Value;
+use super::{Value, Object};
 
 struct FunctionThunk {
     callback: *mut FunctionCallback,
@@ -126,4 +126,5 @@ impl Function {
     }
 }
 
-inherit!(Function, Value);
+inherit!(Function, Object);
+subtype!(Function, Value);

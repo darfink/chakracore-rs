@@ -1,4 +1,3 @@
-use std::ptr;
 use chakra_sys::*;
 use context::ContextGuard;
 use error::*;
@@ -9,7 +8,7 @@ pub struct String(JsValueRef);
 
 impl String {
     /// Creates a new empty string.
-    pub fn new(guard: &ContextGuard) -> Result<Self> {
+    pub fn new(guard: &ContextGuard) -> Self {
         Self::from_str(guard, "")
     }
 
@@ -19,10 +18,15 @@ impl String {
     }
 
     /// Creates a string value from a native string.
-    pub fn from_str(_guard: &ContextGuard, string: &str) -> Result<Self> {
+    pub fn from_str(_guard: &ContextGuard, string: &str) -> Self {
         let mut value = JsValueRef::new();
-        jstry!(unsafe { JsCreateStringUtf8(string.as_ptr(), string.len(), &mut value) });
-        Ok(String(value))
+        unsafe {
+            assert_eq!(JsCreateStringUtf8(string.as_ptr(),
+                                          string.len(),
+                                          &mut value),
+                       JsErrorCode::NoError);
+            String(value)
+        }
     }
 
     /// Returns the length of the string.
@@ -34,18 +38,7 @@ impl String {
 
     /// Converts a JavaScript string to a native string.
     pub fn to_string(&self) -> Result<::std::string::String> {
-        let mut size = 0;
-        unsafe {
-            // Retrieve how large the string representation is
-            jstry!(JsCopyStringUtf8(self.as_raw(), ptr::null_mut(), 0, &mut size));
-
-            // Allocate an appropriate buffer and retrieve the string
-            let mut buffer = vec![0; size];
-            jstry!(JsCopyStringUtf8(self.as_raw(), buffer.as_mut_ptr(), buffer.len(), ptr::null_mut()));
-
-            // Assume the result is valid UTF-8
-            Ok(::std::string::String::from_utf8_unchecked(buffer))
-        }
+        ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8)
     }
 }
 

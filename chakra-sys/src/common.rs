@@ -174,6 +174,7 @@ pub type JsSourceContext = *mut usize;
 
 /// An empty source context.
 // pub const JS_SOURCE_CONTEXT_NONE: JsSourceContext = usize::max_value() as *mut _;
+
 /// A property identifier.
 ///
 /// Property identifiers are used to refer to properties of JavaScript objects

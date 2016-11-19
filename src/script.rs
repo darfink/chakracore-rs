@@ -17,7 +17,7 @@ impl Script {
     pub fn run_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<value::Value> {
         let bytes = code.as_bytes();
 
-        let name = value::String::from_str(guard, name)?;
+        let name = value::String::from_str(guard, name);
         let buffer = unsafe {
             // It's assumed that ChakraCore engine does not modify the code buffer.
             let slice = slice::from_raw_parts_mut(bytes.as_ptr() as *mut u8, bytes.len());

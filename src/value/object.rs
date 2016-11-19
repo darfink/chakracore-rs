@@ -1,8 +1,8 @@
 use chakra_sys::*;
 use context::ContextGuard;
 use error::*;
-use Context;
 use super::Value;
+use PropertyId;
 
 /// Callback type for destructors.
 //pub type FinalizeCallback = Fn(&ContextGuard, &CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
@@ -11,7 +11,7 @@ use super::Value;
 pub struct Object(JsValueRef);
 
 impl Object {
-    /// Creates a new object.
+    /// Creates a new empty object.
     pub fn new(_guard: &ContextGuard) -> Self {
         let mut value = JsValueRef::new();
         unsafe {
@@ -27,12 +27,42 @@ impl Object {
         Object(reference)
     }
 
-    /// Returns the `Context` associated with the object.
-    pub fn get_context(&self) -> Result<Context> {
-        let mut context = JsContextRef::new();
+    /// Sets an object's key's value.
+    pub fn set(&self, _guard: &ContextGuard, key: &PropertyId, value: &Value) -> Result<()> {
+        jstry!(unsafe { JsSetProperty(self.as_raw(), key.as_raw(), value.as_raw(), false) });
+        Ok(())
+    }
+
+    /// Sets an object's index value.
+    pub fn set_index(&self, guard: &ContextGuard, index: u32, value: &Value) -> Result<()> {
+        let index = super::Number::new(guard, index as i32);
+        jstry!(unsafe { JsSetIndexedProperty(self.as_raw(), index.as_raw(), value.as_raw()) });
+        Ok(())
+    }
+
+    /// Sets the object's prototype.
+    pub fn set_prototype(&self, _guard: &ContextGuard, prototype: &Value) -> Result<()> {
         unsafe {
-            jstry!(JsGetContextOfObject(self.as_raw(), &mut context));
-            Ok(Context::from_raw(context))
+            jstry!(JsSetPrototype(self.as_raw(), prototype.as_raw()));
+            Ok(())
+        }
+    }
+
+    /// Returns the object's prototype.
+    pub fn get_prototype(&self, _guard: &ContextGuard) -> Result<Value> {
+        let mut prototype = JsValueRef::new();
+        unsafe {
+            jstry!(JsGetPrototype(self.as_raw(), &mut prototype));
+            Ok(Value::from_raw(prototype))
+        }
+    }
+
+    /// Returns whether the object has external data or not.
+    pub fn has_external_data(&self) -> bool {
+        let mut result = false;
+        unsafe {
+            assert_eq!(JsHasExternalData(self.as_raw(), &mut result), JsErrorCode::NoError);
+            result
         }
     }
 }
