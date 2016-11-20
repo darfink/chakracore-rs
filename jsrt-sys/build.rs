@@ -87,6 +87,10 @@ fn chakra_bindings() {
 
     // Convert 'ChakraCore.h' → 'ffi.rs'
     libbindgen::builder()
+        // Source contains 'nullptr'
+        .clang_arg("-xc++")
+        .clang_arg("--std=c++11")
+        // This must come after the Clang arguments
         .header(jsrt_dir_path.join("ChakraCore.h").to_str().unwrap())
         // Only include JSRT associated types (i.e not STL types)
         .whitelisted_function("^Js.+")
@@ -97,8 +101,6 @@ fn chakra_bindings() {
         // Some enums are used as bitfields
         .bitfield_enum(r"\w+Attributes")
         .bitfield_enum(r"\w+Modes")
-        // Source contains 'nullptr'
-        .clang_arg("--std=c++11")
         .ctypes_prefix("libc")
         .generate()
         .expect("Failed to generate binding")
