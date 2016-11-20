@@ -79,8 +79,8 @@ mod tests {
             assert!(info.this.is_null());
             assert!(info.is_construct_call == false);
             assert_eq!(info.arguments.len(), 2);
+            assert_eq!(captured_variable, 5);
 
-            // Add the two values together
             let result = info.arguments[0].to_double_convert(guard)
                 + info.arguments[1].to_double_convert(guard)
                 + captured_variable;
