@@ -11,6 +11,9 @@ include = ["build.rs", "src/**/*", "Cargo.toml"]
 keywords = ["jsrt", "javascript", "js", "ecmascript", "chakracore"]
 license = "MIT"
 
+[lib]
+doctest = false
+
 [dependencies]
 libc = "0.2.17"
 

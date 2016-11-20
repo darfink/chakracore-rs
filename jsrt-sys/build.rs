@@ -112,10 +112,10 @@ fn chakra_bindings() {
 fn sanitize_binding(file: &path::Path) {
     let mut content = read_file_content(file);
 
-    // Change calling convention to system
+    // Change calling convention → system
     regex_replace(&mut content, "extern \"C\"", "extern \"system\"");
 
-    // Normalize all bitflags (they are prepended with the enum name)
+    // Normalize all bitflags (removes the prepended enum name)
     regex_replace(&mut content, r"_\w+_(?P<name>\w+):", "$name:");
 
     // Ensure safety by making all void handles strongly typed, wrapping the
@@ -134,7 +134,7 @@ fn sanitize_binding(file: &path::Path) {
     // (e.g 'pub type JsErrorCode = _JsErrorCode').
     regex_replace(&mut content, r"pub type (\w+) = _.+", "");
 
-    // This is an edge cases (the type definition does not match the enum name)
+    // This is an edge case (the type definition does not match the enum name)
     regex_replace(&mut content, r"(?P<name>JsTTDMoveMode)s", "$name");
 
     // ... and rename all underscored types
