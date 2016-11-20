@@ -30,6 +30,8 @@ fn main() {
 }
 
 fn chakra_linking() {
+    let target = env::var("TARGET").unwrap();
+
     // TODO: How should 'embed-icu' be handled?
     if let Some(dir_str) = env::var_os("CHAKRA_BUILD") {
         let build = path::Path::new(&dir_str);
@@ -45,6 +47,12 @@ fn chakra_linking() {
         // There is no information available, blindly add paths
         maybe_search("/usr/lib");
         maybe_search("/usr/local/lib");
+    }
+
+    if target.contains("linux") {
+        // TODO: Replace this with ldconfig magic?
+        maybe_search("/usr/lib/x86_64-linux-gnu");
+        maybe_search("/usr/local/lib/x86_64-linux-gnu");
     }
 
     link_libraries();
@@ -74,6 +82,7 @@ fn link_libraries() {
             println!("cargo:rustc-link-lib=framework=Security");
             println!("cargo:rustc-link-lib=framework=Foundation");
         } else if target.contains("linux") {
+            // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
                 link_manually(&["unwind-ptrace", "unwind-generic", "unwind"]);
             }
@@ -81,7 +90,7 @@ fn link_libraries() {
 
         // TODO: Should ICU always be linked statically?
         if pkg_config::Config::new().statik(true).probe("icu-i18n").is_err() {
-            // TODO: This may be embedded in ChakraCore?
+            // TODO: ICU may be embedded in ChakraCore?
             println!("cargo:warning=No libraries for icu4c (pkg_config), linking manually...");
             link_manually(&["icui18n", "icuuc", "icudata"]);
         }
@@ -141,7 +150,7 @@ fn sanitize_binding(file: &path::Path) {
 
     // Ensure safety by making all void handles strongly typed, wrapping the
     // pointer in a struct. Also derive sensible defaults and add a constructor
-    // to initialize the handle with a null pointer.
+    // that initializes the handle with a null pointer.
     regex_replace(&mut content, r"pub type (?P<name>\w+).+(?P<type>\*mut.+c_void);", &[
         "#[repr(C)]",
         "#[derive(Copy, Clone, Debug)]",
