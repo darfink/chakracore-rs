@@ -2,7 +2,7 @@ use libc::c_void;
 use jsrt_sys::*;
 use context::ContextGuard;
 use error::*;
-use super::{Value};
+use super::Value;
 use PropertyId;
 
 /// Callback type for collector.
@@ -37,8 +37,8 @@ impl Object {
         unsafe {
             // TODO: Move this to a custom `External` type.
             jsassert!(JsCreateExternalObject(Box::into_raw(external) as *mut _,
-                                            Some(Self::finalize::<T>),
-                                            &mut value));
+                                             Some(Self::finalize::<T>),
+                                             &mut value));
             Object::from_raw(value)
         }
     }
@@ -111,9 +111,18 @@ impl Object {
     /// Defines or modifies a property directly on an object.
     ///
     /// This is equivalent to `Object.defineProperty()`.
-    pub fn define_property(&self, _guard: &ContextGuard, key: &PropertyId, descriptor: &Object) -> bool {
+    pub fn define_property(&self,
+                           _guard: &ContextGuard,
+                           key: &PropertyId,
+                           descriptor: &Object)
+                           -> bool {
         let mut result = false;
-        jsassert!(unsafe { JsDefineProperty(self.as_raw(), key.as_raw(), descriptor.as_raw(), &mut result) });
+        jsassert!(unsafe {
+            JsDefineProperty(self.as_raw(),
+                             key.as_raw(),
+                             descriptor.as_raw(),
+                             &mut result)
+        });
         result
     }
 
@@ -163,7 +172,9 @@ impl Object {
     pub unsafe fn set_collect_callback(&self, callback: Box<BeforeCollectCallback>) {
         let wrapper = Box::new(callback);
         let api = JsSetObjectBeforeCollectCallback;
-        jsassert!(api(self.as_raw(), Box::into_raw(wrapper) as *mut _, Some(Self::collect)));
+        jsassert!(api(self.as_raw(),
+                      Box::into_raw(wrapper) as *mut _,
+                      Some(Self::collect)));
     }
 
     /// A collect callback, triggered before the object is destroyed.

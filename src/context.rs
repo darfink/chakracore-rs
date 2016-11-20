@@ -36,10 +36,12 @@ impl Context {
     ///
     /// The majority of APIs require an active context.
     pub fn make_current<'a>(&'a self) -> Result<ContextGuard<'a>> {
-        self.enter().map(|_| ContextGuard::<'a> {
-            context: self.clone(),
-            phantom: PhantomData,
-            drop: true,
+        self.enter().map(|_| {
+            ContextGuard::<'a> {
+                context: self.clone(),
+                phantom: PhantomData,
+                drop: true,
+            }
         })
     }
 
@@ -112,7 +114,9 @@ impl<'a> ContextGuard<'a> {
     pub fn global(&self) -> Result<value::Object> {
         let mut value = JsValueRef::new();
         unsafe {
-            jstry!({ JsGetGlobalObject(&mut value) });
+            jstry!({
+                JsGetGlobalObject(&mut value)
+            });
             Ok(value::Object::from_raw(value))
         }
     }

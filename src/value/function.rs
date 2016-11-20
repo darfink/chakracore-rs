@@ -72,7 +72,8 @@ impl Function {
               guard: &ContextGuard,
               this: &Value,
               arguments: &[Value],
-              constructor: bool) -> Result<Value> {
+              constructor: bool)
+              -> Result<Value> {
         // Combine the context with the arguments
         let mut forward = vec![this.as_raw()];
         forward.extend(arguments.iter().map(|value| value.as_raw()));
@@ -85,14 +86,18 @@ impl Function {
 
         unsafe {
             let mut result = JsValueRef::new();
-            let code = api(self.0, forward.as_mut_ptr(), forward.len() as c_ushort, &mut result);
+            let code = api(self.0,
+                           forward.as_mut_ptr(),
+                           forward.len() as c_ushort,
+                           &mut result);
             util::handle_exception(guard, code).map(|_| Value::from_raw(result))
         }
     }
 
     /// Prevents boilerplate code in constructors.
     fn create<T>(callback: Box<FunctionCallback>, initialize: T) -> Self
-        where T : FnOnce(*mut c_void, &mut JsValueRef) -> JsErrorCode {
+        where T: FnOnce(*mut c_void, &mut JsValueRef) -> JsErrorCode
+    {
         // Because a boxed callback can be a fat pointer, it needs to be wrapped
         // in an additional Box to ensure it fits in a single pointer.
         let wrapper = Box::into_raw(Box::new(callback));
@@ -103,17 +108,20 @@ impl Function {
             let function = Function::from_raw(reference);
 
             // Ensure the heap objects are freed
-            function.set_collect_callback(Box::new(move |_| { Box::from_raw(wrapper); }));
+            function.set_collect_callback(Box::new(move |_| {
+                Box::from_raw(wrapper);
+            }));
             function
         }
     }
 
     /// Function implementation for callbacks
     unsafe extern "system" fn callback(callee: JsValueRef,
-                                is_construct_call: bool,
-                                arguments: *mut JsValueRef,
-                                len: c_ushort,
-                                data: *mut c_void) -> *mut c_void {
+                                       is_construct_call: bool,
+                                       arguments: *mut JsValueRef,
+                                       len: c_ushort,
+                                       data: *mut c_void)
+                                       -> *mut c_void {
         // This memory is cleaned up during object collection
         let callback = data as *mut Box<FunctionCallback>;
 
@@ -136,7 +144,7 @@ impl Function {
                 // TODO: what is best to return here? Undefined or exception.
                 jsassert!(JsSetException(error.as_raw()));
                 mem::transmute(error.as_raw())
-            },
+            }
         }
     }
 }

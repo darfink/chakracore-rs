@@ -74,23 +74,25 @@ mod tests {
         let guard = context.make_current().unwrap();
         let captured_variable = 5.0;
 
-        let function = value::Function::new(&guard, Box::new(move |guard, info| {
+        let function = value::Function::new(&guard,
+                                            Box::new(move |guard, info| {
             // Ensure the defaults are sensible
             assert!(info.this.is_null());
             assert!(info.is_construct_call == false);
             assert_eq!(info.arguments.len(), 2);
-            assert_eq!(captured_variable, 5);
+            assert_eq!(captured_variable, 5.0);
 
-            let result = info.arguments[0].to_double_convert(guard)
-                + info.arguments[1].to_double_convert(guard)
-                + captured_variable;
+            let result = info.arguments[0].to_double_convert(guard) +
+                         info.arguments[1].to_double_convert(guard) +
+                         captured_variable;
             Ok(value::Number::from_double(guard, result).into())
         }));
 
-        let result = function.call(&guard, &value::null(&guard), &[
-            value::Number::new(&guard, 5).into(),
-            value::Number::from_double(&guard, 10.5).into(),
-        ]).unwrap();
+        let result = function.call(&guard,
+                  &value::null(&guard),
+                  &[value::Number::new(&guard, 5).into(),
+                    value::Number::from_double(&guard, 10.5).into()])
+            .unwrap();
 
         assert_eq!(result.to_integer_convert(&guard), 20);
         assert_eq!(result.to_double_convert(&guard), 20.5);

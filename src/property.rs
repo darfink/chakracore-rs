@@ -21,9 +21,7 @@ impl PropertyId {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();
         unsafe {
-            assert_eq!(JsCreatePropertyIdUtf8(bytes.as_ptr() as _,
-                                              bytes.len(),
-                                              &mut reference),
+            assert_eq!(JsCreatePropertyIdUtf8(bytes.as_ptr() as _, bytes.len(), &mut reference),
                        JsErrorCode::NoError);
             PropertyId::from_raw(reference)
         }

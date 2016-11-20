@@ -94,9 +94,7 @@ impl Value {
     downcast!(is_undefined,
               "Returns true if this value is `undefined`.",
               Undefined);
-    downcast!(is_null,
-              "Returns true if this value is `null`.",
-              Null);
+    downcast!(is_null, "Returns true if this value is `null`.", Null);
     downcast!(is_number,
               "Returns true if this value is a `Number`.",
               into_number,
@@ -134,40 +132,52 @@ impl Value {
               ArrayBuffer);
 
     // Converts a value to a native type
-    nativecast!(
-        to_string_convert,
-        "Transforms the value to a native string, containing the value's string representation.",
-        String, into_string, string_representation, value);
-    nativecast!(
-        to_integer_convert,
-        "Transforms the value to a native string, containing the value's integer representation.",
-        i32, into_number, number_representation, value);
-    nativecast!(
-        to_double_convert,
-        "Transforms the value to a native `f64`, containing the value's floating point representation.",
-        f64, into_number, number_representation, value_double);
-    nativecast!(
-        to_boolean_convert,
-        "Transforms the value to a native boolean, containing the value's bool representation.",
-        bool, into_boolean, boolean_representation, value);
+    nativecast!(to_string_convert,
+                "Transforms the value to a native string, containing the value's string \
+                 representation.",
+                String,
+                into_string,
+                string_representation,
+                value);
+    nativecast!(to_integer_convert,
+                "Transforms the value to a native string, containing the value's integer \
+                 representation.",
+                i32,
+                into_number,
+                number_representation,
+                value);
+    nativecast!(to_double_convert,
+                "Transforms the value to a native `f64`, containing the value's floating point \
+                 representation.",
+                f64,
+                into_number,
+                number_representation,
+                value_double);
+    nativecast!(to_boolean_convert,
+                "Transforms the value to a native boolean, containing the value's bool \
+                 representation.",
+                bool,
+                into_boolean,
+                boolean_representation,
+                value);
 
     // Converts a value to the JavaScript expression of another type
-    representation!(
-        boolean_representation,
-        "Creates a new boolean with this value represented as `Boolean`.",
-        Boolean, JsConvertValueToBoolean);
-    representation!(
-        number_representation,
-        "Creates a new number with this value represented as `Number`.",
-        Number, JsConvertValueToNumber);
-    representation!(
-        object_representation,
-        "Creates a new object with this value represented as `Object`.",
-        Object, JsConvertValueToObject);
-    representation!(
-        string_representation,
-        "Creates a new string with this value represented as `String`.",
-        String, JsConvertValueToString);
+    representation!(boolean_representation,
+                    "Creates a new boolean with this value represented as `Boolean`.",
+                    Boolean,
+                    JsConvertValueToBoolean);
+    representation!(number_representation,
+                    "Creates a new number with this value represented as `Number`.",
+                    Number,
+                    JsConvertValueToNumber);
+    representation!(object_representation,
+                    "Creates a new object with this value represented as `Object`.",
+                    Object,
+                    JsConvertValueToObject);
+    representation!(string_representation,
+                    "Creates a new string with this value represented as `String`.",
+                    String,
+                    JsConvertValueToString);
 
     /// Returns the type of the value.
     pub fn get_type(&self) -> JsValueType {
