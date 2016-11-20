@@ -1,5 +1,5 @@
 use context::ContextGuard;
-use chakra_sys::*;
+use jsrt_sys::*;
 
 pub use self::array::*;
 pub use self::boolean::Boolean;

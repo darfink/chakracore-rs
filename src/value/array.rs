@@ -1,5 +1,6 @@
+use libc::c_void;
 use std::{mem, ptr};
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::ContextGuard;
 use super::{Value, Object};
 
@@ -27,6 +28,7 @@ impl Array {
     }
 }
 
+// TODO: Should be external array buffer type
 impl ArrayBuffer {
     /// Creates a new array buffer with a specified size.
     pub fn new(_guard: &ContextGuard, size: u32) -> Self {
@@ -37,12 +39,28 @@ impl ArrayBuffer {
         }
     }
 
+    /// Creates a new array buffer, owning external data.
+    pub fn with_data<T: Sized>(_guard: &ContextGuard, data: Vec<T>) -> Self {
+        let mut data = Box::new(data);
+        let base = data.as_mut_ptr() as *mut _;
+        let size = data.len() * mem::size_of::<T>();
+
+        unsafe {
+            let mut buffer = JsValueRef::new();
+            jsassert!(JsCreateExternalArrayBuffer(base,
+                                                  size as _,
+                                                  Some(Self::finalize::<T>),
+                                                  Box::into_raw(data) as *mut _,
+                                                  &mut buffer));
+            ArrayBuffer::from_raw(buffer)
+        }
+    }
+
     /// Creates an array buffer, wrapping external data.
     pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> ArrayBuffer {
         let base = data.as_mut_ptr() as *mut _;
         let size = (data.len() * mem::size_of::<T>()) as usize as _;
 
-        // TODO: Use the finalize callback
         let mut buffer = JsValueRef::new();
         jsassert!(JsCreateExternalArrayBuffer(base, size, None, ptr::null_mut(), &mut buffer));
         ArrayBuffer::from_raw(buffer)
@@ -51,6 +69,11 @@ impl ArrayBuffer {
     /// Creates an array from a raw pointer.
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         ArrayBuffer(reference)
+    }
+
+    /// A finalizer callback, triggered before an external buffer is removed.
+    unsafe extern "system" fn finalize<T>(data: *mut c_void) {
+        Box::from_raw(data as *mut Vec<T>);
     }
 }
 

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 use std::ptr;
 use error::*;
-use chakra_sys::*;
+use jsrt_sys::*;
 use value;
 use Runtime;
 

@@ -1,17 +1,8 @@
+#![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
-#![allow(improper_ctypes)]
-
-#[macro_use]
-extern crate bitflags;
 extern crate libc;
 
-pub use debug::*;
-pub use common::*;
-pub use core::*;
-
-mod common;
-mod core;
-mod debug;
+include!(concat!(env!("OUT_DIR"), "/ffi.rs"));
 
 #[cfg(test)]
 mod tests {
@@ -57,9 +48,9 @@ mod tests {
 
             // Run the script.
             let mut result = JsValueRef::new();
-            let mut source_context = 1;
+            let source_context = 1;
             js!(JsRun(script_buffer,
-                      &mut source_context,
+                      source_context,
                       name_value,
                       JsParseScriptAttributeNone,
                       &mut result));

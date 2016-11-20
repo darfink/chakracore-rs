@@ -1,6 +1,6 @@
 use std::fmt;
 use error::*;
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::{Context, ContextGuard};
 use value;
 

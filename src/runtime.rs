@@ -1,9 +1,10 @@
 use error::*;
-use chakra_sys::*;
+use jsrt_sys::*;
 
 /// An isolated instance of the `JSRT`.
 pub struct Runtime(JsRuntimeHandle);
 
+// TODO: Add support for promises
 impl Runtime {
     /// Creates a new runtime.
     pub fn new() -> Result<Runtime> {

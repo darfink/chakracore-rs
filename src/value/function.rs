@@ -1,6 +1,6 @@
-use std::slice;
+use std::{slice, mem};
 use libc::{c_void, c_ushort};
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
 use util;
@@ -109,36 +109,34 @@ impl Function {
     }
 
     /// Function implementation for callbacks
-    extern "system" fn callback(callee: JsValueRef,
+    unsafe extern "system" fn callback(callee: JsValueRef,
                                 is_construct_call: bool,
                                 arguments: *mut JsValueRef,
                                 len: c_ushort,
-                                data: *mut c_void) -> JsValueRef {
+                                data: *mut c_void) -> *mut c_void {
         // This memory is cleaned up during object collection
         let callback = data as *mut Box<FunctionCallback>;
 
-        unsafe {
-            // There is always an active context in this case
-            let guard = Context::get_current().unwrap();
+        // There is always an active context in this case
+        let guard = Context::get_current().unwrap();
 
-            // Construct the callback information object
-            let arguments = slice::from_raw_parts_mut(arguments, len as usize);
-            let mut info = CallbackInfo {
-                is_construct_call: is_construct_call,
-                arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
-                callee: Value::from_raw(callee),
-                this: Value::from_raw(arguments[0]),
-            };
+        // Construct the callback information object
+        let arguments = slice::from_raw_parts_mut(arguments, len as usize);
+        let mut info = CallbackInfo {
+            is_construct_call: is_construct_call,
+            arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
+            callee: Value::from_raw(callee),
+            this: Value::from_raw(arguments[0]),
+        };
 
-            // Call the user supplied callback
-            match (*callback)(&guard, &mut info) {
-                Ok(value) => value.as_raw(),
-                Err(error) => {
-                    // TODO: what is best to return here? Undefined or exception.
-                    jsassert!(JsSetException(error.as_raw()));
-                    error.as_raw()
-                },
-            }
+        // Call the user supplied callback
+        match (*callback)(&guard, &mut info) {
+            Ok(value) => mem::transmute(value.as_raw()),
+            Err(error) => {
+                // TODO: what is best to return here? Undefined or exception.
+                jsassert!(JsSetException(error.as_raw()));
+                mem::transmute(error.as_raw())
+            },
         }
     }
 }

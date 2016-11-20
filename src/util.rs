@@ -1,5 +1,5 @@
 use std::ptr;
-use chakra_sys::*;
+use jsrt_sys::*;
 use error::*;
 use context::ContextGuard;
 
@@ -24,6 +24,7 @@ pub fn to_string_impl(reference: JsRef,
     }
 }
 
+/// The runtime is set to a disabled state whenever an exception is thrown.
 pub fn handle_exception(_guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
     match code {
         JsErrorCode::NoError => return Ok(()),
@@ -35,5 +36,5 @@ pub fn handle_exception(_guard: &ContextGuard, code: JsErrorCode) -> Result<()> 
         _ => (),
     }
 
-    Err(format!("ChakraCore call failed with {:?}", code).into())
+    Err(format!("JSRT call failed with {:?}", code).into())
 }

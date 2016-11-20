@@ -1,4 +1,4 @@
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::ContextGuard;
 use super::Value;
 

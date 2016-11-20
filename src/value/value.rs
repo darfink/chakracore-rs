@@ -1,5 +1,5 @@
 use std::{fmt, mem};
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::{Context, ContextGuard};
 
 macro_rules! downcast {

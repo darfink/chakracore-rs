@@ -1,5 +1,5 @@
 use libc::c_void;
-use chakra_sys::*;
+use jsrt_sys::*;
 use context::ContextGuard;
 use error::*;
 use super::{Value};
@@ -26,8 +26,12 @@ impl Object {
     /// Creates a new object with external data.
     ///
     /// The object takes ownership of the resource. It is undetermined when, and
-    /// even if the destructor is called. It relies on the engine's finalize
+    /// even if, the destructor is called. It relies on the engine's finalize
     /// callback.
+    ///
+    /// As long as the object is referenced on the stack or in any script
+    /// context, the `external` data will be kept alive (i.e it is not tied to
+    /// the handle).
     pub fn with_external<T>(_guard: &ContextGuard, external: Box<T>) -> Self {
         let mut value = JsValueRef::new();
         unsafe {
@@ -163,17 +167,14 @@ impl Object {
     }
 
     /// A collect callback, triggered before the object is destroyed.
-    extern "system" fn collect(value: JsValueRef, data: *mut c_void) {
-        unsafe {
-            let wrapper: Box<Box<BeforeCollectCallback>> = Box::from_raw(data as *mut _);
-            wrapper(&Value::from_raw(value));
-        }
+    unsafe extern "system" fn collect(value: JsValueRef, data: *mut c_void) {
+        let wrapper: Box<Box<BeforeCollectCallback>> = Box::from_raw(data as *mut _);
+        wrapper(&Value::from_raw(value));
     }
 
-    /// A finalizer callback, triggered before an external data is removed.
-    extern "system" fn finalize<T>(data: *mut c_void) {
-        let _data = unsafe { Box::from_raw(data as *mut T) };
-        println!("BYE BYE!");
+    /// A finalizer callback, triggered before an external is removed.
+    unsafe extern "system" fn finalize<T>(data: *mut c_void) {
+        Box::from_raw(data as *mut T);
     }
 }
 

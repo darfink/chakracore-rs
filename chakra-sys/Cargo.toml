@@ -1,8 +1,0 @@
-[package]
-authors = ["Elliott Linder <elliott.darfink@gmail.com>"]
-name = "chakra-sys"
-version = "0.1.0"
-
-[dependencies]
-bitflags = "0.7.0"
-libc = "0.2.17"

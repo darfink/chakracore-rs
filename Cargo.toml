@@ -1,11 +1,17 @@
 [package]
 authors = ["Elliott Linder <elliott.darfink@gmail.com>"]
-name = "chakra"
+name = "jsrt"
 version = "0.1.0"
+description = "High-level bindings to JRST, the ChakraCore API"
+documentation = "https://docs.rs/jsrt"
+homepage = "https://github.com/darfink/jsrt-rs"
+repository = "https://github.com/darfink/jsrt-rs"
+keywords = ["jrst", "javascript", "js", "ecmascript", "chakracore"]
+license = "MIT"
 
 [dependencies]
 error-chain = "0.5.0"
 libc = "0.2.17"
 
-[dependencies.chakra-sys]
-path = "chakra-sys"
+[dependencies.jsrt-sys]
+path = "jsrt-sys"

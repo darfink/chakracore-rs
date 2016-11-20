@@ -1,5 +1,5 @@
 use std::slice;
-use chakra_sys::*;
+use jsrt_sys::*;
 use error::*;
 use context::ContextGuard;
 use value;
@@ -20,17 +20,16 @@ impl Script {
 
         let name = value::String::from_str(guard, name);
         let buffer = unsafe {
-            // It's assumed that ChakraCore engine does not modify the code buffer.
+            // It's assumed that the JSRT implementation does not modify the code buffer.
             let slice = slice::from_raw_parts_mut(bytes.as_ptr() as *mut u8, bytes.len());
             value::ArrayBuffer::from_slice(guard, slice)
         };
 
-        let mut identifier = 1;
+        let identifier = 1;
         let mut result = JsValueRef::new();
-
         unsafe {
             let code = JsRun(buffer.as_raw(),
-                             &mut identifier,
+                             identifier,
                              name.as_raw(),
                              JsParseScriptAttributeNone,
                              &mut result);
