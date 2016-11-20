@@ -16,7 +16,7 @@ const LIBS: [&'static str; 3] = [
 ];
 
 fn main() {
-    // This build relies much on pkg-config
+    // This build relies heavily on pkg-config
     if !Command::new("which")
                 .arg("pkg-config")
                 .status()
@@ -133,10 +133,10 @@ fn chakra_bindings() {
 fn sanitize_binding(file: &path::Path) {
     let mut content = read_file_content(file);
 
-    // Change calling convention → system
+    // Change calling convention from C → system
     regex_replace(&mut content, "extern \"C\"", "extern \"system\"");
 
-    // Normalize all bitflags (removes the prepended enum name)
+    // Normalize all bitflags (by removing the prepended enum name)
     regex_replace(&mut content, r"_\w+_(?P<name>\w+):", "$name:");
 
     // Ensure safety by making all void handles strongly typed, wrapping the
@@ -158,7 +158,8 @@ fn sanitize_binding(file: &path::Path) {
     // This is an edge case (the type definition does not match the enum name)
     regex_replace(&mut content, r"(?P<name>JsTTDMoveMode)s", "$name");
 
-    // ... and rename all underscored types
+    // ... and rename all underscored types. This is done so users can access
+    // enums without using weird, prefixed syntax, such as '_JsErrorCode'.
     // (e.g '_JsErrorCode' → 'JsErrorCode')
     regex_replace(&mut content, r"\b_(?P<name>\w+)", "$name");
 
@@ -166,10 +167,10 @@ fn sanitize_binding(file: &path::Path) {
     // verbose and repetitive code (e.g 'JsMemoryType::JsMemoryTypeAlloc'). To
     // prevent this, remove a specific prefix of all enum values. By default the
     // enum name (and some edge cases where the values do not match the name).
-    let mut prefixes = regex_find(&content, r"enum (\w+)");
+    let mut prefixes_to_remove = regex_find(&content, r"enum (\w+)");
 
     // These prefixes do not correspond to the enum name
-    prefixes.extend([
+    prefixes_to_remove.extend([
         "JsError",
         "JsArrayType",
         "JsModuleHostInfo",
@@ -177,7 +178,7 @@ fn sanitize_binding(file: &path::Path) {
         "Js"
     ].iter().map(|s| s.to_string()));
 
-    for prefix in prefixes.iter() {
+    for prefix in prefixes_to_remove.iter() {
         let ident = format!(r"{}_?(?P<name>\w+) = (?P<value>\d+)", prefix);
         regex_replace(&mut content, &ident, "$name = $value");
     }
