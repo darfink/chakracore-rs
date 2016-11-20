@@ -73,6 +73,11 @@ fn link_libraries() {
             println!("cargo:rustc-link-lib=framework=Foundation");
         }
 
+        for lib in ["icui18n", "icuuc", "icudata"].iter() {
+            // TODO: This may be embedded in ChakraCore?
+            println!("cargo:rustc-link-lib=static={}", lib);
+        }
+
         // TODO: Should this ever be linked statically?
         println!("cargo:rustc-link-lib=dylib=stdc++");
     }
@@ -90,7 +95,7 @@ fn chakra_bindings() {
         // Source contains 'nullptr'
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
-        // This must come after the Clang arguments
+        // This must be after the Clang arguments
         .header(jsrt_dir_path.join("ChakraCore.h").to_str().unwrap())
         // Only include JSRT associated types (i.e not STL types)
         .whitelisted_function("^Js.+")
