@@ -84,7 +84,7 @@ fn link_libraries() {
         } else if target.contains("linux") {
             // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
-                link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind"]);
+                link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind", "lzma"]);
             }
         }
 
@@ -117,12 +117,12 @@ fn chakra_bindings() {
     // Convert 'ChakraCore.h' → 'ffi.rs'
     clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
         // Ensure all potential paths are pruned
-        builder.clang_arg(format!("-idirafter {}", path.to_str().unwrap()))
+        builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
     })
         // Source contains 'nullptr'
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
-        // This must be after the Clang arguments
+        // This must be after the arguments to Clang
         .header(jsrt_dir_path.join("ChakraCore.h").to_str().unwrap())
         // Only include JSRT associated types (i.e not STL types)
         .whitelisted_function("^Js.+")
