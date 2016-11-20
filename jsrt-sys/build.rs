@@ -1,3 +1,4 @@
+extern crate clang_sys;
 extern crate libbindgen;
 extern crate pkg_config;
 extern crate regex;
@@ -7,6 +8,8 @@ use std::io::{Read, Write};
 use std::fs;
 use std::path;
 use std::process::Command;
+
+use clang_sys::support::Clang;
 use regex::Regex;
 
 const LIBS: [&'static str; 3] = [
@@ -73,26 +76,22 @@ fn link_libraries() {
         // The dynamic library is completely self-contained
         println!("cargo:rustc-link-lib=dylib=ChakraCore");
     } else {
-        for lib in LIBS.iter() {
-            // Statically link all ChakraCore libraries
-            println!("cargo:rustc-link-lib=static={}", lib);
-        }
+        // Statically link all ChakraCore libraries
+        link_manually("static", &LIBS);
 
         if target.contains("apple") {
-            println!("cargo:rustc-link-lib=framework=Security");
-            println!("cargo:rustc-link-lib=framework=Foundation");
+            link_manually("framework", &["Security", "Foundation"]);
         } else if target.contains("linux") {
             // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
-                link_manually(&["unwind-ptrace", "unwind-generic", "unwind"]);
+                link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind"]);
             }
         }
 
         // TODO: Should ICU always be linked statically?
         if pkg_config::Config::new().statik(true).probe("icu-i18n").is_err() {
-            // TODO: ICU may be embedded in ChakraCore?
             println!("cargo:warning=No libraries for icu4c (pkg_config), linking manually...");
-            link_manually(&["icui18n", "icuuc", "icudata"]);
+            link_manually("static", &["icui18n", "icuuc", "icudata"]);
         }
 
         // TODO: Should this ever be linked statically?
@@ -100,9 +99,9 @@ fn link_libraries() {
     }
 }
 
-fn link_manually(libs: &[&str]) {
+fn link_manually(linkage: &str, libs: &[&str]) {
     for lib in libs.iter() {
-        println!("cargo:rustc-link-lib=static={}", lib);
+        println!("cargo:rustc-link-lib={}={}", linkage, lib);
     }
 }
 
@@ -113,8 +112,13 @@ fn chakra_bindings() {
     let source = env::var_os("CHAKRA_SOURCE").expect("No $CHAKRA_SOURCE specified");
     let jsrt_dir_path = path::Path::new(&source).join("lib/Jsrt");
 
+    let clang = Clang::find(None).expect("No clang found, is it installed?");
+
     // Convert 'ChakraCore.h' → 'ffi.rs'
-    libbindgen::builder()
+    clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
+        // Ensure all potential paths are pruned
+        builder.clang_arg(format!("-idirafter {}", path.to_str().unwrap()))
+    })
         // Source contains 'nullptr'
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
