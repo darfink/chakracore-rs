@@ -6,6 +6,7 @@ use std::env;
 use std::io::{Read, Write};
 use std::fs;
 use std::path;
+use std::process::Command;
 use regex::Regex;
 
 const LIBS: [&'static str; 3] = [
@@ -15,6 +16,15 @@ const LIBS: [&'static str; 3] = [
 ];
 
 fn main() {
+    // This build relies much on pkg-config
+    if !Command::new("which")
+                .arg("pkg-config")
+                .status()
+                .ok()
+                .map_or(false, |res| res.success()) {
+        println!("cargo:warning=Cannot find pkg-config");
+    }
+
     chakra_linking();
     chakra_bindings();
 }
