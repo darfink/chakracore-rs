@@ -37,14 +37,6 @@ fn chakra_linking() {
         maybe_search("/usr/local/lib");
     }
 
-    // TODO: Should ICU always be linked statically?
-    let result = pkg_config::Config::new()
-        .statik(true)
-        .probe("icu-i18n");
-    if result.is_err() {
-        println!("cargo:warning=No path for icu4c (pkg_config)");
-    }
-
     link_libraries();
 }
 
@@ -64,22 +56,34 @@ fn link_libraries() {
         println!("cargo:rustc-link-lib=dylib=ChakraCore");
     } else {
         for lib in LIBS.iter() {
-            // Statically link all predefined libraries
+            // Statically link all ChakraCore libraries
             println!("cargo:rustc-link-lib=static={}", lib);
         }
 
         if target.contains("apple") {
             println!("cargo:rustc-link-lib=framework=Security");
             println!("cargo:rustc-link-lib=framework=Foundation");
+        } else if target.contains("linux") {
+            if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
+                link_manually(&["unwind-ptrace", "unwind-generic", "unwind"]);
+            }
         }
 
-        for lib in ["icui18n", "icuuc", "icudata"].iter() {
+        // TODO: Should ICU always be linked statically?
+        if pkg_config::Config::new().statik(true).probe("icu-i18n").is_err() {
             // TODO: This may be embedded in ChakraCore?
-            println!("cargo:rustc-link-lib=static={}", lib);
+            println!("cargo:warning=No libraries for icu4c (pkg_config), linking manually...");
+            link_manually(&["icui18n", "icuuc", "icudata"]);
         }
 
         // TODO: Should this ever be linked statically?
         println!("cargo:rustc-link-lib=dylib=stdc++");
+    }
+}
+
+fn link_manually(libs: &[&str]) {
+    for lib in libs.iter() {
+        println!("cargo:rustc-link-lib=static={}", lib);
     }
 }
 
