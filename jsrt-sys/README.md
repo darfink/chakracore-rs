@@ -1,10 +1,11 @@
 # `jsrt-sys`
 
-This is a library for the [JSRT runtime](https://goo.gl/1F6Gi1), an API used for
-embedding Microsoft's ChakraCore into applications. This library handles static
-and/or dynamic linking of the runtime, and generates rust bindings (on the fly)
-for the interface. The entire API is generated and accessable (except for the
-functions used for debugging, those are not yet available on Unix OSes).
+This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
+API used for embedding Microsoft's ChakraCore into applications. This library
+handles static and/or dynamic linking of the runtime, and generates rust
+bindings (on the fly) for the interface. The entire API is generated and
+accessable (except for the functions used for debugging, those are not yet
+available on Unix OSes).
 
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/jsrt-rs/blob/master/jsrt-sys/src/lib.rs).
