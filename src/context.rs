@@ -85,7 +85,7 @@ impl Context {
 
     /// Sets the current context.
     fn enter(&self) -> Result<()> {
-        jstry!(unsafe { JsSetCurrentContext(self.0) });
+        jstry!(unsafe { JsSetCurrentContext(self.as_raw()) });
         Ok(())
     }
 
