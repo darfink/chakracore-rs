@@ -73,7 +73,7 @@ There are two possible solutions to this.
 #### On Debian-based linuxes
 
 ```
-# apt-get install llvm-3.8-dev libclang-3.8-dev pkg-config
+# apt-get install llvm-3.8-dev libclang-3.8-dev pkg-config liblzma-dev
 ```
 
 ### Building
