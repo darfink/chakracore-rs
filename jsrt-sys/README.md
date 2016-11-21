@@ -10,7 +10,10 @@ available on Unix OSes).
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/jsrt-rs/blob/master/jsrt-sys/src/lib.rs).
 
-If you are interested in idiomatic Rust bindings, look here
+An example of the generated binding can be found
+[here](https://gist.github.com/darfink/d519756ad88efcddfbfe895439cf9451).
+
+If you are interested in idiomatic Rust bindings, check out
 [jsrt-rs](https://github.com/darfink/jsrt-rs).
 
 ## Requirements
@@ -84,7 +87,7 @@ telling the script where the ChakraCore files can be found.
 # cargo build -vv && cargo test
 ```
 
-Remember that if you change the environment variables after running the build
+Remember that if you change the environment variables *after* running the build
 script, you need to recompile it.
 
 ```
