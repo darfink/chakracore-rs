@@ -115,7 +115,7 @@ fn chakra_bindings() {
     let clang = Clang::find(None).expect("No clang found, is it installed?");
 
     // Convert 'ChakraCore.h' → 'ffi.rs'
-    clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
+    let ffi = clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
         // Ensure all potential paths are pruned
         builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
     })
@@ -136,16 +136,16 @@ fn chakra_bindings() {
         .ctypes_prefix("libc")
         .generate()
         .expect("Failed to generate binding")
-        .write_to_file(out_dir_path.join("ffi.rs"))
-        .expect("Failed to write binding to file");
+        .to_string();
 
     // Make the binding less cumbersome and platform agnostic
-    sanitize_binding(&out_dir_path.join("ffi.rs"));
+    let binding = sanitize_binding(ffi);
+
+    // Write the generated binding to file
+    write_file_content(&out_dir_path.join("ffi.rs"), &binding);
 }
 
-fn sanitize_binding(file: &path::Path) {
-    let mut content = read_file_content(file);
-
+fn sanitize_binding(mut content: String) -> String {
     // Change calling convention from C → system
     regex_replace(&mut content, "extern \"C\"", "extern \"system\"");
 
@@ -196,8 +196,7 @@ fn sanitize_binding(file: &path::Path) {
         regex_replace(&mut content, &ident, "$name = $value");
     }
 
-    // Update the generated binding
-    write_file_content(file, &content);
+    content
 }
 
 pub fn regex_replace(source: &mut String, ident: &str, replacement: &str) {
@@ -212,13 +211,6 @@ pub fn regex_find(source: &str, ident: &str) -> Vec<String> {
         .captures_iter(source)
         .map(|cap| cap.at(1).unwrap().to_string())
         .collect()
-}
-
-pub fn read_file_content(path: &path::Path) -> String {
-    let mut file = fs::File::open(path).expect("Could not open file");
-    let mut buffer = String::new();
-    file.read_to_string(&mut buffer).expect("Could not read file contents");
-    buffer
 }
 
 pub fn write_file_content(path: &path::Path, content: &str) {
