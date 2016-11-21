@@ -56,7 +56,7 @@ Ensure that you have `clang-3.8` or later installed. Downloads can be found
 Remember to add LLVM directories to `PATH` during installation.
 
 
-ChakraCore is built using the MSVC ABI, therefore you must use to MSVC toolchain
+ChakraCore is built using the MSVC ABI, therefore you must use the MSVC toolchain
 when linking with this library (e.g `stable-x86_64-pc-windows-msvc`)
 
 #### macOS
