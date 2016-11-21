@@ -40,7 +40,7 @@ shared that builds it by linking to `libChakraCore.so` instead.
 
 ### Prerequisites
 
-Besides the dependencies for ChakraCore (cmake, clang-3.7, ICU), it also uses
+Besides ChakraCore and its dependencies (cmake, clang-3.7, ICU), it also uses
 Servo's [rust-bindgen](https://github.com/servo/rust-bindgen), which requires
 clang-3.8 or later. The build script also heavily relies on pkg-config.
 

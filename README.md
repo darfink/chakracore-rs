@@ -30,7 +30,7 @@ extern crate jsrt;
 This library, by itself is simple and easily installed, but its `jsrt-sys`
 dependency is *not*. To ensure a successful build, please view the `jsrt-sys`
 [build
-instructions](https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys#prerequisites).
+instructions](https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys#requirements).
 
 ## Example
 
