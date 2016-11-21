@@ -20,12 +20,7 @@ const LIBS: [&'static str; 3] = [
 
 fn main() {
     // This build relies heavily on pkg-config
-    if !has_target("windows") &&
-        !Command::new("which")
-                 .arg("pkg-config")
-                 .status()
-                 .ok()
-                 .map_or(false, |res| res.success()) {
+    if !has_target("windows") && !has_command("pkg-config") {
         println!("cargo:warning=Cannot find pkg-config");
     }
 
@@ -228,6 +223,14 @@ fn regex_find(source: &str, ident: &str) -> Vec<String> {
 fn write_file_content(path: &path::Path, content: &str) {
     let mut handle = fs::File::create(path).expect("Failed to create file");
     handle.write_all(content.as_bytes()).expect("Failed to write to file");
+}
+
+fn has_command(command: &str) -> bool {
+    Command::new("which")
+            .arg(command)
+            .status()
+            .ok()
+            .map_or(false, |res| res.success())
 }
 
 fn has_target(target: &str) -> bool {
