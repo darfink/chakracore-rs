@@ -42,17 +42,20 @@ On windows, only shared library builds are available as of this time. See
 
 ### Prerequisites
 
-Besides ChakraCore and its dependencies it also uses Servo's
-[rust-bindgen](https://github.com/servo/rust-bindgen), which requires clang-3.8
-or later. The build script also utilizes, but does not require, pkg-config.
+Besides ChakraCore and its dependencies, the library also uses Servo's
+[rust-bindgen](https://github.com/servo/rust-bindgen), which requires `clang-3.8`
+or later. The build script utilizes, but does not require, `pkg-config`.
 
 **NOTE:** The following instructions assume you already have ChakraCore's
  dependencies installed.
 
 #### Windows
 
-Ensure that you have clang-3.8 or later installed. Downloads can be found
-[here](http://llvm.org/releases/download.html).
+Ensure that you have `clang-3.8` or later installed. Downloads can be found
+[here](http://llvm.org/releases/download.html). Remember to add LLVM
+directories to `PATH` during installation.  
+ChakraCore is built using the MSVC ABI, therefore you must use to MSVC toolchain
+when linking with this library (e.g `stable-x86_64-pc-windows-msvc`)
 
 #### macOS
 
@@ -60,8 +63,8 @@ Ensure that you have clang-3.8 or later installed. Downloads can be found
 # brew install llvm38 pkg-config
 ```
 
-If you installed ICU4C (required for ChakraCore) using Brew, and wish to link
-statically, you need make pkg-config aware of the library. This is because Brew
+If you installed `icu4c` (required for ChakraCore) using Brew, and wish to link
+statically, you need make `pkg-config` aware of the library. This is because Brew
 does not link this library with the system, it may conflict with other builds.
 There are two possible solutions to this.
 
@@ -71,7 +74,7 @@ There are two possible solutions to this.
   # brew link icu4c --force
   ```
 
-- Or, before you build this library, export ICU4C's package configuration:
+- Or, before you build the library, export `icu4c`'s package configuration:
 
   ```
   # export PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig
