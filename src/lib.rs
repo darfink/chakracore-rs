@@ -34,7 +34,7 @@ mod tests {
         let guard = context.make_current().unwrap();
 
         // TODO: Wrap input in parantheses?
-        let result = Script::run(&guard, "(5 + 5)").unwrap();
+        let result = Script::eval(&guard, "(5 + 5)").unwrap();
         assert_eq!(result.to_integer(&guard), 10);
     }
 
@@ -43,8 +43,8 @@ mod tests {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
 
-        let error = Script::run(&guard, "throw 5;");
-        let result = Script::run(&guard, "(5 + 5)").unwrap();
+        let error = Script::eval(&guard, "throw 5;");
+        let result = Script::eval(&guard, "(5 + 5)").unwrap();
 
         assert_eq!(result.to_integer(&guard), 10);
         assert!(error.is_err());
@@ -61,8 +61,8 @@ mod tests {
         global.set(&guard, &dirname, &value::String::from_str(&guard, "FooBar"));
         global.set_index(&guard, 2, &value::Number::new(&guard, 1337));
 
-        let result1 = Script::run(&guard, "__dirname").unwrap();
-        let result2 = Script::run(&guard, "this[2]").unwrap();
+        let result1 = Script::eval(&guard, "__dirname").unwrap();
+        let result2 = Script::eval(&guard, "this[2]").unwrap();
 
         assert_eq!(result1.to_string(&guard), "FooBar");
         assert_eq!(result2.to_integer(&guard), 1337);
@@ -74,8 +74,7 @@ mod tests {
         let guard = context.make_current().unwrap();
         let captured_variable = 5.0;
 
-        let function = value::Function::new(&guard,
-                                            Box::new(move |guard, info| {
+        let function = value::Function::new(&guard, Box::new(move |guard, info| {
             // Ensure the defaults are sensible
             assert!(info.this.is_null());
             assert!(info.is_construct_call == false);
@@ -88,18 +87,17 @@ mod tests {
             Ok(value::Number::from_double(guard, result).into())
         }));
 
-        let result = function.call(&guard,
-                  &value::null(&guard),
-                  &[value::Number::new(&guard, 5).into(),
-                    value::Number::from_double(&guard, 10.5).into()])
-            .unwrap();
+        let result = function.call(&guard, &value::null(&guard), &[
+            value::Number::new(&guard, 5).into(),
+            value::Number::from_double(&guard, 10.5).into()
+        ]).unwrap();
 
         assert_eq!(result.to_integer(&guard), 20);
         assert_eq!(result.to_double(&guard), 20.5);
     }
 
     #[test]
-    fn external_drop() {
+    fn external_data_drop() {
         static mut called: bool = false;
         {
             struct Foo(i32);

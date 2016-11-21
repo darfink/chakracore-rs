@@ -44,7 +44,7 @@ fn main() {
   let context = jsrt::Context::new(&runtime).unwrap();
   let guard = context.make_current().unwrap();
 
-  let result = jsrt::Script::run(&guard, "(5 + 5)").unwrap();
+  let result = jsrt::Script::eval(&guard, "(5 + 5)").unwrap();
   assert_eq!(result.to_integer(&guard), 10);
 }
 ```

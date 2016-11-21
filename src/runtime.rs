@@ -4,7 +4,8 @@ use jsrt_sys::*;
 /// An isolated instance of the `JSRT`.
 pub struct Runtime(JsRuntimeHandle);
 
-// TODO: Add support for promises
+// TODO: Determine whether JsAddRef & JsRelease should be used
+// TODO: Add support for promises and more using Builder pattern
 impl Runtime {
     /// Creates a new runtime.
     pub fn new() -> Result<Runtime> {
