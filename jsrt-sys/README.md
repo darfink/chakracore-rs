@@ -95,8 +95,8 @@ telling the script where the ChakraCore files can be found.
   Studio Command Prompt.
 
   ```
-  # SET CHAKRA_SOURCE=/path/to/chakracore/checkout
-  # SET CHAKRA_BUILD=/path/to/chakracore/build/directory
+  # SET CHAKRA_SOURCE=C:\path\to\chakracore\checkout
+  # SET CHAKRA_BUILD=C:\path\to\chakracore\build\directory
   # cargo test -vv --features shared
   ```
 
