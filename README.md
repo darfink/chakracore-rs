@@ -28,7 +28,7 @@ extern crate jsrt;
 ```
 
 This library, by itself is simple and easily installed, but its `jsrt-sys`
-dependency is not. To ensure a successful build, please view the `jsrt-sys`
+dependency is *not*. To ensure a successful build, please view the `jsrt-sys`
 [build
 instructions](https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys#prerequisites).
 
@@ -61,13 +61,13 @@ fn main() {
 
   let multiply = jsrt::value::Function(&guard, Box::new(|guard, info| {
       let result = info.arguments[0].to_integer_convert(guard)
-                 + info.arguments[1].to_integer_convert(guard);
+                 * info.arguments[1].to_integer_convert(guard);
       Ok(jsrt::value::Number::new(guard, result).into())
   });
 
   let result = multiply.call(&guard, &jsrt::value::null(&guard), &[
-      jsrt::value::Number::new(&guard, 668).into(),
-      jsrt::value::Number::new(&guard, 669).into(),
+      jsrt::value::Number::new(&guard, 191).into(),
+      jsrt::value::Number::new(&guard, 7).into(),
   ]).unwrap();
 
   assert_eq!(result.to_integer_convert(&guard), 1337);
