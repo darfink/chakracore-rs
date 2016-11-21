@@ -4,8 +4,8 @@ This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
 API used for embedding Microsoft's ChakraCore into applications. This library
 handles static and/or dynamic linking of the runtime, and generates rust
 bindings (on the fly) for the interface. The entire API is generated and
-accessable (except for the functions used for debugging, those are not yet
-available on Unix OSes).
+accessable (though debugging functionality is only available if ChakraCore
+was built with it).
 
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/jsrt-rs/blob/master/jsrt-sys/src/lib.rs).
@@ -36,16 +36,21 @@ This script has not been tested with the `--embed-icu` option.
 ### Static/Shared
 
 By default, this library links ChakraCore statically. There is a feature called
-shared that builds it by linking to `libChakraCore.so` instead.
+shared that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.
 
 ### Prerequisites
 
-Besides ChakraCore and its dependencies (cmake, clang-3.7, ICU), it also uses
-Servo's [rust-bindgen](https://github.com/servo/rust-bindgen), which requires
-clang-3.8 or later. The build script also heavily relies on pkg-config.
+Besides ChakraCore and its dependencies it also uses Servo's
+[rust-bindgen](https://github.com/servo/rust-bindgen), which requires clang-3.8
+or later. The build script also utilizes, but does not require, pkg-config.
 
 **NOTE:** The following instructions assume you already have ChakraCore's
  dependencies installed.
+
+#### Windows
+
+Ensure that you have clang-3.8 or later installed. Downloads can be found
+[here](http://llvm.org/releases/download.html).
 
 #### macOS
 
@@ -67,7 +72,7 @@ There are two possible solutions to this.
 - Or, before you build this library, export ICU4C's package configuration:
 
   ```
-  export PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig
+  # export PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig
   ```
 
 #### On Debian-based linuxes
@@ -81,9 +86,23 @@ There are two possible solutions to this.
 After building ChakraCore and installing all dependencies, prepare the build by
 telling the script where the ChakraCore files can be found.
 
+- ##### Windows
+
+  ```
+  # SET CHAKRA_SOURCE=/path/to/chakracore/checkout
+  # SET CHAKRA_BUILD=/path/to/chakracore/build/directory
+  ```
+
+- ##### Unix
+
+  ```
+  # export CHAKRA_SOURCE=/path/to/chakracore/checkout
+  # export CHAKRA_BUILD=/path/to/chakracore/build/directory
+  ```
+
+And then run the build (there should be no *missing variable* warnings):
+
 ```
-# export CHAKRA_SOURCE=/path/to/chakracore/checkout
-# export CHAKRA_BUILD=/path/to/chakracore/build/directory
 # cargo build -vv && cargo test
 ```
 
@@ -91,7 +110,7 @@ Remember that if you change the environment variables *after* running the build
 script, you need to recompile it.
 
 ```
-cargo clean -p jsrt-sys && cargo build
+# cargo clean -p jsrt-sys && cargo build
 ```
 
 In case you find yourself stuck in the build process, open an
@@ -99,4 +118,5 @@ In case you find yourself stuck in the build process, open an
 
 ### Status
 
-This library has been built on `macOS 10.12 x86_64` and `Ubuntu 16.10 x86_64`.
+This library has been built on `macOS 10.12 x86_64`, `Ubuntu 16.10 x86_64` and
+`Windows 10 x86_x64`.
