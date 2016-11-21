@@ -60,16 +60,16 @@ fn main() {
   let guard = context.make_current().unwrap();
 
   let multiply = jsrt::value::Function::new(&guard, Box::new(|guard, info| {
-      let result = info.arguments[0].to_integer_convert(guard)
-                 * info.arguments[1].to_integer_convert(guard);
+      let result = info.arguments[0].to_integer(guard)
+                 * info.arguments[1].to_integer(guard);
       Ok(jsrt::value::Number::new(guard, result).into())
-  });
+  }));
 
   let result = multiply.call(&guard, &jsrt::value::null(&guard), &[
       jsrt::value::Number::new(&guard, 191).into(),
       jsrt::value::Number::new(&guard, 7).into(),
   ]).unwrap();
 
-  assert_eq!(result.to_integer_convert(&guard), 1337);
+  assert_eq!(result.to_integer(&guard), 1337);
 }
 ```

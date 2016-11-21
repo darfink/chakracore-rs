@@ -35,7 +35,7 @@ mod tests {
 
         // TODO: Wrap input in parantheses?
         let result = Script::run(&guard, "(5 + 5)").unwrap();
-        assert_eq!(result.to_integer_convert(&guard), 10);
+        assert_eq!(result.to_integer(&guard), 10);
     }
 
     #[test]
@@ -46,7 +46,7 @@ mod tests {
         let error = Script::run(&guard, "throw 5;");
         let result = Script::run(&guard, "(5 + 5)").unwrap();
 
-        assert_eq!(result.to_integer_convert(&guard), 10);
+        assert_eq!(result.to_integer(&guard), 10);
         assert!(error.is_err());
     }
 
@@ -64,8 +64,8 @@ mod tests {
         let result1 = Script::run(&guard, "__dirname").unwrap();
         let result2 = Script::run(&guard, "this[2]").unwrap();
 
-        assert_eq!(result1.to_string_convert(&guard), "FooBar");
-        assert_eq!(result2.to_integer_convert(&guard), 1337);
+        assert_eq!(result1.to_string(&guard), "FooBar");
+        assert_eq!(result2.to_integer(&guard), 1337);
     }
 
     #[test]
@@ -82,8 +82,8 @@ mod tests {
             assert_eq!(info.arguments.len(), 2);
             assert_eq!(captured_variable, 5.0);
 
-            let result = info.arguments[0].to_double_convert(guard) +
-                         info.arguments[1].to_double_convert(guard) +
+            let result = info.arguments[0].to_double(guard) +
+                         info.arguments[1].to_double(guard) +
                          captured_variable;
             Ok(value::Number::from_double(guard, result).into())
         }));
@@ -94,8 +94,8 @@ mod tests {
                     value::Number::from_double(&guard, 10.5).into()])
             .unwrap();
 
-        assert_eq!(result.to_integer_convert(&guard), 20);
-        assert_eq!(result.to_double_convert(&guard), 20.5);
+        assert_eq!(result.to_integer(&guard), 20);
+        assert_eq!(result.to_double(&guard), 20.5);
     }
 
     #[test]

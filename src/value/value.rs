@@ -65,11 +65,11 @@ macro_rules! representation {
 /// underneath. There are three different type of conversions:
 ///
 /// > `into_*`
-/// >> These do not modify an data. They only check the type of the
+/// >> These do not modify any data. They only check the type of the
 /// underlying value. If the value is the targetted type (e.g `Object`), the
-/// underlying pointer is copied and returned wrapped in an `Object`.
+/// underlying pointer is copied and returned wrapped as the specific type.
 ///
-/// > `to_*_convert`
+/// > `to_*`
 /// >> These are utility functions to easily retrieve a native representation of
 /// the internal value. The actions performed are straightforward: `into_*() ->
 /// [*_representation()] -> value()`. A call to `*_representation` is only
@@ -98,64 +98,60 @@ impl Value {
     downcast!(is_number,
               "Returns true if this value is a `Number`.",
               into_number,
-              "Converts the type to a `Number`. Does not affect the underlying value.",
+              "Represent the value as a `Number`. Does not affect the underlying value.",
               Number);
     downcast!(is_string,
               "Returns true if this value is a `String`.",
               into_string,
-              "Converts the type to a `String`. Does not affect the underlying value.",
+              "Represent the value as a `String`. Does not affect the underlying value.",
               String);
     downcast!(is_boolean,
               "Returns true if this value is a `Boolean`.",
               into_boolean,
-              "Converts the type to a `Boolean`. Does not affect the underlying value.",
+              "Represent the value as a `Boolean`. Does not affect the underlying value.",
               Boolean);
     downcast!(is_object,
               "Returns true if this value is an `Object`.",
               into_object,
-              "Converts the type to an `Object`. Does not affect the underlying value.",
+              "Represent the value as an `Object`. Does not affect the underlying value.",
               Object);
     downcast!(is_function,
               "Returns true if this value is a `Function`.",
               into_function,
-              "Converts the type to a `Function`. Does not affect the underlying value.",
+              "Represent the value as a `Function`. Does not affect the underlying value.",
               Function);
     downcast!(is_array,
               "Returns true if this value is an `Array`.",
               into_array,
-              "Converts the type to an `Array`. Does not affect the underlying value.",
+              "Represent the value as an `Array`. Does not affect the underlying value.",
               Array);
     downcast!(is_array_buffer,
               "Returns true if this value is an `ArrayBuffer`.",
               into_array_buffer,
-              "Converts the type to an `ArrayBuffer`. Does not affect the underlying value.",
+              "Represent the value as an `ArrayBuffer`. Does not affect the underlying value.",
               ArrayBuffer);
 
     // Converts a value to a native type
-    nativecast!(to_string_convert,
-                "Transforms the value to a native string, containing the value's string \
-                 representation.",
+    nativecast!(to_string,
+                "Converts the value to a native string, containing the value's string representation.",
                 String,
                 into_string,
                 string_representation,
                 value);
-    nativecast!(to_integer_convert,
-                "Transforms the value to a native string, containing the value's integer \
-                 representation.",
+    nativecast!(to_integer,
+                "Converts the value to a native string, containing the value's integer representation.",
                 i32,
                 into_number,
                 number_representation,
                 value);
-    nativecast!(to_double_convert,
-                "Transforms the value to a native `f64`, containing the value's floating point \
-                 representation.",
+    nativecast!(to_double,
+                "Converts the value to a native `f64`, containing the value's floating point representation.",
                 f64,
                 into_number,
                 number_representation,
                 value_double);
-    nativecast!(to_boolean_convert,
-                "Transforms the value to a native boolean, containing the value's bool \
-                 representation.",
+    nativecast!(to_bool,
+                "Converts the value to a native boolean, containing the value's bool representation.",
                 bool,
                 into_boolean,
                 boolean_representation,
@@ -218,7 +214,7 @@ impl fmt::Debug for Value {
     /// Only use for debugging, it relies on an implicit active context and uses unwrap.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let guard = unsafe { Context::get_current().unwrap() };
-        let output = self.to_string_convert(&guard);
+        let output = self.to_string(&guard);
 
         let value_type = self.get_type();
         match value_type {
