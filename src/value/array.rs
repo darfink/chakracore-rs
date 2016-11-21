@@ -8,7 +8,7 @@ use super::{Value, Object};
 #[derive(Clone, Debug)]
 pub struct Array(JsValueRef);
 
-/// An instance of an array buffer.
+/// A JavaScript array buffer.
 #[derive(Clone, Debug)]
 pub struct ArrayBuffer(JsValueRef);
 
@@ -39,7 +39,7 @@ impl ArrayBuffer {
         }
     }
 
-    /// Creates a new array buffer, owning external data.
+    /// Creates a new array buffer, owning the data.
     pub fn with_data<T: Sized>(_guard: &ContextGuard, data: Vec<T>) -> Self {
         let mut data = Box::new(data);
         let base = data.as_mut_ptr() as *mut _;
@@ -56,7 +56,7 @@ impl ArrayBuffer {
         }
     }
 
-    /// Creates an array buffer, wrapping external data.
+    /// Creates a new array buffer, wrapping external data.
     pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> ArrayBuffer {
         let base = data.as_mut_ptr() as *mut _;
         let size = (data.len() * mem::size_of::<T>()) as usize as _;
