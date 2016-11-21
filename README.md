@@ -59,7 +59,7 @@ fn main() {
   let context = jsrt::Context::new(&runtime).unwrap();
   let guard = context.make_current().unwrap();
 
-  let multiply = jsrt::value::Function(&guard, Box::new(|guard, info| {
+  let multiply = jsrt::value::Function::new(&guard, Box::new(|guard, info| {
       let result = info.arguments[0].to_integer_convert(guard)
                  * info.arguments[1].to_integer_convert(guard);
       Ok(jsrt::value::Number::new(guard, result).into())
