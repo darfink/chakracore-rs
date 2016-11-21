@@ -20,11 +20,12 @@ const LIBS: [&'static str; 3] = [
 
 fn main() {
     // This build relies heavily on pkg-config
-    if !Command::new("which")
-                .arg("pkg-config")
-                .status()
-                .ok()
-                .map_or(false, |res| res.success()) {
+    if !has_target("windows") &&
+        !Command::new("which")
+                 .arg("pkg-config")
+                 .status()
+                 .ok()
+                 .map_or(false, |res| res.success()) {
         println!("cargo:warning=Cannot find pkg-config");
     }
 
@@ -33,8 +34,6 @@ fn main() {
 }
 
 fn chakra_linking() {
-    let target = env::var("TARGET").unwrap();
-
     // TODO: How should 'embed-icu' be handled?
     if let Some(dir_str) = env::var_os("CHAKRA_BUILD") {
         let build = path::Path::new(&dir_str);
@@ -52,7 +51,7 @@ fn chakra_linking() {
         maybe_search("/usr/local/lib");
     }
 
-    if target.contains("linux") {
+    if has_target("linux") {
         // TODO: Replace this with ldconfig magic?
         maybe_search("/usr/lib/x86_64-linux-gnu");
         maybe_search("/usr/local/lib/x86_64-linux-gnu");
@@ -70,8 +69,6 @@ fn maybe_search<P>(dir: P) where P: AsRef<path::Path> {
 }
 
 fn link_libraries() {
-    let target = env::var("TARGET").unwrap();
-
     if cfg!(feature = "shared") {
         // The dynamic library is completely self-contained
         println!("cargo:rustc-link-lib=dylib=ChakraCore");
@@ -79,9 +76,9 @@ fn link_libraries() {
         // Statically link all ChakraCore libraries
         link_manually("static", &LIBS);
 
-        if target.contains("apple") {
+        if has_target("apple") {
             link_manually("framework", &["Security", "Foundation"]);
-        } else if target.contains("linux") {
+        } else if has_target("linux") {
             // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
                 link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind"]);
@@ -94,7 +91,8 @@ fn link_libraries() {
         }
 
         // TODO: Should ICU always be linked statically?
-        if pkg_config::Config::new().statik(true).probe("icu-i18n").is_err() {
+        if !has_target("windows") &&
+                pkg_config::Config::new().statik(true).probe("icu-i18n").is_err() {
             println!("cargo:warning=No libraries for icu4c (pkg_config), linking manually...");
             link_manually("static", &["icui18n", "icuuc", "icudata"]);
         }
@@ -111,19 +109,25 @@ fn link_manually(linkage: &str, libs: &[&str]) {
 }
 
 fn chakra_bindings() {
-    let out_dir_str = env::var_os("OUT_DIR").expect("No $OUT_DIR specified");
-    let out_dir_path = path::Path::new(&out_dir_str);
-
-    let source = env::var_os("CHAKRA_SOURCE").expect("No $CHAKRA_SOURCE specified");
-    let jsrt_dir_path = path::Path::new(&source).join("lib/Jsrt");
-
     let clang = Clang::find(None).expect("No clang found, is it installed?");
 
-    // Convert 'ChakraCore.h' → 'ffi.rs'
-    let ffi = clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
-        // Ensure all potential paths are pruned
+    // Some default includes are not found without this (e.g 'stddef.h')
+    let mut builder = clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
+        // Ensure all potential system paths are searched
         builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
-    })
+    });
+
+    if has_target("windows") {
+        // Clang is not aware of 'uint8_t' and its cousins by default
+        builder = ["-include", "stdint.h", "-Wno-pragma-once-outside-header"]
+            .iter().fold(builder, |builder, carg| builder.clang_arg(*carg));
+    }
+
+    let source_dir_str = env::var_os("CHAKRA_SOURCE").expect("No $CHAKRA_SOURCE specified");
+    let jsrt_dir_path = path::Path::new(&source_dir_str).join("lib/Jsrt");
+
+    // Convert 'ChakraCore.h' → 'ffi.rs'
+    let ffi = builder
         // Source contains 'nullptr'
         .clang_arg("-xc++")
         .clang_arg("--std=c++11")
@@ -143,8 +147,11 @@ fn chakra_bindings() {
         .expect("Failed to generate binding")
         .to_string();
 
-    // Make the binding less cumbersome and platform agnostic
+    // Make the binding Rust friendly and platform agnostic
     let binding = sanitize_binding(ffi);
+
+    let out_dir_str = env::var_os("OUT_DIR").expect("No $OUT_DIR specified");
+    let out_dir_path = path::Path::new(&out_dir_str);
 
     // Write the generated binding to file
     write_file_content(&out_dir_path.join("ffi.rs"), &binding);
@@ -204,13 +211,13 @@ fn sanitize_binding(mut content: String) -> String {
     content
 }
 
-pub fn regex_replace(source: &mut String, ident: &str, replacement: &str) {
+fn regex_replace(source: &mut String, ident: &str, replacement: &str) {
     let regex = Regex::new(ident).expect("Replacement regex has invalid syntax");
     *source = regex.replace_all(&source, replacement);
 }
 
 /// Returns a collection of the first capture group.
-pub fn regex_find(source: &str, ident: &str) -> Vec<String> {
+fn regex_find(source: &str, ident: &str) -> Vec<String> {
     Regex::new(ident)
         .expect("Find regex has invalid syntax")
         .captures_iter(source)
@@ -218,7 +225,11 @@ pub fn regex_find(source: &str, ident: &str) -> Vec<String> {
         .collect()
 }
 
-pub fn write_file_content(path: &path::Path, content: &str) {
+fn write_file_content(path: &path::Path, content: &str) {
     let mut handle = fs::File::create(path).expect("Failed to create file");
     handle.write_all(content.as_bytes()).expect("Failed to write to file");
+}
+
+fn has_target(target: &str) -> bool {
+    env::var("TARGET").expect("No $TARGET specified").contains(target)
 }
