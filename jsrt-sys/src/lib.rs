@@ -60,7 +60,7 @@ mod tests {
             let mut result_as_string = JsValueRef::new();
             js!(JsConvertValueToString(result, &mut result_as_string));
 
-            // Project script result back to C++.
+            // Project script result back to Rust
             let mut size = 0;
             let mut buffer = vec![0; 100];
             js!(JsCopyStringUtf8(result_as_string,

@@ -32,7 +32,7 @@ This script has not been tested with the `--embed-icu` option.
 ### Static/Shared
 
 By default, this library links ChakraCore statically. There is a feature called
-shared that builds it by linking to libChakraCore.so instead.
+shared that builds it by linking to `libChakraCore.so` instead.
 
 ### Prerequisites
 
@@ -75,3 +75,7 @@ cargo clean -p jsrt-sys && cargo build
 
 In case you find yourself stuck with the build process, open an
 [issue](https://github.com/darfink/jsrt-rs/issues/new).
+
+### Status
+
+This library has been built on `macOS 10.12` and `Ubuntu 16.10`.
