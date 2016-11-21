@@ -10,7 +10,7 @@ available on Unix OSes).
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/jsrt-rs/blob/master/jsrt-sys/src/lib.rs).
 
-An example of the generated binding can be found
+An example of the generated bindings can be found
 [here](https://gist.github.com/darfink/d519756ad88efcddfbfe895439cf9451).
 
 If you are interested in idiomatic Rust bindings, check out
