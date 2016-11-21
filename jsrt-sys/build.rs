@@ -84,7 +84,12 @@ fn link_libraries() {
         } else if target.contains("linux") {
             // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
-                link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind", "lzma"]);
+                link_manually("static", &["unwind-ptrace", "unwind-generic", "unwind"]);
+            }
+
+            // TODO: Why isn't this included in 'libunwind-ptrace'?
+            if pkg_config::Config::new().statik(true).probe("liblzma").is_err() {
+                link_manually("static", &["lzma"]);
             }
         }
 
