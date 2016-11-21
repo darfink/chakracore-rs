@@ -36,7 +36,9 @@ This script has not been tested with the `--embed-icu` option.
 ### Static/Shared
 
 By default, this library links ChakraCore statically. There is a feature called
-shared that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.
+`shared` that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.  
+On windows, only shared library builds are available as of this time. See
+[#279](https://github.com/Microsoft/ChakraCore/issues/279)
 
 ### Prerequisites
 
@@ -95,6 +97,7 @@ telling the script where the ChakraCore files can be found.
   ```
   # SET CHAKRA_SOURCE=/path/to/chakracore/checkout
   # SET CHAKRA_BUILD=/path/to/chakracore/build/directory
+  # cargo test -vv --features shared
   ```
 
 - ##### Unix
@@ -102,26 +105,16 @@ telling the script where the ChakraCore files can be found.
   ```
   # export CHAKRA_SOURCE=/path/to/chakracore/checkout
   # export CHAKRA_BUILD=/path/to/chakracore/build/directory
+  # cargo test -vv
   ```
 
-And then run the build (there should be no *missing variable* warnings):
-
-```
-# cargo build -vv && cargo test
-```
+When you run the build, there should be no *missing variable* warnings.
 
 Remember that if you change the environment variables *after* running the build
 script, you need to recompile it.
 
 ```
-# cargo clean -p jsrt-sys && cargo build
-```
-
-To link to the shared library, compile ChakraCore without the `--static` flag
-and run the build script with the `shared` feature:
-
-```
-# cargo build -vv --features shared
+# cargo clean -p jsrt-sys && cargo build [--features shared]
 ```
 
 In case you find yourself stuck in the build process, open an
