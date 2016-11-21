@@ -4,7 +4,7 @@ extern crate pkg_config;
 extern crate regex;
 
 use std::env;
-use std::io::{Read, Write};
+use std::io::Write;
 use std::fs;
 use std::path;
 use std::process::Command;
