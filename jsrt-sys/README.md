@@ -24,8 +24,8 @@ latest [master](https://github.com/Microsoft/ChakraCore/commit/446b086d17).
 The build script uses two environment variables to find the required files.
 
 - `CHAKRA_SOURCE`: Should point to root of the ChakraCore checkout.
-- `CHAKRA_BUILD`: Should point to the build directory of ChakraCore. By default
-  it is `$CHAKRA_SOURCE/Build(Linux)/{BUILD_TYPE}`.
+- `CHAKRA_BUILD`: Should point to the build directory of ChakraCore.  
+By default it is `$CHAKRA_SOURCE/Build(Linux)/{BUILD_TYPE}`.
 
 This script has not been tested with the `--embed-icu` option.
 
@@ -73,9 +73,9 @@ script, you need to recompile it.
 cargo clean -p jsrt-sys && cargo build
 ```
 
-In case you find yourself stuck with the build process, open an
+In case you find yourself stuck in the build process, open an
 [issue](https://github.com/darfink/jsrt-rs/issues/new).
 
 ### Status
 
-This library has been built on `macOS 10.12` and `Ubuntu 16.10`.
+This library has been built on `macOS 10.12 x86_64` and `Ubuntu 16.10 x86_64`.
