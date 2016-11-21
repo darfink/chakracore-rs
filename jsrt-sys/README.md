@@ -88,6 +88,9 @@ telling the script where the ChakraCore files can be found.
 
 - ##### Windows
 
+  Ensure that you are running in a Visual Studio command line environment, either
+  by sourcing `vcvarsall.bat`, or by building in the Visual Studio Command Prompt.
+
   ```
   # SET CHAKRA_SOURCE=/path/to/chakracore/checkout
   # SET CHAKRA_BUILD=/path/to/chakracore/build/directory
