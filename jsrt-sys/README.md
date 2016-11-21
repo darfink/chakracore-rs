@@ -49,6 +49,23 @@ clang-3.8 or later. The build script also heavily relies on pkg-config.
 # brew install llvm38 pkg-config
 ```
 
+If you installed ICU4C (required for ChakraCore) using Brew, and wish to link
+statically, you need make pkg-config aware of the library. This is because Brew
+does not link this library with the system, it may conflict with other builds.
+There are two possible solutions to this.
+
+- Forcefully link the library with the system:
+
+  ```
+  # brew link icu4c --force
+  ```
+
+- Or, before you build this library, export ICU4C's package configuration:
+
+  ```
+  export PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig
+  ```
+
 #### On Debian-based linuxes
 
 ```

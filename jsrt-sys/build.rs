@@ -177,7 +177,7 @@ fn sanitize_binding(mut content: String) -> String {
     regex_replace(&mut content, r"\b_(?P<name>\w+)", "$name");
 
     // Enums are scoped in Rust, but they are not in C/C++. This leads to
-    // verbose and repetitive code (e.g 'JsMemoryType::JsMemoryTypeAlloc'). To
+    // verbose and cumbersome code (e.g 'JsMemoryType::JsMemoryTypeAlloc'). To
     // prevent this, remove a specific prefix of all enum values. By default the
     // enum name (and some edge cases where the values do not match the name).
     let mut prefixes_to_remove = regex_find(&content, r"enum (\w+)");
