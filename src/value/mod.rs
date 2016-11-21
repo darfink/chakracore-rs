@@ -1,3 +1,4 @@
+//! Javascript values that user code can interact with.
 use context::ContextGuard;
 use jsrt_sys::*;
 

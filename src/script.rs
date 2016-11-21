@@ -5,6 +5,7 @@ use context::ContextGuard;
 use value;
 use util;
 
+/// A compiled JavaScript script, tied to a Context.
 pub struct Script;
 
 // TODO: serialized and parsed scripts

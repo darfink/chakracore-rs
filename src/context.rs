@@ -1,3 +1,4 @@
+//! Execution contexts and sandboxing.
 use std::marker::PhantomData;
 use std::ptr;
 use error::*;
