@@ -88,8 +88,9 @@ telling the script where the ChakraCore files can be found.
 
 - ##### Windows
 
-  Ensure that you are running in a Visual Studio command line environment, either
-  by sourcing `vcvarsall.bat`, or by building in the Visual Studio Command Prompt.
+  Ensure that you are running in a Visual Studio command line environment,
+  either by sourcing `vcvarsall.bat`, or by building from the Visual
+  Studio Command Prompt.
 
   ```
   # SET CHAKRA_SOURCE=/path/to/chakracore/checkout
@@ -114,6 +115,13 @@ script, you need to recompile it.
 
 ```
 # cargo clean -p jsrt-sys && cargo build
+```
+
+To link to the shared library, compile ChakraCore without the `--static` flag
+and run the build script with the `shared` feature:
+
+```
+# cargo build -vv --features shared
 ```
 
 In case you find yourself stuck in the build process, open an
