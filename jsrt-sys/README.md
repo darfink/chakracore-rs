@@ -53,7 +53,9 @@ or later. The build script utilizes, but does not require, `pkg-config`.
 
 Ensure that you have `clang-3.8` or later installed. Downloads can be found
 [here](http://llvm.org/releases/download.html).  
-Remember to add LLVM directories to `PATH` during installation.  
+Remember to add LLVM directories to `PATH` during installation.
+
+
 ChakraCore is built using the MSVC ABI, therefore you must use to MSVC toolchain
 when linking with this library (e.g `stable-x86_64-pc-windows-msvc`)
 
