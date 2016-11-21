@@ -73,6 +73,7 @@ fn link_libraries() {
 
         if has_target("apple") {
             link_manually("framework", &["Security", "Foundation"]);
+            link_manually("dylib", &["c++"])
         } else if has_target("linux") {
             // TODO: Support for builds without ptrace
             if pkg_config::Config::new().statik(true).probe("libunwind-ptrace").is_err() {
@@ -83,6 +84,9 @@ fn link_libraries() {
             if pkg_config::Config::new().statik(true).probe("liblzma").is_err() {
                 link_manually("static", &["lzma"]);
             }
+
+            // TODO: Should this ever be linked statically?
+            link_manually("dylib", &["stdc++"]);
         }
 
         // TODO: Should ICU always be linked statically?
@@ -91,9 +95,6 @@ fn link_libraries() {
             println!("cargo:warning=No libraries for icu4c (pkg_config), linking manually...");
             link_manually("static", &["icui18n", "icuuc", "icudata"]);
         }
-
-        // TODO: Should this ever be linked statically?
-        println!("cargo:rustc-link-lib=dylib=stdc++");
     }
 }
 
