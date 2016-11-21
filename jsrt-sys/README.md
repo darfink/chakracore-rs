@@ -36,7 +36,7 @@ This script has not been tested with the `--embed-icu` option.
 ### Static/Shared
 
 By default, this library links ChakraCore statically. There is a feature called
-`shared` that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.  
+`shared` that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.
 On windows, only shared library builds are available as of this time. See
 [#279](https://github.com/Microsoft/ChakraCore/issues/279)
 
