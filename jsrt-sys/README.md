@@ -2,7 +2,7 @@
 
 This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
 API used for embedding Microsoft's ChakraCore into applications. This library
-handles static and/or dynamic linking of the runtime, and generates rust
+handles static and dynamic linking of the runtime, and generates rust
 bindings (on the fly) for the interface. The entire API is generated and
 accessable (though debugging functionality is only available if ChakraCore
 was built with it).
