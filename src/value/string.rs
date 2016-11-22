@@ -4,7 +4,7 @@ use error::*;
 use super::Value;
 
 /// A JavaScript string.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct String(JsValueRef);
 
 impl String {

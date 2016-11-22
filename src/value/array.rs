@@ -5,11 +5,11 @@ use context::ContextGuard;
 use super::{Value, Object};
 
 /// A JavaScript array.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Array(JsValueRef);
 
 /// A JavaScript array buffer.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ArrayBuffer(JsValueRef);
 
 impl Array {

@@ -1,18 +1,18 @@
+//! A JavaScript object and associated types.
 use libc::c_void;
 use chakracore_sys::*;
 use context::ContextGuard;
 use error::*;
 use super::Value;
-use PropertyId;
+use Property;
 
 /// Callback type for collector.
 type BeforeCollectCallback = Fn(&Value);
 
 /// A JavaScript object.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Object(JsValueRef);
 
-// TODO: Add support for finalize callback
 impl Object {
     /// Creates a new empty object.
     pub fn new(_guard: &ContextGuard) -> Self {
@@ -49,7 +49,7 @@ impl Object {
     }
 
     /// Sets an object's property's value.
-    pub fn set(&self, _guard: &ContextGuard, key: &PropertyId, value: &Value) {
+    pub fn set(&self, _guard: &ContextGuard, key: &Property, value: &Value) {
         jsassert!(unsafe { JsSetProperty(self.as_raw(), key.as_raw(), value.as_raw(), false) });
     }
 
@@ -60,7 +60,7 @@ impl Object {
     }
 
     /// Returns an object's property's value.
-    pub fn get(&self, _guard: &ContextGuard, key: &PropertyId) -> Value {
+    pub fn get(&self, _guard: &ContextGuard, key: &Property) -> Value {
         let mut result = JsValueRef::new();
         unsafe {
             jsassert!(JsGetProperty(self.as_raw(), key.as_raw(), &mut result));
@@ -79,7 +79,7 @@ impl Object {
     }
 
     /// Deletes an object's property.
-    pub fn delete(&self, _guard: &ContextGuard, key: &PropertyId) -> bool {
+    pub fn delete(&self, _guard: &ContextGuard, key: &Property) -> bool {
         let mut result = JsValueRef::new();
         unsafe {
             jsassert!(JsDeleteProperty(self.as_raw(), key.as_raw(), false, &mut result));
@@ -94,7 +94,7 @@ impl Object {
     }
 
     /// Determines whether an object has a property.
-    pub fn has(&self, _guard: &ContextGuard, key: &PropertyId) -> bool {
+    pub fn has(&self, _guard: &ContextGuard, key: &Property) -> bool {
         let mut result = false;
         jsassert!(unsafe { JsHasProperty(self.as_raw(), key.as_raw(), &mut result) });
         result
@@ -111,17 +111,10 @@ impl Object {
     /// Defines or modifies a property directly on an object.
     ///
     /// This is equivalent to `Object.defineProperty()`.
-    pub fn define_property(&self,
-                           _guard: &ContextGuard,
-                           key: &PropertyId,
-                           descriptor: &Object)
-                           -> bool {
+    pub fn define_property(&self, _guard: &ContextGuard, key: &Property, desc: &Object) -> bool {
         let mut result = false;
         jsassert!(unsafe {
-            JsDefineProperty(self.as_raw(),
-                             key.as_raw(),
-                             descriptor.as_raw(),
-                             &mut result)
+            JsDefineProperty(self.as_raw(), key.as_raw(), desc.as_raw(), &mut result)
         });
         result
     }

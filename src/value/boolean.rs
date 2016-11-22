@@ -3,7 +3,7 @@ use context::ContextGuard;
 use super::Value;
 
 /// A JavaScript boolean.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Boolean(JsValueRef);
 
 impl Boolean {

@@ -4,10 +4,10 @@ use error::*;
 use context::ContextGuard;
 
 /// Type for `JsCreateStringUtf8` & `JsCreatePropertyIdUtf8`
-pub type StringCallback = unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usize) -> JsErrorCode;
+pub type StringCall = unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usize) -> JsErrorCode;
 
 /// This is dangerous because it may require an active context.
-pub fn to_string_impl(reference: JsRef, callback: StringCallback) -> Result<String> {
+pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> {
     let mut size = 0;
     unsafe {
         // Retrieve how large the string representation is

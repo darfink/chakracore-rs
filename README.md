@@ -44,7 +44,7 @@ fn main() {
   let context = js::Context::new(&runtime).unwrap();
   let guard = context.make_current().unwrap();
 
-  let result = js::Script::eval(&guard, "(5 + 5)").unwrap();
+  let result = js::script::eval(&guard, "(5 + 5)").unwrap();
   assert_eq!(result.to_integer(&guard), 10);
 }
 ```

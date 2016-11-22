@@ -5,17 +5,16 @@ extern crate libc;
 
 pub use context::Context;
 pub use runtime::Runtime;
-pub use script::Script;
-pub use property::PropertyId;
+pub use property::Property;
 
 #[macro_use]
 mod macros;
 mod property;
-mod script;
 mod runtime;
 mod util;
 pub mod context;
 pub mod error;
+pub mod script;
 pub mod value;
 
 #[cfg(test)]
@@ -34,7 +33,7 @@ mod tests {
         let guard = context.make_current().unwrap();
 
         // TODO: Wrap input in parantheses?
-        let result = Script::eval(&guard, "(5 + 5)").unwrap();
+        let result = script::eval(&guard, "(5 + 5)").unwrap();
         assert_eq!(result.to_integer(&guard), 10);
     }
 
@@ -43,8 +42,8 @@ mod tests {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
 
-        let error = Script::eval(&guard, "throw 5;");
-        let result = Script::eval(&guard, "(5 + 5)").unwrap();
+        let error = script::eval(&guard, "throw 5;");
+        let result = script::eval(&guard, "(5 + 5)").unwrap();
 
         assert_eq!(result.to_integer(&guard), 10);
         assert!(error.is_err());
@@ -56,13 +55,13 @@ mod tests {
         let guard = context.make_current().unwrap();
 
         let global = guard.global().unwrap();
-        let dirname = PropertyId::from_str(&guard, "__dirname");
+        let dirname = Property::from_str(&guard, "__dirname");
 
         global.set(&guard, &dirname, &value::String::from_str(&guard, "FooBar"));
         global.set_index(&guard, 2, &value::Number::new(&guard, 1337));
 
-        let result1 = Script::eval(&guard, "__dirname").unwrap();
-        let result2 = Script::eval(&guard, "this[2]").unwrap();
+        let result1 = script::eval(&guard, "__dirname").unwrap();
+        let result2 = script::eval(&guard, "this[2]").unwrap();
 
         assert_eq!(result1.to_string(&guard), "FooBar");
         assert_eq!(result2.to_integer(&guard), 1337);
@@ -113,5 +112,13 @@ mod tests {
             let _external = value::Object::with_external(&guard, Box::new(Foo(10)));
         }
         assert!(unsafe { called });
+    }
+
+    #[test]
+    fn error_object() {
+        let (_runtime, context) = setup_env();
+        let guard = context.make_current().unwrap();
+        let error = value::Error::type_error(&guard, "FooBar");
+        assert_eq!(error.to_string(&guard), "FooBar");
     }
 }

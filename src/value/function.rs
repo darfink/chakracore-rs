@@ -1,3 +1,4 @@
+//! A JavaScript function and associated types.
 use std::{slice, mem};
 use libc::{c_void, c_ushort};
 use chakracore_sys::*;
@@ -24,7 +25,7 @@ pub type FunctionCallback =
     Fn(&ContextGuard, &mut CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
 
 /// A JavaScript function object.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Function(JsValueRef);
 
 impl Function {
@@ -48,7 +49,7 @@ impl Function {
         Function(reference)
     }
 
-    /// Returns whether the `object` is an instance of this `Function`.
+    /// Returns whether the `object` is an instance of this `Function` or not.
     pub fn instance_of(&self, _guard: &ContextGuard, object: super::Object) -> Result<bool> {
         let mut result = false;
         unsafe {

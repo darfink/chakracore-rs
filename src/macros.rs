@@ -1,7 +1,7 @@
 macro_rules! jstry {
     ($e: expr) => {
         match $e {
-            // TODO: Add support for stack traces
+            // TODO: Use a custom ErrorKind
             ::chakracore_sys::JsErrorCode::NoError => (),
             error @ _ => return Err(format!("JSRT call failed with {:?}", error).into()),
         }

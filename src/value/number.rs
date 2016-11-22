@@ -3,7 +3,7 @@ use context::ContextGuard;
 use super::Value;
 
 /// A JavaScript number.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Number(JsValueRef);
 
 impl Number {

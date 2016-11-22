@@ -4,6 +4,7 @@ use chakracore_sys::*;
 
 pub use self::array::*;
 pub use self::boolean::Boolean;
+pub use self::error::Error;
 pub use self::function::Function;
 pub use self::number::Number;
 pub use self::object::Object;
@@ -15,6 +16,7 @@ pub mod function;
 pub mod object;
 mod array;
 mod boolean;
+mod error;
 mod number;
 mod string;
 mod value;
