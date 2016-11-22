@@ -1,6 +1,6 @@
 use std::{slice, mem};
 use libc::{c_void, c_ushort};
-use jsrt_sys::*;
+use chakracore_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
 use util;

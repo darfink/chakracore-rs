@@ -1,5 +1,5 @@
 use error::*;
-use jsrt_sys::*;
+use chakracore_sys::*;
 
 /// An isolated instance of the `JSRT`.
 pub struct Runtime(JsRuntimeHandle);

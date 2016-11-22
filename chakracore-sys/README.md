@@ -1,4 +1,4 @@
-# `jsrt-sys`
+# `chakracore-sys`
 
 This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
 API used for embedding Microsoft's ChakraCore into applications. This library
@@ -8,13 +8,13 @@ accessable (though debugging functionality is only available if ChakraCore
 was built with it).
 
 A *Hello World* example can be found in
-[src/lib.rs](https://github.com/darfink/jsrt-rs/blob/master/jsrt-sys/src/lib.rs).
+[src/lib.rs](https://github.com/darfink/chakracore-rs/blob/master/chakracore-sys/src/lib.rs).
 
 An example of the generated bindings can be found
 [here](https://gist.github.com/darfink/d519756ad88efcddfbfe895439cf9451).
 
 If you are interested in idiomatic Rust bindings, check out
-[jsrt-rs](https://github.com/darfink/jsrt-rs).
+[chakracore-rs](https://github.com/darfink/chakracore-rs).
 
 ## Requirements
 
@@ -119,11 +119,11 @@ Remember that if you change the environment variables *after* running the build
 script, you need to recompile it.
 
 ```
-# cargo clean -p jsrt-sys && cargo build [--features shared]
+# cargo clean -p chakracore-sys && cargo build [--features shared]
 ```
 
 In case you find yourself stuck in the build process, open an
-[issue](https://github.com/darfink/jsrt-rs/issues/new).
+[issue](https://github.com/darfink/chakracore-rs/issues/new).
 
 ### Status
 

@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate error_chain;
-extern crate jsrt_sys;
+extern crate chakracore_sys;
 extern crate libc;
 
 pub use context::Context;

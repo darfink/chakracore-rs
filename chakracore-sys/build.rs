@@ -66,7 +66,7 @@ fn maybe_search<P>(dir: P) where P: AsRef<path::Path> {
 fn link_libraries() {
     if cfg!(feature = "shared") {
         // The dynamic library is completely self-contained
-        println!("cargo:rustc-link-lib=dylib=ChakraCore");
+        link_manually("dylib", &["ChakraCore"]);
     } else {
         // Statically link all ChakraCore libraries
         link_manually("static", &LIBS);

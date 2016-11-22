@@ -1,5 +1,5 @@
 use std::{slice, ptr};
-use jsrt_sys::*;
+use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
 use value;
@@ -28,19 +28,19 @@ impl Script {
         }
     }
 
-    /// Parses a script an returns it as a function.
+    /// Parses code an returns it as a function.
     pub fn parse(guard: &ContextGuard, code: &str) -> Result<value::Function> {
         Self::parse_with_name(guard, "", code)
     }
 
-    /// Parses a script, with an associated name, and returns it as a function.
+    /// Parses code, associates it with a name, and returns it as a function.
     pub fn parse_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<value::Function> {
         let (code, result) = Self::process_code(guard, name, code, CodeAction::Parse);
         jstry!(code);
         Ok(unsafe { value::Function::from_raw(result) })
     }
 
-    /// Parses a script and stores it in a runtime-independant format.
+    /// Parse code and stores it in a runtime-independant format.
     pub fn serialize(guard: &ContextGuard, code: &str) -> Result<Script> {
         // The size of the serialized code is often much large than the source
         let code_source = Self::create_code_buffer(guard, code);
@@ -59,12 +59,12 @@ impl Script {
         })
     }
 
-    /// Parses the serialized script and returns it as a function.
+    /// Parses the serialized source and returns it as a function.
     pub fn unserialize(&mut self, guard: &ContextGuard, name: &str) -> Result<value::Function> {
         Self::parse_serialized(guard, name, &mut self.0)
     }
 
-    /// Runs the serialized code in a specificed context
+    /// Runs the serialized code in a specificed context.
     pub fn run(&mut self, guard: &ContextGuard) -> Result<value::Value> {
         self.run_with_name(guard, "")
     }
@@ -74,7 +74,7 @@ impl Script {
         let name = value::String::from_str(guard, name);
         let mut result = JsValueRef::new();
         unsafe {
-            // TODO: Analyze why a callback is required
+            // TODO: Analyze why a callback is required and if it should be used
             let code = JsRunSerialized(self.0.as_mut_ptr(),
                                        None,
                                        Self::generate_source_context(),
@@ -84,12 +84,12 @@ impl Script {
         }
     }
 
-    /// Consumes the script and return its internal byte representation.
-    pub fn into_vec(self) -> Vec<u8> {
+    /// Consumes the script and returns its internal byte representation.
+    pub fn into_serialized_code(self) -> Vec<u8> {
         self.0
     }
 
-    /// Parses a serialized script and returns it as a function.
+    /// Parses a serialized code and returns it as a function.
     fn parse_serialized(guard: &ContextGuard, name: &str, data: &mut Vec<u8>) -> Result<value::Function> {
         let name = value::String::from_str(guard, name);
         let mut result = JsValueRef::new();
@@ -125,7 +125,7 @@ impl Script {
         }
     }
 
-    /// Creates an array buffer from immutable data (JSRT does not modify it internally)
+    /// Creates an array buffer from immutable data (JSRT does not modify it internally).
     fn create_code_buffer(guard: &ContextGuard, code: &str) -> value::ArrayBuffer {
         let bytes = code.as_bytes();
         unsafe {
@@ -135,6 +135,7 @@ impl Script {
         }
     }
 
+    /// Generates a new source context identifier.
     fn generate_source_context() -> usize {
         // TODO: handle source context identifier
         1

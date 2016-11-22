@@ -1,6 +1,6 @@
 //! Javascript values that user code can interact with.
 use context::ContextGuard;
-use jsrt_sys::*;
+use chakracore_sys::*;
 
 pub use self::array::*;
 pub use self::boolean::Boolean;

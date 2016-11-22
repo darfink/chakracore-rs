@@ -2,7 +2,7 @@ macro_rules! jstry {
     ($e: expr) => {
         match $e {
             // TODO: Add support for stack traces
-            ::jsrt_sys::JsErrorCode::NoError => (),
+            ::chakracore_sys::JsErrorCode::NoError => (),
             error @ _ => return Err(format!("JSRT call failed with {:?}", error).into()),
         }
     }
@@ -12,7 +12,7 @@ macro_rules! jsassert {
     ($e: expr) => {
         // In some cases idiomatic code should prevent any errors from
         // happening (except for memory resource issues).
-        assert_eq!($e, ::jsrt_sys::JsErrorCode::NoError)
+        assert_eq!($e, ::chakracore_sys::JsErrorCode::NoError)
     }
 }
 

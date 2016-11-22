@@ -1,4 +1,4 @@
-# `jsrt-rs`
+# `chakracore-rs`
 
 This is a wrapper around the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1),
 used in [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge)
@@ -6,11 +6,11 @@ and [node-chakracore](https://github.com/nodejs/node-chakracore). The library is
 still in pre-release and is not yet stable. The tests try to cover as much
 functionality as possible but memory leaks and segfaults may occur. If you want
 a more stable library, use the underlying API directly with
-[jsrt-sys](https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys).
+[chakracore-sys](https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys).
 
 ## Documentation
 
-https://docs.rs/jsrt
+https://docs.rs/chakracore
 
 ## Installation
 
@@ -18,33 +18,33 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-jsrt = "0.1.0"
+chakracore = "0.1.0"
 ```
 
 and this to your crate root:
 
 ```rust
-extern crate jsrt;
+extern crate chakracore as js;
 ```
 
-This library, by itself is simple and easily installed, but its `jsrt-sys`
-dependency is *not*. To ensure a successful build, please view the `jsrt-sys`
-[build
-instructions](https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys#requirements).
+This library, by itself is simple and easily installed, but its
+`chakracore-sys` dependency is *not*. To ensure a successful build, please view
+the `chakracore-sys` [build
+instructions](https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys#requirements).
 
 ## Example
 
 ### Hello World
 
 ```rust
-extern crate jsrt;
+extern crate chakracore as js;
 
 fn main() {
-  let runtime = jsrt::Runtime::new().unwrap();
-  let context = jsrt::Context::new(&runtime).unwrap();
+  let runtime = js::Runtime::new().unwrap();
+  let context = js::Context::new(&runtime).unwrap();
   let guard = context.make_current().unwrap();
 
-  let result = jsrt::Script::eval(&guard, "(5 + 5)").unwrap();
+  let result = js::Script::eval(&guard, "(5 + 5)").unwrap();
   assert_eq!(result.to_integer(&guard), 10);
 }
 ```
@@ -52,22 +52,22 @@ fn main() {
 ### Function - Multiply
 
 ```rust
-extern crate jsrt;
+extern crate chakracore as js;
 
 fn main() {
-  let runtime = jsrt::Runtime::new().unwrap();
-  let context = jsrt::Context::new(&runtime).unwrap();
+  let runtime = js::Runtime::new().unwrap();
+  let context = js::Context::new(&runtime).unwrap();
   let guard = context.make_current().unwrap();
 
-  let multiply = jsrt::value::Function::new(&guard, Box::new(|guard, info| {
+  let multiply = js::value::Function::new(&guard, Box::new(|guard, info| {
       let result = info.arguments[0].to_integer(guard)
                  * info.arguments[1].to_integer(guard);
-      Ok(jsrt::value::Number::new(guard, result).into())
+      Ok(js::value::Number::new(guard, result).into())
   }));
 
-  let result = multiply.call(&guard, &jsrt::value::null(&guard), &[
-      jsrt::value::Number::new(&guard, 191).into(),
-      jsrt::value::Number::new(&guard, 7).into(),
+  let result = multiply.call(&guard, &js::value::null(&guard), &[
+      js::value::Number::new(&guard, 191).into(),
+      js::value::Number::new(&guard, 7).into(),
   ]).unwrap();
 
   assert_eq!(result.to_integer(&guard), 1337);

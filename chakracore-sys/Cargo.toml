@@ -1,12 +1,12 @@
 [package]
 authors = ["Elliott Linder <elliott.darfink@gmail.com>"]
-name = "jsrt-sys"
+name = "chakracore-sys"
 version = "0.1.0"
 build = "build.rs"
 description = "Low-level bindings to JSRT, the ChakraCore API"
-documentation = "https://docs.rs/jsrt-sys"
-homepage = "https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys"
-repository = "https://github.com/darfink/jsrt-rs/tree/master/jsrt-sys"
+documentation = "https://docs.rs/chakracore-sys"
+homepage = "https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys"
+repository = "https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys"
 include = ["build.rs", "src/**/*", "Cargo.toml"]
 keywords = ["jsrt", "javascript", "js", "ecmascript", "chakracore"]
 license = "MIT"

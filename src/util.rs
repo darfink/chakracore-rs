@@ -1,5 +1,5 @@
 use std::ptr;
-use jsrt_sys::*;
+use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
 

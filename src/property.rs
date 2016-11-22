@@ -1,8 +1,7 @@
 use std::fmt;
 use error::*;
-use jsrt_sys::*;
+use chakracore_sys::*;
 use context::{Context, ContextGuard};
-use value;
 
 /// A property identifier used with objects.
 #[derive(Clone)]
@@ -30,13 +29,6 @@ impl PropertyId {
     /// Creates a property identifier from a raw pointer.
     pub unsafe fn from_raw(reference: JsPropertyIdRef) -> PropertyId {
         PropertyId(reference)
-    }
-
-    /// Returns an object's associated context.
-    pub unsafe fn from_object(object: &value::Object) -> Result<Context> {
-        let mut reference = JsContextRef::new();
-        jstry!(JsGetContextOfObject(object.as_raw(), &mut reference));
-        Ok(Context::from_raw(reference))
     }
 
     /// Converts a JavaScript property to a native string.

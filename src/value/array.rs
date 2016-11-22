@@ -1,6 +1,6 @@
 use libc::c_void;
 use std::{mem, ptr};
-use jsrt_sys::*;
+use chakracore_sys::*;
 use context::ContextGuard;
 use super::{Value, Object};
 
