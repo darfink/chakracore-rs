@@ -53,7 +53,7 @@ impl Context {
     /// associated lifetime has no connection to an actual `Context`.
     ///
     /// This `ContextGuard` does not reset the current context upon destruction,
-    /// in contrast to a normally allocated `ContextGuard`, this is merely a
+    /// in contrast to a normally allocated `ContextGuard`. This is merely a
     /// reference.
     pub unsafe fn get_current<'a>() -> Result<ContextGuard<'a>> {
         let mut reference = JsContextRef::new();
@@ -112,13 +112,11 @@ impl<'a> ContextGuard<'a> {
     }
 
     /// Returns the active context's global object.
-    pub fn global(&self) -> Result<value::Object> {
+    pub fn global(&self) -> value::Object {
         let mut value = JsValueRef::new();
         unsafe {
-            jstry!({
-                JsGetGlobalObject(&mut value)
-            });
-            Ok(value::Object::from_raw(value))
+            jsassert!(JsGetGlobalObject(&mut value));
+            value::Object::from_raw(value)
         }
     }
 }

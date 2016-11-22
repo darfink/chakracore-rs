@@ -1,14 +1,15 @@
 //! Functionality for executing and parsing JavaScript.
 //!
-//! The simple `eval` function should cover most peoples' needs. It simply
-//! evalutes the supplied code directly and returns the scripts value.
+//! The simple `eval` function should cover most needs. It evalutes the supplied
+//! code directly and returns the script's value.
 //!
 //! ```rust
 //! # use chakracore as js;
 //! # let runtime = js::Runtime::new().unwrap();
 //! # let context = js::Context::new(&runtime).unwrap();
-//! let guard = context.make_current().unwrap();
-//! let _result = js::script::eval(&guard, "(10 + 10)").unwrap();
+//! # let guard = context.make_current().unwrap();
+//! let result = js::script::eval(&guard, "(10 + 10)").unwrap();
+//! assert_eq!(result.to_integer(&guard), 20);
 //! ```
 //!
 //! Another option is to parse the source code and execute it at a later time
@@ -18,9 +19,10 @@
 //! # use chakracore as js;
 //! # let runtime = js::Runtime::new().unwrap();
 //! # let context = js::Context::new(&runtime).unwrap();
-//! let guard = context.make_current().unwrap();
+//! # let guard = context.make_current().unwrap();
 //! let add = js::script::parse(&guard, "(10 + 10)").unwrap();
-//! let _result = add.call(&guard, &js::value::null(&guard), &[]);
+//! let result = add.call(&guard, &[]).unwrap();
+//! assert_eq!(result.to_integer(&guard), 20);
 //! ```
 use std::{slice, ptr};
 use chakracore_sys::*;

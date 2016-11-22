@@ -1,4 +1,23 @@
 //! Javascript values that user code can interact with.
+//!
+//! The `Value` object acts as the base type for all others using dereference.
+//! Therefore all types have access to the `Value` type's methods and traits.
+//! Implicit traits such as `Debug` must be accessed by dereferencing. For
+//! example: the `Function` inherits `Object` which then inherits `Value`. To
+//! print a function using the debug trait, you need to dereference twice.
+//!
+//! ```norun
+//! println("Output: {:?}", **function_value);
+//! ```
+//!
+//! Please note that the `Debug` trait should be carefully used. It relies
+//! implicitly on an active context, and that it's the same that the value was
+//! created with. Therefore it's mostly implemented to ease debugging. Prefer
+//! `to_string` in stable code.
+//!
+//! All created values are tied to a specific context. Because of this a
+//! `ContextGuard` is required when creating new values, and you cannot pass
+//! values to different scripts.
 use context::ContextGuard;
 use chakracore_sys::*;
 

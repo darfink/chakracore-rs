@@ -65,9 +65,9 @@ fn main() {
       Ok(js::value::Number::new(guard, result).into())
   }));
 
-  let result = multiply.call(&guard, &js::value::null(&guard), &[
-      js::value::Number::new(&guard, 191).into(),
-      js::value::Number::new(&guard, 7).into(),
+  let result = multiply.call(&guard, &[
+      &js::value::Number::new(&guard, 191).into(),
+      &js::value::Number::new(&guard, 7).into(),
   ]).unwrap();
 
   assert_eq!(result.to_integer(&guard), 1337);

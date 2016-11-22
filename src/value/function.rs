@@ -59,12 +59,17 @@ impl Function {
     }
 
     /// Calls a function and returns the result.
-    pub fn call(&self, _guard: &ContextGuard, this: &Value, arguments: &[Value]) -> Result<Value> {
+    pub fn call(&self, guard: &ContextGuard, arguments: &[&Value]) -> Result<Value> {
+        self.call_with_this(guard, &guard.global().into(), arguments)
+    }
+
+    /// Calls a function, with a context, and returns the result.
+    pub fn call_with_this(&self, _guard: &ContextGuard, this: &Value, arguments: &[&Value]) -> Result<Value> {
         self.invoke(_guard, this, arguments, false)
     }
 
     /// Calls a function as a constructor and returns the result.
-    pub fn construct(&self, _guard: &ContextGuard, this: &Value, args: &[Value]) -> Result<Value> {
+    pub fn construct(&self, _guard: &ContextGuard, this: &Value, args: &[&Value]) -> Result<Value> {
         self.invoke(_guard, this, args, true)
     }
 
@@ -72,7 +77,7 @@ impl Function {
     fn invoke(&self,
               guard: &ContextGuard,
               this: &Value,
-              arguments: &[Value],
+              arguments: &[&Value],
               constructor: bool)
               -> Result<Value> {
         // Combine the context with the arguments
