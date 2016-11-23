@@ -2,6 +2,7 @@ use std::ptr;
 use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
+use value;
 
 /// Type for `JsCreateStringUtf8` & `JsCreatePropertyIdUtf8`
 pub type StringCall = unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usize) -> JsErrorCode;
@@ -26,16 +27,17 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
 }
 
 /// The runtime is set to a disabled state whenever an exception is thrown.
-pub fn handle_exception(_guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
+pub fn handle_exception(guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
     match code {
-        JsErrorCode::NoError => return Ok(()),
+        JsErrorCode::NoError => Ok(()),
         JsErrorCode::ScriptException => {
             // TODO: Use an exception with stack trace.
             let mut reference = JsValueRef::new();
             jsassert!(unsafe { JsGetAndClearException(&mut reference) });
-        }
-        _ => (),
-    }
 
-    Err(format!("JSRT call failed with {:?}", code).into())
+            let exception = unsafe { value::Value::from_raw(reference) };
+            Err(ErrorKind::ScriptException(exception.to_string(guard)).into())
+        },
+        _ => Err(format!("JSRT call failed with {:?}", code).into()),
+    }
 }

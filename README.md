@@ -5,7 +5,7 @@ used in [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge)
 and [node-chakracore](https://github.com/nodejs/node-chakracore). The library is
 still in pre-release and is not yet stable. The tests try to cover as much
 functionality as possible but memory leaks and segfaults may occur. If you want
-a more stable library, use the underlying API directly with
+a more stable library, use the underlying API directly:
 [chakracore-sys](https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys).
 
 ## Documentation

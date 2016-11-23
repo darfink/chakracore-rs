@@ -49,7 +49,7 @@ impl Function {
         Function(reference)
     }
 
-    /// Returns whether the `object` is an instance of this `Function` or not.
+    /// Returns whether the object is an instance of this `Function` or not.
     pub fn instance_of(&self, _guard: &ContextGuard, object: super::Object) -> Result<bool> {
         let mut result = false;
         unsafe {
@@ -58,7 +58,8 @@ impl Function {
         }
     }
 
-    /// Calls a function and returns the result.
+    /// Calls a function and returns the result. The context (i.e `this`) will
+    /// be the global object associated with the `ContextGuard`.
     pub fn call(&self, guard: &ContextGuard, arguments: &[&Value]) -> Result<Value> {
         self.call_with_this(guard, &guard.global().into(), arguments)
     }

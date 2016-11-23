@@ -42,7 +42,7 @@ mod tests {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
 
-        let error = script::eval(&guard, "throw 5;");
+        let error = script::eval(&guard, "null[0] = 3;");
         let result = script::eval(&guard, "(5 + 5)").unwrap();
 
         assert_eq!(result.to_integer(&guard), 10);
