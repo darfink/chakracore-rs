@@ -18,3 +18,4 @@ path = "chakracore-sys"
 
 [features]
 shared = ["chakracore-sys/shared"]
+unstable = []

@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "unstable", feature(test))]
+
 #[macro_use]
 extern crate error_chain;
 extern crate chakracore_sys;
@@ -99,13 +101,13 @@ mod tests {
 
     #[test]
     fn external_data_drop() {
-        static mut called: bool = false;
+        static mut CALLED: bool = false;
         {
             struct Foo(i32);
             impl Drop for Foo {
                 fn drop(&mut self) {
                     assert_eq!(self.0, 10);
-                    unsafe { called = true };
+                    unsafe { CALLED = true };
                 }
             }
 
@@ -113,7 +115,7 @@ mod tests {
             let guard = context.make_current().unwrap();
             let _external = value::External::new(&guard, Box::new(Foo(10)));
         }
-        assert!(unsafe { called });
+        assert!(unsafe { CALLED });
     }
 
     #[test]
@@ -128,12 +130,40 @@ mod tests {
     fn array_iter() {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
-        let array = value::Array::new(&guard, 10);
 
-        for i in 0..10 {
+        let length = 10;
+        let array = value::Array::new(&guard, length);
+
+        for i in 0..length {
             array.set_index(&guard, i, &value::Number::new(&guard, i as i32));
         }
 
         assert_eq!(array.iter(&guard).fold(0, |acc, value| acc + value.to_integer(&guard)), 45);
+    }
+}
+
+#[cfg(all(feature = "unstable", test))]
+mod bench {
+    extern crate test;
+    use self::test::Bencher;
+    use super::*;
+
+    fn setup_env() -> (Runtime, Context) {
+        let runtime = Runtime::new().unwrap();
+        let context = Context::new(&runtime).unwrap();
+        (runtime, context)
+    }
+
+    #[bench]
+    fn property_bench(bench: &mut Bencher) {
+        let (_runtime, context) = setup_env();
+
+        let guard = context.make_current().unwrap();
+        let object = value::Object::new(&guard);
+        object.set(&guard, &guard.property("test"), &value::Number::new(&guard, 10));
+
+        bench.iter(|| {
+            (0..10000).fold(0, |acc, _| acc + object.get(&guard, &Property::from_str(&guard, "test")).to_integer(&guard));
+        });
     }
 }
