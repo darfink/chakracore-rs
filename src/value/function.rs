@@ -121,7 +121,7 @@ impl Function {
         }
     }
 
-    /// Function implementation for callbacks
+    /// A function callback, triggered on call.
     unsafe extern "system" fn callback(callee: JsValueRef,
                                        is_construct_call: bool,
                                        arguments: *mut JsValueRef,

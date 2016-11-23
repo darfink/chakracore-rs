@@ -59,7 +59,7 @@ impl ArrayBuffer {
     /// Creates a new array buffer, wrapping external data.
     pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> ArrayBuffer {
         let base = data.as_mut_ptr() as *mut _;
-        let size = (data.len() * mem::size_of::<T>()) as usize as _;
+        let size = (data.len() * mem::size_of::<T>()) as _;
 
         let mut buffer = JsValueRef::new();
         jsassert!(JsCreateExternalArrayBuffer(base, size, None, ptr::null_mut(), &mut buffer));

@@ -10,8 +10,8 @@ pub use property::Property;
 #[macro_use]
 mod macros;
 mod property;
-mod runtime;
 mod util;
+pub mod runtime;
 pub mod context;
 pub mod error;
 pub mod script;
@@ -118,6 +118,6 @@ mod tests {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
         let error = value::Error::type_error(&guard, "FooBar");
-        assert_eq!(error.to_string(&guard), "FooBar");
+        assert_eq!(error.to_string(&guard), "TypeError: FooBar");
     }
 }

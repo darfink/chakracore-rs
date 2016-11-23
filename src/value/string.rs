@@ -1,6 +1,5 @@
 use chakracore_sys::*;
 use context::ContextGuard;
-use error::*;
 use super::Value;
 
 /// A JavaScript string.
@@ -28,10 +27,10 @@ impl String {
     }
 
     /// Returns the length of the string.
-    pub fn len(&self) -> Result<usize> {
+    pub fn len(&self) -> usize {
         let mut length = 0;
-        jstry!(unsafe { JsGetStringLength(self.as_raw(), &mut length) });
-        Ok(length as usize)
+        jsassert!(unsafe { JsGetStringLength(self.as_raw(), &mut length) });
+        length as usize
     }
 
     /// Converts a JavaScript string to a native string.

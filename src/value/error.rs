@@ -30,7 +30,7 @@ impl Error {
     }
 
     /// Returns the error's message
-    pub fn to_string(&self, guard: &ContextGuard) -> String {
+    pub fn message(&self, guard: &ContextGuard) -> String {
         let property = Property::from_str(guard, "message");
         self.get(guard, &property).to_string(guard)
     }
