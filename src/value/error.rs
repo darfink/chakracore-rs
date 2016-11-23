@@ -17,19 +17,19 @@ macro_rules! ctor {
 pub struct Error(JsValueRef);
 
 impl Error {
-    ctor!(new, JsCreateError, "Creates a new error");
-    ctor!(range_error, JsCreateRangeError, "Creates a new range error");
-    ctor!(reference_error, JsCreateReferenceError, "Creates a new reference error");
-    ctor!(syntax_error, JsCreateSyntaxError, "Creates a new syntax error");
-    ctor!(type_error, JsCreateTypeError, "Creates a new type error");
-    ctor!(uri_error, JsCreateURIError, "Creates a new URI error");
+    ctor!(new, JsCreateError, "Creates a new error.");
+    ctor!(range_error, JsCreateRangeError, "Creates a new range error.");
+    ctor!(reference_error, JsCreateReferenceError, "Creates a new reference error.");
+    ctor!(syntax_error, JsCreateSyntaxError, "Creates a new syntax error.");
+    ctor!(type_error, JsCreateTypeError, "Creates a new type error.");
+    ctor!(uri_error, JsCreateURIError, "Creates a new URI error.");
 
     /// Creates an error from a raw pointer.
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         Error(reference)
     }
 
-    /// Returns the error's message
+    /// Returns the error's message.
     pub fn message(&self, guard: &ContextGuard) -> String {
         let property = Property::from_str(guard, "message");
         self.get(guard, &property).to_string(guard)

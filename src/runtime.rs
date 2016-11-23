@@ -48,9 +48,10 @@ impl Runtime {
 
     /// Runs any idle tasks that are in the queue. The returned duration is the
     /// least amount of time that should pass until this function is called
-    /// again. This call will fail if the runtime was created without
-    /// `JsRuntimeAttributeEnableIdleProcessing`. Returns whether any processing
-    /// was done or not.
+    /// again. This call will fail if the runtime was created without idle
+    /// processing enabled.
+    ///
+    /// Returns whether any processing was done or not.
     pub fn run_idle_tasks(&mut self) -> Result<bool> {
         let should_idle = self.last_idle.map_or(true, |before| {
             // Assume that `last_idle_tick` is set, if `last_idle` is
@@ -95,12 +96,38 @@ impl Drop for Runtime {
     }
 }
 
+macro_rules! attr {
+    ($name:ident, $attribute:ident, $doc:expr) => {
+        #[doc=$doc]
+        pub fn $name(mut self) -> Self {
+            self.attributes = self.attributes | $attribute;
+            self
+        }
+    };
+}
+
 impl Builder {
-    /// Set the runtime's attributes.
-    pub fn attributes(mut self, attributes: JsRuntimeAttributes) -> Self {
-        self.attributes = attributes;
-        self
-    }
+    attr!(disable_background_work,
+          JsRuntimeAttributeDisableEval,
+          "Disable the runtime from doing any work on background threads.");
+    attr!(disable_eval,
+          JsRuntimeAttributeDisableEval,
+          "Disable `eval` and `function` by throwing an exception upon use.");
+    attr!(disable_jit,
+          JsRuntimeAttributeDisableNativeCodeGeneration,
+          "Disable just-in-time compilation.");
+    attr!(enable_experimental,
+          JsRuntimeAttributeEnableExperimentalFeatures,
+          "Allow experimental JavaScript features.");
+    attr!(enable_script_interrupt,
+          JsRuntimeAttributeAllowScriptInterrupt,
+          "Allow script interrupt.");
+    attr!(dispatch_exceptions,
+          JsRuntimeAttributeDispatchSetExceptionsToDebugger,
+          "Dispatch exceptions to any attached JavaScript debuggers.");
+    attr!(supports_idle_tasks,
+          JsRuntimeAttributeEnableIdleProcessing,
+          "Enable idle processing. `run_idle_tasks` must be called regularly.");
 
     /// Set the runtime's memory limit.
     pub fn memory_limit(mut self, limit: usize) -> Self {
