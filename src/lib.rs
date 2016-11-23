@@ -123,4 +123,17 @@ mod tests {
         let error = value::Error::type_error(&guard, "FooBar");
         assert_eq!(error.to_string(&guard), "TypeError: FooBar");
     }
+
+    #[test]
+    fn array_iter() {
+        let (_runtime, context) = setup_env();
+        let guard = context.make_current().unwrap();
+        let array = value::Array::new(&guard, 10);
+
+        for i in 0..10 {
+            array.set_index(&guard, i, &value::Number::new(&guard, i as i32));
+        }
+
+        assert_eq!(array.iter(&guard).fold(0, |acc, value| acc + value.to_integer(&guard)), 45);
+    }
 }

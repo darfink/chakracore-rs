@@ -38,7 +38,7 @@ impl String {
         ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8).unwrap()
     }
 
-    is_same!(String, "Returns true if the value is an `String`.");
+    is_same!(String, "Returns true if the value is a `String`.");
 }
 
 inherit!(String, Value);

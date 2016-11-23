@@ -3,10 +3,19 @@ use std::{mem, ptr};
 use chakracore_sys::*;
 use context::ContextGuard;
 use super::{Value, Object};
+use Property;
 
 /// A JavaScript array.
 #[derive(Clone)]
 pub struct Array(JsValueRef);
+
+/// An iterator for a JavaScript array.
+pub struct ArrayIter<'a> {
+    guard: &'a ContextGuard<'a>,
+    array: &'a Array,
+    index: u32,
+    size: u32,
+}
 
 /// A JavaScript array buffer.
 #[derive(Clone)]
@@ -25,6 +34,17 @@ impl Array {
     /// Creates an array from a raw pointer.
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         Array(reference)
+    }
+
+    /// Returns an iterator for the array.
+    pub fn iter<'a>(&'a self, guard: &'a ContextGuard) -> ArrayIter<'a> {
+        let length = Property::from_str(guard, "length");
+        ArrayIter {
+            guard: guard,
+            size: self.get(guard, &length).to_integer(&guard) as u32,
+            array: self,
+            index: 0,
+        }
     }
 
     is_same!(Array, "Returns true if the value is an `Array`.");
@@ -77,6 +97,20 @@ impl ArrayBuffer {
     /// A finalizer callback, triggered before an external buffer is removed.
     unsafe extern "system" fn finalize<T>(data: *mut c_void) {
         Box::from_raw(data as *mut Vec<T>);
+    }
+}
+
+impl<'a> Iterator for ArrayIter<'a> {
+    type Item = Value;
+
+    /// Returns the next element in the array.
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.size {
+            self.index += 1;
+            Some(self.array.get_index(self.guard, self.index - 1))
+        } else {
+            None
+        }
     }
 }
 

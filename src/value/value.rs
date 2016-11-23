@@ -69,18 +69,18 @@ macro_rules! representation {
 /// underlying value. If the value is the targetted type (e.g `Object`), the
 /// underlying pointer is copied and returned wrapped as the specific type.
 ///
+/// > `*_representation`
+/// >> These create a new value, by casting to a specific type using JavaScript
+/// semantics. For example; calling `number_representation` on an `Object`
+/// results in a `Number(NaN)`. Casting a `Boolean(false)` using
+/// `string_representation` results in a `String('false')`.
+///
 /// > `to_*`
 /// >> These are utility functions to easily retrieve a native representation of
 /// the internal value. The actions performed are straightforward: `into_*() ->
 /// [*_representation()] -> value()`. A call to `*_representation` is only
-/// performed if necessary (i.e a string is not redundantly converted to a
+/// performed if required (i.e a string is not redundantly converted to a
 /// string).
-///
-/// > `*_representation`
-/// >> These create a new value casted to a specific type using JavaScript
-/// semantics. For example; calling `number_representation` on an `Object`
-/// results in a `Number(NaN)`. Casting a `Boolean(false)` using
-/// `string_representation` results in a `String('false')`.
 #[derive(Clone)]
 pub struct Value(JsValueRef);
 
@@ -90,7 +90,7 @@ impl Value {
         Value(reference)
     }
 
-    // Converts a value to another custom type
+    // Transforms a value to another custom type
     downcast!(is_undefined,
               "Returns true if this value is `undefined`.",
               Undefined);
@@ -162,7 +162,7 @@ impl Value {
                 boolean_representation,
                 value);
 
-    // Converts a value to the JavaScript expression of another type
+    // Casts a value to the JavaScript expression of another type
     representation!(boolean_representation,
                     "Creates a new boolean with this value represented as `Boolean`.",
                     Boolean,
@@ -180,7 +180,9 @@ impl Value {
                     String,
                     JsConvertValueToString);
 
-    /// Returns the type of the value.
+    /// Returns the type of the value. This method should be used with
+    /// consideration. It does not keep track of custom types, such as
+    /// `External`. It only returns the runtime's definition of a type.
     pub fn get_type(&self) -> JsValueType {
         let mut value_type = JsValueType::Undefined;
         jsassert!(unsafe { JsGetValueType(self.as_raw(), &mut value_type) });
@@ -208,7 +210,7 @@ impl Value {
 }
 
 impl PartialEq for Value {
-    /// Use sparingly (prefer `equals`), this relies on an implicit context.
+    /// Use sparingly (prefer `equals`), this relies on an implicitly active context.
     fn eq(&self, other: &Value) -> bool {
         let guard = unsafe { Context::get_current().unwrap() };
         self.strict_equals(&guard, other)
@@ -216,7 +218,7 @@ impl PartialEq for Value {
 }
 
 impl fmt::Debug for Value {
-    /// Only use for debugging, it relies on an implicit active context and uses unwrap.
+    /// Only use for debugging, it relies on an implicitly active context.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let guard = unsafe { Context::get_current().unwrap() };
         let output = self.to_string(&guard);

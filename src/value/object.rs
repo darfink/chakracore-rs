@@ -117,15 +117,6 @@ impl Object {
         }
     }
 
-    /// Returns whether the object has external data or not.
-    pub fn has_external_data(&self) -> bool {
-        let mut result = false;
-        unsafe {
-            jsassert!(JsHasExternalData(self.as_raw(), &mut result));
-            result
-        }
-    }
-
     /// Makes an object non-extensible.
     pub fn prevent_extension(&self) {
         jsassert!(unsafe { JsPreventExtension(self.as_raw()) });
