@@ -36,12 +36,17 @@ impl Array {
         Array(reference)
     }
 
+    /// Returns the length of the array.
+    pub fn len(&self, guard: &ContextGuard) -> usize {
+        let length = Property::from_str(&guard, "length");
+        self.get(guard, &length).to_integer(&guard) as usize
+    }
+
     /// Returns an iterator for the array.
     pub fn iter<'a>(&'a self, guard: &'a ContextGuard) -> ArrayIter<'a> {
-        let length = Property::from_str(guard, "length");
         ArrayIter {
             guard: guard,
-            size: self.get(guard, &length).to_integer(&guard) as u32,
+            size: self.len(guard) as u32,
             array: self,
             index: 0,
         }
