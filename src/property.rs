@@ -18,8 +18,7 @@ impl Property {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();
         unsafe {
-            assert_eq!(JsCreatePropertyIdUtf8(bytes.as_ptr() as _, bytes.len(), &mut reference),
-                       JsErrorCode::NoError);
+            jsassert!(JsCreatePropertyIdUtf8(bytes.as_ptr() as _, bytes.len(), &mut reference));
             Property::from_raw(reference)
         }
     }
