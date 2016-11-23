@@ -1,7 +1,6 @@
 macro_rules! jstry {
     ($e: expr) => {
         match $e {
-            // TODO: Use a custom ErrorKind
             ::chakracore_sys::JsErrorCode::NoError => (),
             error @ _ => return Err(format!("JSRT call failed with {:?}", error).into()),
         }
@@ -12,7 +11,8 @@ macro_rules! jsassert {
     ($e: expr) => {
         // In some cases idiomatic code should prevent any errors from
         // happening (except for memory resource issues).
-        assert_eq!($e, ::chakracore_sys::JsErrorCode::NoError)
+        assert!($e == ::chakracore_sys::JsErrorCode::NoError,
+                concat!("Call to '", stringify!($e), "' failed"))
     }
 }
 
@@ -38,4 +38,13 @@ macro_rules! inherit {
             }
         }
     }
+}
+
+macro_rules! is_same {
+    ($target:ident, $target_doc:expr) => {
+        #[doc=$target_doc]
+        pub fn is_same(value: &Value) -> bool {
+            value.get_type() == JsValueType::$target
+        }
+    };
 }

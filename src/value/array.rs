@@ -26,9 +26,10 @@ impl Array {
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         Array(reference)
     }
+
+    is_same!(Array, "Returns true if the value is an `Array`.");
 }
 
-// TODO: Should be external array buffer type
 impl ArrayBuffer {
     /// Creates a new array buffer with a specified size.
     pub fn new(_guard: &ContextGuard, size: u32) -> Self {
@@ -70,6 +71,8 @@ impl ArrayBuffer {
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         ArrayBuffer(reference)
     }
+
+    is_same!(ArrayBuffer, "Returns true if the value is an `ArrayBuffer`.");
 
     /// A finalizer callback, triggered before an external buffer is removed.
     unsafe extern "system" fn finalize<T>(data: *mut c_void) {

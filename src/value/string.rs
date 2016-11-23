@@ -37,6 +37,8 @@ impl String {
     pub fn value(&self) -> ::std::string::String {
         ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8).unwrap()
     }
+
+    is_same!(String, "Returns true if the value is an `String`.");
 }
 
 inherit!(String, Value);

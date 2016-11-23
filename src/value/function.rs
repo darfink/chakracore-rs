@@ -74,6 +74,8 @@ impl Function {
         self.invoke(_guard, this, args, true)
     }
 
+    is_same!(Function, "Returns true if the value is a `Function`.");
+
     /// Invokes a function and returns the result.
     fn invoke(&self,
               guard: &ContextGuard,

@@ -1,6 +1,6 @@
 use chakracore_sys::*;
 use context::ContextGuard;
-use super::Object;
+use super::{Value, Object};
 use Property;
 
 macro_rules! ctor {
@@ -34,6 +34,8 @@ impl Error {
         let property = Property::from_str(guard, "message");
         self.get(guard, &property).to_string(guard)
     }
+
+    is_same!(Error, "Returns true if the value is an `Error`.");
 }
 
 /// Function definition for an error call.

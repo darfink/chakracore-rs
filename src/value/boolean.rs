@@ -27,6 +27,8 @@ impl Boolean {
         jsassert!(unsafe { JsBooleanToBool(self.as_raw(), &mut boolean) });
         boolean
     }
+
+    is_same!(Boolean, "Returns true if the value is a `Boolean`.");
 }
 
 inherit!(Boolean, Value);

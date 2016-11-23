@@ -46,7 +46,10 @@ mod tests {
         let result = script::eval(&guard, "(5 + 5)").unwrap();
 
         assert_eq!(result.to_integer(&guard), 10);
-        assert!(error.is_err());
+        match error.unwrap_err().kind() {
+            &error::ErrorKind::ScriptException(_) => assert!(true),
+            _ => assert!(false),
+        };
     }
 
     #[test]
@@ -108,7 +111,7 @@ mod tests {
 
             let (_runtime, context) = setup_env();
             let guard = context.make_current().unwrap();
-            let _external = value::Object::with_external(&guard, Box::new(Foo(10)));
+            let _external = value::External::new(&guard, Box::new(Foo(10)));
         }
         assert!(unsafe { called });
     }

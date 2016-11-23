@@ -23,26 +23,6 @@ impl Object {
         }
     }
 
-    /// Creates a new object with external data.
-    ///
-    /// The object takes ownership of the resource. It is undetermined when, and
-    /// even if, the destructor is called. It relies on the engine's finalize
-    /// callback.
-    ///
-    /// As long as the object is referenced on the stack or in any script
-    /// context, the `external` data will be kept alive (i.e it is not tied to
-    /// the handle).
-    pub fn with_external<T>(_guard: &ContextGuard, external: Box<T>) -> Self {
-        let mut value = JsValueRef::new();
-        unsafe {
-            // TODO: Move this to a custom `External` type.
-            jsassert!(JsCreateExternalObject(Box::into_raw(external) as *mut _,
-                                             Some(Self::finalize::<T>),
-                                             &mut value));
-            Object::from_raw(value)
-        }
-    }
-
     /// Creates an object from a raw pointer.
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         Object(reference)
@@ -119,7 +99,8 @@ impl Object {
         result
     }
 
-    /// Sets the object's prototype.
+    /// Sets the object's prototype. This will result in an error if it's called
+    /// on the context's global object.
     pub fn set_prototype(&self, _guard: &ContextGuard, prototype: &Value) -> Result<()> {
         unsafe {
             jstry!(JsSetPrototype(self.as_raw(), prototype.as_raw()));
@@ -128,11 +109,11 @@ impl Object {
     }
 
     /// Returns the object's prototype.
-    pub fn get_prototype(&self, _guard: &ContextGuard) -> Result<Value> {
+    pub fn get_prototype(&self, _guard: &ContextGuard) -> Value {
         let mut prototype = JsValueRef::new();
         unsafe {
-            jstry!(JsGetPrototype(self.as_raw(), &mut prototype));
-            Ok(Value::from_raw(prototype))
+            jsassert!(JsGetPrototype(self.as_raw(), &mut prototype));
+            Value::from_raw(prototype)
         }
     }
 
@@ -157,9 +138,9 @@ impl Object {
         result
     }
 
-    /// Sets a callback that is executed before object is collected.
+    /// Sets a callback that is executed before the object is collected.
     ///
-    /// This is highly unsafe to use. There is no bookkeeping whether another
+    /// This is highly unsafe to use. There is no bookkeeping whether any other
     /// caller replaces the current callback or not. It is also used internally
     /// by `Function` to cleanup user data (if it's replaced, memory will leak).
     pub unsafe fn set_collect_callback(&self, callback: Box<BeforeCollectCallback>) {
@@ -170,15 +151,24 @@ impl Object {
                       Some(Self::collect)));
     }
 
+    /// Returns true if the value is an `Object`.
+    pub fn is_same(value: &Value) -> bool {
+        match value.get_type() {
+            JsValueType::Object      |
+            JsValueType::Function    |
+            JsValueType::Error       |
+            JsValueType::Array       |
+            JsValueType::ArrayBuffer |
+            JsValueType::TypedArray  |
+            JsValueType::DataView    => true,
+            _ => false,
+        }
+    }
+
     /// A collect callback, triggered before the object is destroyed.
     unsafe extern "system" fn collect(value: JsValueRef, data: *mut c_void) {
         let wrapper: Box<Box<BeforeCollectCallback>> = Box::from_raw(data as *mut _);
         wrapper(&Value::from_raw(value));
-    }
-
-    /// A finalizer callback, triggered before an external is removed.
-    unsafe extern "system" fn finalize<T>(data: *mut c_void) {
-        Box::from_raw(data as *mut T);
     }
 }
 

@@ -24,6 +24,7 @@ use chakracore_sys::*;
 pub use self::array::*;
 pub use self::boolean::Boolean;
 pub use self::error::Error;
+pub use self::external::External;
 pub use self::function::Function;
 pub use self::number::Number;
 pub use self::object::Object;
@@ -36,6 +37,7 @@ pub mod object;
 mod array;
 mod boolean;
 mod error;
+mod external;
 mod number;
 mod string;
 mod value;
@@ -75,3 +77,10 @@ pub fn undefined(_guard: &ContextGuard) -> Value {
         Value::from_raw(value)
     }
 }
+
+// These are hidden and exists merely for the `is_same` functionality.
+struct Null;
+struct Undefined;
+
+impl Null { is_same!(Null, "Returns true if the value is `null`"); }
+impl Undefined { is_same!(Undefined, "Returns true if the value is `undefined`"); }

@@ -47,6 +47,8 @@ impl Number {
             integer
         }
     }
+
+    is_same!(Number, "Returns true if the value is a `Number`.");
 }
 
 inherit!(Number, Value);

@@ -1,13 +1,13 @@
 use std::{fmt, mem};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
+use value;
 
 macro_rules! downcast {
-    ($predicate:ident, $predicate_doc:expr, $result:ident) => {
+    ($predicate:ident, $predicate_doc:expr, $target:ident) => {
         #[doc=$predicate_doc]
         pub fn $predicate(&self) -> bool {
-            // TODO: Account for type hierarchy (e.g a `Function` is an `Object`).
-            self.get_type() == JsValueType::$result
+            value::$target::is_same(self)
         }
     };
 
@@ -115,6 +115,11 @@ impl Value {
               into_object,
               "Represent the value as an `Object`. Does not affect the underlying value.",
               Object);
+    downcast!(is_external,
+              "Returns true if this value is an `External`.",
+              into_external,
+              "Represent the value as an `External`. Does not affect the underlying value.",
+              External);
     downcast!(is_function,
               "Returns true if this value is a `Function`.",
               into_function,
