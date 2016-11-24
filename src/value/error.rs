@@ -52,3 +52,4 @@ fn create_error(guard: &ContextGuard, message: &str, api: ErrorCall) -> Error {
 }
 
 inherit!(Error, Object);
+subtype!(Error, Value);
