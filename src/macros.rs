@@ -16,6 +16,27 @@ macro_rules! jsassert {
     }
 }
 
+macro_rules! reference {
+    ($typ:ident) => {
+        impl Clone for $typ {
+            fn clone(&self) -> $typ {
+                unsafe {
+                    jsassert!(JsAddRef(self.as_raw(), ::std::ptr::null_mut()));
+                    $typ::from_raw(self.as_raw())
+                }
+            }
+        }
+
+        impl Drop for $typ {
+            fn drop(&mut self) {
+                let mut count = 0;
+                jsassert!(unsafe { JsRelease(self.as_raw(), &mut count) });
+                debug_assert!(count < ::libc::c_uint::max_value());
+            }
+        }
+    }
+}
+
 macro_rules! subtype {
     ($child:ident, $parent:ident) => {
         impl From<$child> for $parent {
