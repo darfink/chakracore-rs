@@ -61,9 +61,14 @@ impl Context {
 
     /// Set user data associated with the context. Only one value per type. The
     /// internal implementation uses `AnyMap`. Returns a previous value if
-    /// applicable.
-    pub fn set_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
+    /// applicable. The data will live as long as the runtime keeps the context.
+    pub fn insert_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
         unsafe { (*self.get_data()).user_data.insert(value) }
+    }
+
+    /// Remove user data associated with the context.
+    pub fn remove_user_data<T>(&self) -> Option<T> where T: 'static {
+        unsafe { (*self.get_data()).user_data.remove::<T>() }
     }
 
     /// Get user data associated with the context.
