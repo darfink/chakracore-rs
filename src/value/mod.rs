@@ -21,6 +21,7 @@
 use context::ContextGuard;
 use chakracore_sys::*;
 
+// TODO: Add typed arrays and buffer view.
 pub use self::array::*;
 pub use self::boolean::Boolean;
 pub use self::error::Error;

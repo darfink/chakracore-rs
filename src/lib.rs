@@ -8,6 +8,7 @@ extern crate anymap;
 extern crate libc;
 
 pub use context::Context;
+pub use context::ContextGuard;
 pub use runtime::Runtime;
 pub use property::Property;
 

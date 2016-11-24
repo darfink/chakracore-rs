@@ -17,6 +17,7 @@ struct ContextData {
 pub struct Context(JsContextRef);
 
 // TODO: Use a stack for active contexts?
+// TODO: Should context lifetime explicitly depend on runtime?
 impl Context {
     /// Creates a new context and returns a handle to it.
     pub fn new(runtime: &Runtime) -> Result<Context> {
