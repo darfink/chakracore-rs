@@ -29,6 +29,19 @@ impl External {
         }
     }
 
+    /// Creates a new object with external data.
+    ///
+    /// This is unsafe because the object does not take ownership of the
+    /// resource. Therefore the data may become a dangling pointer. The caller
+    /// is responsible for keeping the reference alive.
+    pub unsafe fn from_ptr<T>(_guard: &ContextGuard, external: *mut T) -> Self {
+        let mut value = JsValueRef::new();
+        jsassert!(JsCreateExternalObject(external as *mut _,
+                                         None,
+                                         &mut value));
+        External::from_raw(value)
+    }
+
     /// Creates an external object from a raw pointer.
     pub unsafe fn from_raw(reference: JsValueRef) -> Self {
         External(reference)
