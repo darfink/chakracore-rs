@@ -21,7 +21,7 @@ Add this to your `Cargo.toml`:
 chakracore = "0.1.0"
 ```
 
-and this to your crate root:
+... and this to your crate root:
 
 ```rust
 extern crate chakracore as js;
