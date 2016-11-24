@@ -1,8 +1,10 @@
 #![cfg_attr(feature = "unstable", feature(test))]
+// TODO: Should `mut` be used extensively or not?
 
 #[macro_use]
 extern crate error_chain;
 extern crate chakracore_sys;
+extern crate anymap;
 extern crate libc;
 
 pub use context::Context;

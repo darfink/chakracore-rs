@@ -1,10 +1,16 @@
 //! Execution contexts and sandboxing.
 use std::marker::PhantomData;
 use std::ptr;
+use anymap::AnyMap;
 use error::*;
 use chakracore_sys::*;
 use value;
 use Runtime;
+
+/// Used for holding context instance data.
+struct ContextData {
+    user_data: AnyMap,
+}
 
 /// A sandboxed execution context with its own set of built-in objects and functions.
 #[derive(Clone, Debug)]
@@ -17,7 +23,14 @@ impl Context {
         let mut reference = JsContextRef::new();
         unsafe {
             jstry!(JsCreateContext(runtime.as_raw(), &mut reference));
-            Ok(Context::from_raw(reference))
+            jstry!(JsSetObjectBeforeCollectCallback(reference, ptr::null_mut(), Some(Self::collect)));
+
+            let context = Context::from_raw(reference);
+            context.set_data(Box::new(ContextData {
+                user_data: AnyMap::new()
+            }))?;
+
+            Ok(context)
         }
     }
 
@@ -46,6 +59,23 @@ impl Context {
         })
     }
 
+    /// Set user data associated with the context. Only one value per type. The
+    /// internal implementation uses `AnyMap`. Returns a previous value if
+    /// applicable.
+    pub fn set_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
+        unsafe { (*self.get_data()).user_data.insert(value) }
+    }
+
+    /// Get user data associated with the context.
+    pub fn get_user_data<T>(&self) -> Option<&T> where T: 'static {
+        unsafe { (*self.get_data()).user_data.get::<T>() }
+    }
+
+    /// Get mutable user data associated with the context.
+    pub fn get_user_data_mut<T>(&self) -> Option<&mut T> where T: 'static {
+        unsafe { (*self.get_data()).user_data.get_mut::<T>() }
+    }
+
     /// Returns the active context in the current thread.
     ///
     /// This is unsafe because there should be no reason to use it in idiomatic
@@ -66,16 +96,16 @@ impl Context {
     }
 
     /// Sets the internal data of the context.
-    pub fn set_data<'a, T>(&'a self, data: &'a mut T) -> Result<()> {
-        jstry!(unsafe { JsSetContextData(self.as_raw(), data as *mut _ as *mut _) });
+    unsafe fn set_data(&self, data: Box<ContextData>) -> Result<()> {
+        jstry!(JsSetContextData(self.as_raw(), Box::into_raw(data) as *mut _));
         Ok(())
     }
 
     /// Gets the internal data of the context.
-    pub unsafe fn get_data<T>(&self) -> Result<*mut T> {
+    unsafe fn get_data(&self) -> *mut ContextData {
         let mut data = ptr::null_mut();
-        jstry!(JsGetContextData(self.as_raw(), &mut data));
-        Ok(data as *mut T)
+        jsassert!(JsGetContextData(self.as_raw(), &mut data));
+        data as *mut _
     }
 
     /// Returns the underlying raw pointer.
@@ -94,6 +124,12 @@ impl Context {
         // This is called from a destructor, so assert instead of returning the error
         jstry!(unsafe { JsSetCurrentContext(JsValueRef::new()) });
         Ok(())
+    }
+
+    /// A collect callback, triggered before the context is destroyed.
+    unsafe extern "system" fn collect(context: JsContextRef, _: *mut ::libc::c_void) {
+        let context = Context::from_raw(context);
+        Box::from_raw(context.get_data());
     }
 }
 
