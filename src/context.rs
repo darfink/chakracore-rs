@@ -63,22 +63,22 @@ impl Context {
     /// internal implementation uses `AnyMap`. Returns a previous value if
     /// applicable. The data will live as long as the runtime keeps the context.
     pub fn insert_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
-        unsafe { (*self.get_data()).user_data.insert(value) }
+        unsafe { self.get_data().user_data.insert(value) }
     }
 
     /// Remove user data associated with the context.
     pub fn remove_user_data<T>(&self) -> Option<T> where T: 'static {
-        unsafe { (*self.get_data()).user_data.remove::<T>() }
+        unsafe { self.get_data().user_data.remove::<T>() }
     }
 
     /// Get user data associated with the context.
     pub fn get_user_data<T>(&self) -> Option<&T> where T: 'static {
-        unsafe { (*self.get_data()).user_data.get::<T>() }
+        unsafe { self.get_data().user_data.get::<T>() }
     }
 
     /// Get mutable user data associated with the context.
     pub fn get_user_data_mut<T>(&self) -> Option<&mut T> where T: 'static {
-        unsafe { (*self.get_data()).user_data.get_mut::<T>() }
+        unsafe { self.get_data().user_data.get_mut::<T>() }
     }
 
     /// Returns the active context in the current thread.
@@ -107,10 +107,10 @@ impl Context {
     }
 
     /// Gets the internal data of the context.
-    unsafe fn get_data(&self) -> *mut ContextData {
+    unsafe fn get_data<'a>(&'a self) -> &'a mut ContextData {
         let mut data = ptr::null_mut();
         jsassert!(JsGetContextData(self.as_raw(), &mut data));
-        data as *mut _
+        (data as *mut _).as_mut().unwrap()
     }
 
     /// Returns the underlying raw pointer.
