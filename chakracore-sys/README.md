@@ -27,9 +27,10 @@ latest [master](https://github.com/Microsoft/ChakraCore/commit/446b086d17).
 
 The build script uses two environment variables to find the required files.
 
-- `CHAKRA_SOURCE`: Should point to root of the ChakraCore checkout.
-- `CHAKRA_BUILD`: Should point to the build directory of ChakraCore.  
-By default it is `$CHAKRA_SOURCE/Build(Linux)/{BUILD_TYPE}`.
+* `CHAKRA_SOURCE`: Should point to root of the ChakraCore checkout.
+* `CHAKRA_BUILD`: Should point to the build directory of ChakraCore.
+  - Default on Windows: `%CHAKRA_SOURCE%\Build\VcBuild\bin\{BUILD_TYPE}`.
+  - Default on Unix: `$CHAKRA_SOURCE/BuildLinux/{BUILD_TYPE}`.
 
 This script has not been tested with the `--embed-icu` option.
 
@@ -57,7 +58,7 @@ Remember to add LLVM directories to `PATH` during installation.
 
 
 ChakraCore is built using the MSVC ABI, therefore you must use the MSVC toolchain
-when linking with this library (e.g `stable-x86_64-pc-windows-msvc`)
+when linking with this library (e.g `rustup install stable-msvc`).
 
 #### macOS
 
@@ -79,7 +80,7 @@ There are two possible solutions to this.
 - Or, before you build the library, export `icu4c`'s package configuration:
 
   ```
-  # export PKG_CONFIG_PATH=/usr/local/opt/icu4c/lib/pkgconfig
+  # export PKG_CONFIG_PATH="$(brew --prefix)/opt/icu4c/lib/pkgconfig"
   ```
 
 #### On Debian-based linuxes
