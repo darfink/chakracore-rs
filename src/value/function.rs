@@ -22,7 +22,7 @@ pub struct CallbackInfo {
 
 /// Callback type for functions.
 pub type FunctionCallback =
-    Fn(&ContextGuard, &mut CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
+    Fn(&ContextGuard, CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
 
 /// A JavaScript function object.
 #[derive(Clone)]
@@ -139,7 +139,7 @@ impl Function {
 
         // Construct the callback information object
         let arguments = slice::from_raw_parts_mut(arguments, len as usize);
-        let mut info = CallbackInfo {
+        let info = CallbackInfo {
             is_construct_call: is_construct_call,
             arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
             callee: Value::from_raw(callee),
@@ -147,7 +147,7 @@ impl Function {
         };
 
         // Call the user supplied callback
-        match (*callback)(&guard, &mut info) {
+        match (*callback)(&guard, info) {
             Ok(value) => mem::transmute(value.as_raw()),
             Err(error) => {
                 // TODO: what is best to return here? Undefined or exception.
