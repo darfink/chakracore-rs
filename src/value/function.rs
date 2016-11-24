@@ -20,9 +20,12 @@ pub struct CallbackInfo {
     pub this: Value,
 }
 
+/// The result returned from a function callback.
+pub type CallbackResult = ::std::result::Result<Value, Value>;
+
 /// Callback type for functions.
 pub type FunctionCallback =
-    Fn(&ContextGuard, CallbackInfo) -> ::std::result::Result<Value, Value> + 'static;
+    Fn(&ContextGuard, CallbackInfo) -> CallbackResult + 'static;
 
 /// A JavaScript function object.
 #[derive(Clone)]
