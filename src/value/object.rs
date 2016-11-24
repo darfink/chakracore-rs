@@ -13,6 +13,7 @@ type BeforeCollectCallback = Fn(&Value);
 #[derive(Clone)]
 pub struct Object(JsValueRef);
 
+// TODO: Add `for .. in` iterator
 impl Object {
     /// Creates a new empty object.
     pub fn new(_guard: &ContextGuard) -> Self {
