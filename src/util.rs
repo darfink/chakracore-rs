@@ -11,7 +11,7 @@ pub type StringCall = unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usiz
 pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> {
     let mut size = 0;
     unsafe {
-        // Retrieve how large the string representation is
+        // Determine how large the string representation is
         jstry!(callback(reference, ptr::null_mut(), 0, &mut size));
 
         // Allocate an appropriate buffer and retrieve the string

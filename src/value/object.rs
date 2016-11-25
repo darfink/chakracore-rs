@@ -14,7 +14,6 @@ type BeforeCollectCallback = Fn(&Value);
 pub struct Object(JsValueRef);
 
 // TODO: Add `for .. in` iterator
-// TODO: Add getOwnPropertyNames
 impl Object {
     /// Creates a new empty object.
     pub fn new(_guard: &ContextGuard) -> Self {
