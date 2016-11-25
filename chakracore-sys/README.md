@@ -4,8 +4,7 @@ This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
 API used for embedding Microsoft's ChakraCore into applications. This library
 handles static and dynamic linking of the runtime, and generates rust
 bindings (on the fly) for the interface. The entire API is generated and
-accessable (though debugging functionality is only available if ChakraCore
-was built with it).
+accessable.
 
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/chakracore-rs/blob/master/chakracore-sys/src/lib.rs).
@@ -23,17 +22,14 @@ desired, use the git repository instead.**
 
 ## Requirements
 
-Before being able to use this library, ChakraCore needs to be built. It is a
-rather complex build process and the script is not stable, so this library does
-not automate it (yet). Look
-[here](https://github.com/Microsoft/ChakraCore/wiki/Building-ChakraCore) for
-build instructions. This library has been tested with the 1.4 release and
-latest [master](https://github.com/Microsoft/ChakraCore/commit/446b086d17).
+This library builds the ChakraCore component in the source tree. It is cloned by
+the build script and built in test-mode (same as release, but includes more
+runtime checks). The current version used is `1.4`. It has also been tested with
+versions `1.2` and `1.3`. If custom build settings are desired, ChakraCore can
+be built manually, out of tree, and specified using two environment variables:
 
-The build script uses two environment variables to find the required files.
-
-* `CHAKRA_SOURCE`: Should point to root of the ChakraCore checkout.
-* `CHAKRA_BUILD`: Should point to the build directory of ChakraCore.
+* `CHAKRA_SOURCE`: The root of the ChakraCore checkout.
+* `CHAKRA_BUILD`: The `bin` directory of the build.
   - Default on Windows: `%CHAKRA_SOURCE%\Build\VcBuild\bin\{BUILD_TYPE}`.
   - Default on Unix: `$CHAKRA_SOURCE/BuildLinux/{BUILD_TYPE}`.
 
@@ -41,19 +37,17 @@ This script has not been tested with the `--embed-icu` option.
 
 ### Static/Shared
 
-By default, this library links ChakraCore statically. There is a feature called
-`shared` that builds it by linking to `(lib)ChakraCore.(so/dylib/dll)` instead.
-On windows, only shared library builds are available as of this time. See
+By default, this library links ChakraCore dynamically. There is a feature called
+`static` that builds it by linking to the three generated archives instead. On
+windows, only shared library builds are available as of this time. See
 [#279](https://github.com/Microsoft/ChakraCore/issues/279)
 
 ### Prerequisites
 
-Besides ChakraCore and its dependencies, the library also uses Servo's
-[rust-bindgen](https://github.com/servo/rust-bindgen), which requires `clang-3.8`
-or later. The build script utilizes, but does not require, `pkg-config`.
-
-**NOTE:** The following instructions assume you already have ChakraCore's
- dependencies installed.
+The library naturally shares all of ChakraCore's dependencies. Beyond this,
+[rust-bindgen](https://github.com/servo/rust-bindgen) is used in the build
+script, which requires `clang-3.8` or later. On Unix `pkg-config` is required as
+well.
 
 #### Windows
 
@@ -61,6 +55,7 @@ Ensure that you have `clang-3.8` or later installed. Downloads can be found
 [here](http://llvm.org/releases/download.html).  
 Remember to add LLVM directories to `PATH` during installation.
 
+Visual Studio 2013 or 2015 with C++ support is required as well.
 
 ChakraCore is built using the MSVC ABI, therefore you must use the MSVC toolchain
 when linking with this library (e.g `rustup install stable-msvc`).
@@ -68,13 +63,13 @@ when linking with this library (e.g `rustup install stable-msvc`).
 #### macOS
 
 ```
-# brew install llvm38 pkg-config
+# brew install cmake icu4c llvm38 pkg-config
 ```
 
-If you installed `icu4c` (required for ChakraCore) using Brew, and wish to link
-statically, you need make `pkg-config` aware of the library. This is because Brew
-does not link this library with the system, it may conflict with other builds.
-There are two possible solutions to this.
+If you choose to install `icu4c` (required for ChakraCore) using Brew, you need
+make `pkg-config` aware of the library. This is because Brew does not link the
+library with the system, as it may conflict with other builds. There are two
+possible solutions to this.
 
 - Forcefully link the library with the system:
 
@@ -91,13 +86,11 @@ There are two possible solutions to this.
 #### On Debian-based linuxes
 
 ```
-# apt-get install llvm-3.8-dev libclang-3.8-dev pkg-config liblzma-dev
+# apt-get install -y build-essential cmake clang libunwind-dev \
+#     libicu-dev llvm-3.8-dev libclang-3.8-dev pkg-config liblzma-dev
 ```
 
 ### Building
-
-After building ChakraCore and installing all dependencies, prepare the build by
-telling the script where the ChakraCore files can be found.
 
 - ##### Windows
 
@@ -106,27 +99,24 @@ telling the script where the ChakraCore files can be found.
   Studio Command Prompt.
 
   ```
-  # SET CHAKRA_SOURCE=C:\path\to\chakracore\checkout
-  # SET CHAKRA_BUILD=C:\path\to\chakracore\build\directory
-  # cargo test -vv --features shared
+  # cargo test -vv
   ```
 
 - ##### Unix
 
   ```
-  # export CHAKRA_SOURCE=/path/to/chakracore/checkout
-  # export CHAKRA_BUILD=/path/to/chakracore/build/directory
-  # cargo test -vv
+  # cargo test -vv [--features static]
   ```
 
 When you run the build, there should be no *missing variable* warnings.
 
-Remember that if you change the environment variables *after* running the build
-script, you need to recompile it.
+```
+# cargo clean -p chakracore-sys && cargo build [--features static]
+```
 
-```
-# cargo clean -p chakracore-sys && cargo build [--features shared]
-```
+In case you use a custom ChakraCore build using `CHAKRA_SOURCE/BUILD`, remember
+that if an environment variable is changed *after* running the build script, you
+need to recompile it.
 
 In case you find yourself stuck in the build process, open an
 [issue](https://github.com/darfink/chakracore-rs/issues/new).
