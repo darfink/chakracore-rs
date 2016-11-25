@@ -87,7 +87,8 @@ impl Function {
               constructor: bool)
               -> Result<Value> {
         // Combine the context with the arguments
-        let mut forward = vec![this.as_raw()];
+        let mut forward = Vec::with_capacity(arguments.len() + 1);
+        forward.push(this.as_raw());
         forward.extend(arguments.iter().map(|value| value.as_raw()));
 
         let api = if constructor {
@@ -137,7 +138,7 @@ impl Function {
         // This memory is cleaned up during object collection
         let callback = data as *mut Box<FunctionCallback>;
 
-        // There is always an active context in this case
+        // There is always an active context in callbacks
         let guard = Context::get_current().unwrap();
 
         // Construct the callback information object
