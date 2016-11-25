@@ -108,7 +108,7 @@ macro_rules! attr {
 
 impl Builder {
     attr!(disable_background_work,
-          JsRuntimeAttributeDisableEval,
+          JsRuntimeAttributeDisableBackgroundWork,
           "Disable the runtime from doing any work on background threads.");
     attr!(disable_eval,
           JsRuntimeAttributeDisableEval,
