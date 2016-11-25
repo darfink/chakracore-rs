@@ -86,7 +86,7 @@ impl Buffer {
 
     /// Parses the serialized source and returns it as a function.
     pub fn parse(&mut self, guard: &ContextGuard, name: &str) -> Result<value::Function> {
-        let name = value::String::from_str(guard, name);
+        let name = value::String::new(guard, name);
         let mut result = JsValueRef::new();
         unsafe {
             // TODO: The api information is invalid, callback cannot be null
@@ -106,7 +106,7 @@ impl Buffer {
 
     /// Runs the serialized code in a specificed context, and associates it with a name.
     pub fn run_with_name(&mut self, guard: &ContextGuard, name: &str) -> Result<value::Value> {
-        let name = value::String::from_str(guard, name);
+        let name = value::String::new(guard, name);
         let mut result = JsValueRef::new();
         unsafe {
             // TODO: Analyze why a callback is required and if it should be used
@@ -134,7 +134,7 @@ enum CodeAction {
 
 /// Either parses or executes a script.
 fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction) -> (JsErrorCode, JsValueRef) {
-    let name = value::String::from_str(guard, name);
+    let name = value::String::new(guard, name);
     let buffer = create_code_buffer(guard, code);
 
     let api = match action {

@@ -42,7 +42,7 @@ impl Function {
     /// Creates a named function
     pub fn with_name(guard: &ContextGuard, name: &str, callback: Box<FunctionCallback>) -> Self {
         Self::create(callback, |context, reference| unsafe {
-            let name = super::String::from_str(guard, name);
+            let name = super::String::new(guard, name);
             JsCreateNamedFunction(name.as_raw(), Some(Self::callback), context, reference)
         })
     }

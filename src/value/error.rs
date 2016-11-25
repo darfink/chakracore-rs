@@ -31,7 +31,7 @@ impl Error {
 
     /// Returns the error's message.
     pub fn message(&self, guard: &ContextGuard) -> String {
-        let property = Property::from_str(guard, "message");
+        let property = Property::new(guard, "message");
         self.get(guard, &property).to_string(guard)
     }
 
@@ -43,7 +43,7 @@ type ErrorCall = unsafe extern "system" fn(JsValueRef, *mut JsValueRef) -> JsErr
 
 /// Creates an error object from a specified API.
 fn create_error(guard: &ContextGuard, message: &str, api: ErrorCall) -> Error {
-    let message = super::String::from_str(guard, message);
+    let message = super::String::new(guard, message);
     let mut value = JsValueRef::new();
     unsafe {
         jsassert!(api(message.as_raw(), &mut value));

@@ -14,7 +14,7 @@ impl Property {
     ///
     /// Reuse the property identifier objects as much as possible. For each
     /// constructor call, the string is copied and converted to UTF-16.
-    pub fn from_str(_guard: &ContextGuard, name: &str) -> Self {
+    pub fn new(_guard: &ContextGuard, name: &str) -> Self {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();
         unsafe {

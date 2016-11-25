@@ -62,9 +62,9 @@ mod tests {
         let guard = context.make_current().unwrap();
 
         let global = guard.global();
-        let dirname = Property::from_str(&guard, "__dirname");
+        let dirname = Property::new(&guard, "__dirname");
 
-        global.set(&guard, &dirname, &value::String::from_str(&guard, "FooBar"));
+        global.set(&guard, &dirname, &value::String::new(&guard, "FooBar"));
         global.set_index(&guard, 2, &value::Number::new(&guard, 1337));
 
         let result1 = script::eval(&guard, "__dirname").unwrap();

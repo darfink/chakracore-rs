@@ -38,7 +38,7 @@ impl Array {
 
     /// Returns the length of the array.
     pub fn len(&self, guard: &ContextGuard) -> usize {
-        let length = Property::from_str(&guard, "length");
+        let length = Property::new(&guard, "length");
         self.get(guard, &length).to_integer(&guard) as usize
     }
 
