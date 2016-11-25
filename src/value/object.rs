@@ -3,7 +3,7 @@ use libc::c_void;
 use chakracore_sys::*;
 use context::ContextGuard;
 use error::*;
-use super::Value;
+use super::{Value, Array};
 use Property;
 
 /// Callback type for collector.
@@ -116,6 +116,15 @@ impl Object {
         unsafe {
             jsassert!(JsGetPrototype(self.as_raw(), &mut prototype));
             Value::from_raw(prototype)
+        }
+    }
+
+    /// Returns the object's property names
+    pub fn get_own_property_names(&self, _guard: &ContextGuard) -> Array {
+        let mut properties = JsValueRef::new();
+        unsafe {
+            jsassert!(JsGetOwnPropertyNames(self.as_raw(), &mut properties));
+            Array::from_raw(properties)
         }
     }
 
