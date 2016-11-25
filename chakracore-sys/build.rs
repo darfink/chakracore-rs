@@ -128,13 +128,17 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
         };
 
         let deps = if cfg!(feature = "static") {
-            LIBS.iter().map(|&(dir, name)| (build_dir.join(dir), name)).collect()
+            LIBS.iter().map(|&(dir, name)| (build_dir.join(dir), linking::format_lib(name))).collect()
         } else {
-            vec![(build_dir, LIBRARY)]
+            vec![
+                #[cfg(windows)]
+                // Windows requires an import library as well
+                (build_dir.clone(), format!("{}.lib", LIBRARY)),
+                (build_dir, linking::format_lib(LIBRARY)),
+            ]
         };
 
         for (dir, name) in deps {
-            let name = linking::format_lib(name);
             fs::copy(dir.join(&name), lib_dir.join(&name))
                 .expect(&format!("Failed to copy '{}' to target directory", name));
         }
