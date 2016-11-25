@@ -27,4 +27,4 @@ git = "https://github.com/servo/rust-bindgen"
 features = ["llvm_stable"]
 
 [features]
-shared = []
+static = []

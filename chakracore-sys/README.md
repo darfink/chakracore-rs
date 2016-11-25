@@ -27,7 +27,7 @@ Before being able to use this library, ChakraCore needs to be built. It is a
 rather complex build process and the script is not stable, so this library does
 not automate it (yet). Look
 [here](https://github.com/Microsoft/ChakraCore/wiki/Building-ChakraCore) for
-build instructions. This library has been tested with the 1.3 release and
+build instructions. This library has been tested with the 1.4 release and
 latest [master](https://github.com/Microsoft/ChakraCore/commit/446b086d17).
 
 The build script uses two environment variables to find the required files.
