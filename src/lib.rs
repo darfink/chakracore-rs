@@ -21,6 +21,9 @@ pub mod error;
 pub mod script;
 pub mod value;
 
+#[cfg(all(unix, not(feature = "static")))]
+mod ffi;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -140,6 +143,7 @@ mod tests {
             array.set_index(&guard, i, &value::Number::new(&guard, i as i32));
         }
 
+        assert_eq!(array.len(&guard), 10);
         assert_eq!(array.iter(&guard).fold(0, |acc, value| acc + value.to_integer(&guard)), 45);
     }
 }
