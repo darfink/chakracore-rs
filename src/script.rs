@@ -164,7 +164,7 @@ fn create_code_buffer(guard: &ContextGuard, code: &str) -> value::ArrayBuffer {
 }
 
 /// Generates a new source context identifier.
-fn generate_source_context() -> usize {
+fn generate_source_context() -> JsSourceContext {
     // TODO: handle source context identifier
     1
 }
