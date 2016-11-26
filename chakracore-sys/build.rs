@@ -42,10 +42,11 @@ fn main() {
 
     assert!(overrides.iter().filter(|var| var.is_ok()).count() != 1,
             "Only one of $CHAKRA_SOURCE/BUILD variable was set");
-    let (src_dir, lib_dirs) = if overrides.iter().any(|var| var.is_err()) {
-        setup_default()
-    } else {
+
+    let (src_dir, lib_dirs) = if overrides.iter().all(|var| var.is_ok()) {
         setup_custom()
+    } else {
+        setup_default()
     };
 
     binding::generate(&src_dir);
