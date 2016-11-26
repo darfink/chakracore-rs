@@ -16,9 +16,10 @@ If you are interested in idiomatic Rust bindings, check out
 [chakracore-rs](https://github.com/darfink/chakracore-rs).
 
 **NOTE: The version on crates.io (version `0.0.2`) does not include support for
-generating bindings on-the-fly. This is because of the `libbindgen`
-dependecy, which is not yet published on crates.io. If this functionality is
-desired, use the git repository instead.
+generating bindings on-the-fly. This is because of the `libbindgen` dependecy,
+which is not yet published on crates.io. If this functionality is desired, use
+the git repository instead. It also requires ChakraCore to be built manually,
+outside the source tree, using `CHAKRA_SOURCE/BUILD`.**
 
 ## Requirements
 

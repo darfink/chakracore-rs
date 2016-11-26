@@ -44,6 +44,7 @@ fn main() {
             "Only one of $CHAKRA_SOURCE/BUILD variable was set");
 
     let (src_dir, lib_dirs) = if overrides.iter().all(|var| var.is_ok()) {
+        log!("Using custom ChakraCore build");
         setup_custom()
     } else {
         setup_default()
@@ -74,8 +75,8 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
         fs::create_dir(&lib_dir).expect("Could not create library directory");
     }
 
-    // Clone the repository for local access
     if !Path::new(&src_dir.join(".git")).exists() {
+        // Clone the repository for local access
         util::run_command("git", &[
             "clone",
             &format!("--branch=release/{}", VERSION),
@@ -85,15 +86,19 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
     }
 
     let has_required_libs = if cfg!(feature = "static") {
-        // The static archives consists of three different files
+        // The static archives make up three different files, all required
         LIBS.iter().all(|&(_, name)| lib_dir.join(linking::format_lib(name)).exists())
     } else {
+        // The dynamic library is only a single file
         lib_dir.join(linking::format_lib(LIBRARY)).exists()
     };
 
     if !has_required_libs {
+        log!("Building ChakraCore from source, brace yourself");
         let build_dir = build::compile(&src_dir);
         build::copy_libs(&build_dir, &lib_dir);
+    } else {
+        log!("Binaries already built, using existing...");
     }
 
     // Return the source and lib directory
@@ -122,7 +127,7 @@ mod build {
         } else {
             // The ICU directory must be configued using pkg-config
             let icu_include = pkg_config::get_variable("icu-i18n", "includedir")
-                .expect("No package configuration for 'icu-i18n' found");
+                .expect("No library includes for 'icu-i18n' found");
 
             // These need to live long enough
             let arg_icu = format!("--icu={}", icu_include);
@@ -155,11 +160,13 @@ mod build {
         let build_dir = build_dir.to_path_buf();
 
         let deps = if cfg!(feature = "static") {
-            LIBS.iter().map(|&(dir, name)| (build_dir.join(dir), linking::format_lib(name))).collect()
+            LIBS.iter()
+                .map(|&(dir, name)| (build_dir.join(dir), linking::format_lib(name)))
+                .collect()
         } else {
             vec![
-                #[cfg(windows)]
                 // Windows requires an import library as well
+                #[cfg(windows)]
                 (build_dir.clone(), format!("{}.lib", LIBRARY)),
                 (build_dir, linking::format_lib(LIBRARY)),
             ]
@@ -178,7 +185,7 @@ mod linking {
     use pkg_config;
     use {util, LIBS};
 
-    /// Prints linking setup to Cargo.
+    /// Provides Cargo with linker configuration.
     pub fn setup(search_paths: &[PathBuf]) {
         for path in search_paths {
             add_path(path);
@@ -196,7 +203,7 @@ mod linking {
                 link_library("liblzma", true);
             }
 
-            // Use 'libstdc++' on all Unixes (like ChakraCore build)
+            // Use 'libstdc++' on all Unixes (ChakraCore does this)
             link_manually("dylib", &["stdc++"]);
             link_library("icu-i18n", true);
         } else {
@@ -205,7 +212,7 @@ mod linking {
         }
     }
 
-    /// Returns a filename to OS specific format.
+    /// Returns a library filename in OS specific format.
     pub fn format_lib(name: &str) -> String {
         if cfg!(windows) {
             format!("{}.dll", name)
@@ -222,13 +229,13 @@ mod linking {
     fn add_path<P>(dir: P) where P: AsRef<Path> {
         let dir = dir.as_ref();
         assert!(fs::metadata(dir).map(|m| m.is_dir()).unwrap_or(false),
-                format!("Library search path {:?} does not exist", dir));
+                format!("Library search path '{:?}' does not exist", dir));
         println!("cargo:rustc-link-search=native={}", dir.to_string_lossy());
     }
 
     fn link_library(name: &str, statik: bool) {
         pkg_config::Config::new().statik(statik).probe(name).ok()
-            .expect(&format!("Could not find '{}'", name));
+            .expect(&format!("No package configuration for '{}' found", name));
     }
 
     fn link_manually(linkage: &str, libs: &[&str]) {
@@ -283,16 +290,16 @@ mod binding {
             .to_string();
 
         // Make the binding Rust friendly and platform agnostic
-        let binding = sanitize_binding(ffi);
+        let binding = sanitize_interface(ffi);
 
         let out_dir_str = env::var_os("OUT_DIR").expect("No $OUT_DIR specified");
         let out_dir_path = Path::new(&out_dir_str);
 
         // Write the generated binding to file
-        util::write_file_content(&out_dir_path.join("ffi.rs"), &binding);
+        util::write_file_contents(&out_dir_path.join("ffi.rs"), &binding);
     }
 
-    fn sanitize_binding(mut content: String) -> String {
+    fn sanitize_interface(mut content: String) -> String {
         // Change calling convention from C → system
         regex_replace(&mut content, "extern \"C\"", "extern \"system\"");
 
@@ -368,7 +375,7 @@ mod util {
     use std::path::Path;
     use std::io::Write;
 
-    pub fn write_file_content(path: &Path, content: &str) {
+    pub fn write_file_contents(path: &Path, content: &str) {
         let mut handle = fs::File::create(path).expect("Failed to create file");
         handle.write_all(content.as_bytes()).expect("Failed to write to file");
     }
@@ -381,10 +388,11 @@ mod util {
         arm,
     }
 
+    /// Returns the architecture in a build script format.
     pub fn get_arch(target: &str) -> Architecture {
         if target.starts_with("x86_64") {
             Architecture::x64
-        } else if target.starts_with("i686") {
+        } else if target.starts_with("i686") || target.starts_with("i586") {
             Architecture::x86
         } else if target.starts_with("arm") {
             Architecture::arm
@@ -393,6 +401,7 @@ mod util {
         }
     }
 
+    /// Runs a command in a working directory, and panics if it fails.
     pub fn run_command(name: &str, arguments: &[&str], directory: Option<&Path>) {
         let mut command = Command::new(name);
         if let Some(path) = directory {
