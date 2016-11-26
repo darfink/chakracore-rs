@@ -1,10 +1,10 @@
 # `chakracore-sys`
 
 This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
-API used for embedding Microsoft's ChakraCore into applications. This library
-handles static and dynamic linking of the runtime, and generates rust
-bindings (on the fly) for the interface. The entire API is generated and
-accessable.
+API used for embedding Microsoft's ChakraCore, the core part of the Chakra
+JavaScript engine. This library handles static and dynamic linking of the
+runtime, and generates rust bindings (on the fly) for the interface. The entire
+API is generated and accessable.
 
 A *Hello World* example can be found in
 [src/lib.rs](https://github.com/darfink/chakracore-rs/blob/master/chakracore-sys/src/lib.rs).
@@ -108,8 +108,6 @@ possible solutions to this.
   ```
   # cargo test -vv [--features static]
   ```
-
-When you run the build, there should be no *missing variable* warnings.
 
 In case you use a custom ChakraCore build using `CHAKRA_SOURCE/BUILD`, remember
 that if an environment variable is changed *after* running the build script, you
