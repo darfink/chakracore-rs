@@ -18,7 +18,7 @@ If you are interested in idiomatic Rust bindings, check out
 **NOTE: The version on crates.io (version `0.0.2`) does not include support for
 generating bindings on-the-fly. This is because of the `libbindgen`
 dependecy, which is not yet published on crates.io. If this functionality is
-desired, use the git repository instead.**
+desired, use the git repository instead.
 
 ## Requirements
 
@@ -51,14 +51,14 @@ well.
 
 #### Windows
 
-Ensure that you have `clang-3.8` or later installed. Downloads can be found
-[here](http://llvm.org/releases/download.html).  
-Remember to add LLVM directories to `PATH` during installation.
-
-Visual Studio 2013 or 2015 with C++ support is required as well.
-
-ChakraCore is built using the MSVC ABI, therefore you must use the MSVC toolchain
-when linking with this library (e.g `rustup install stable-msvc`).
+* Visual Studio 2013 or 2015 with C++ support.
+* `clang-3.8` or later. Downloads can be found
+  [here](http://llvm.org/releases/download.html).  
+  Remember to add LLVM directories to `PATH` during installation.
+* Rust MSVC toolchain (i.e `rustup install stable-msvc`).  
+  This is required since ChakraCore uses the MSVC ABI.
+* If building for ARM: [Windows 10 SDK (July
+  2015)](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive)
 
 #### macOS
 
@@ -110,13 +110,13 @@ possible solutions to this.
 
 When you run the build, there should be no *missing variable* warnings.
 
+In case you use a custom ChakraCore build using `CHAKRA_SOURCE/BUILD`, remember
+that if an environment variable is changed *after* running the build script, you
+need to recompile it:
+
 ```
 # cargo clean -p chakracore-sys && cargo build [--features static]
 ```
-
-In case you use a custom ChakraCore build using `CHAKRA_SOURCE/BUILD`, remember
-that if an environment variable is changed *after* running the build script, you
-need to recompile it.
 
 In case you find yourself stuck in the build process, open an
 [issue](https://github.com/darfink/chakracore-rs/issues/new).
