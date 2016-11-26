@@ -28,7 +28,7 @@ fn main() {
           panic!("Windows build does not support static linkage");
         }
 
-        if !has_target("msvc") {
+        if !util::has_target("msvc") {
             // The runtime errors are very subtle, so be explicit
             panic!("Only MSVC toolchain is compatible with ChakraCore");
         }
@@ -84,15 +84,31 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
     }
 
     let has_required_libs = if cfg!(feature = "static") {
+        // The static archives consists of three different files
         LIBS.iter().all(|&(_, name)| lib_dir.join(linking::format_lib(name)).exists())
     } else {
         lib_dir.join(linking::format_lib(LIBRARY)).exists()
     };
 
-    // Only build libraries if required
     if !has_required_libs {
+        let build_dir = build::compile(&src_dir);
+        build::copy_libs(&build_dir, &lib_dir);
+    }
+
+    // Return the source and lib directory
+    (src_dir, vec![lib_dir])
+}
+
+mod build {
+    use std::{env, fs};
+    use std::path::{Path, PathBuf};
+    use pkg_config;
+    use {util, linking, LIBRARY, LIBS};
+
+    /// Builds the ChakraCore project.
+    pub fn compile(src_dir: &Path) -> PathBuf {
         let arch = util::get_arch(&get!("TARGET"));
-        let build_dir = if util::has_target("windows") {
+        if util::has_target("windows") {
             // This requires `vcvars` to be sourced
             util::run_command("msbuild", &[
                 "/m",
@@ -103,7 +119,7 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
 
             src_dir.join(format!("Build/VcBuild/bin/{:?}_test", arch))
         } else {
-            // As of now, the user cannot configure the ICU directory
+            // The ICU directory must be configued using pkg-config
             let icu_include = pkg_config::get_variable("icu-i18n", "includedir")
                 .expect("No package configuration for 'icu-i18n' found");
 
@@ -130,7 +146,12 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
 
             // Hopefully this directory won't change
             src_dir.join("BuildLinux/Test")
-        };
+        }
+    }
+
+    /// Copies all binaries to the local 'libs' folder.
+    pub fn copy_libs(build_dir: &Path, lib_dir: &Path) {
+        let build_dir = build_dir.to_path_buf();
 
         let deps = if cfg!(feature = "static") {
             LIBS.iter().map(|&(dir, name)| (build_dir.join(dir), linking::format_lib(name))).collect()
@@ -148,17 +169,13 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
                 .expect(&format!("Failed to copy '{}' to target directory", name));
         }
     }
-
-    // Return source and library directories
-    (src_dir, vec![lib_dir])
 }
 
 mod linking {
     use std::path::{Path, PathBuf};
     use std::fs;
     use pkg_config;
-    use util;
-    use super::LIBS;
+    use {util, LIBS};
 
     /// Prints linking setup to Cargo.
     pub fn setup(search_paths: &[PathBuf]) {
