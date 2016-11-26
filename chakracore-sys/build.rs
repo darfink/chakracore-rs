@@ -27,6 +27,11 @@ fn main() {
           // This is related to ChakraCore (see #279)
           panic!("Windows build does not support static linkage");
         }
+
+        if !has_target("msvc") {
+            // The runtime errors are very subtle, so be explicit
+            panic!("Only MSVC toolchain is compatible with ChakraCore");
+        }
     } else {
         // This build relies heavily on pkg-config
         util::run_command("which", &["pkg-config"], None);
