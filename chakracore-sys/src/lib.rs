@@ -4,6 +4,7 @@ extern crate libc;
 
 include!(concat!(env!("OUT_DIR"), "/ffi.rs"));
 
+#[cfg(all(unix, not(feature = "static")))]
 pub mod ffi {
     use std::ptr;
     use libc::{c_int, c_void};
