@@ -23,7 +23,7 @@ macro_rules! log {
 
 fn main() {
     if util::has_target("windows") {
-        if cfg!(features = "static") {
+        if cfg!(feature = "static") {
           // This is related to ChakraCore (see #279)
           panic!("Windows build does not support static linkage");
         }
