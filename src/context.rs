@@ -96,7 +96,7 @@ impl Context {
         jstry!(JsGetCurrentContext(&mut reference));
 
         if reference.0.is_null() {
-            // For some reason this check is not done by default
+            // The JSRT API returns null instead of an error code
             jsassert!(JsErrorCode::NoCurrentContext, "JsGetCurrentContext");
         }
 

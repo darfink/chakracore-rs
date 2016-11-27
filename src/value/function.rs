@@ -154,7 +154,6 @@ impl Function {
         match (*callback)(&guard, info) {
             Ok(value) => mem::transmute(value.as_raw()),
             Err(error) => {
-                // TODO: what is best to return here? Undefined or exception.
                 jsassert!(JsSetException(error.as_raw()));
                 mem::transmute(error.as_raw())
             }
