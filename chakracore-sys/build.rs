@@ -47,6 +47,7 @@ fn main() {
         log!("Using custom ChakraCore build");
         setup_custom()
     } else {
+        log!("Using default ChakraCore build (version: {})", VERSION);
         setup_default()
     };
 

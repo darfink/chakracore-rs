@@ -4,6 +4,24 @@ extern crate libc;
 
 include!(concat!(env!("OUT_DIR"), "/ffi.rs"));
 
+pub mod ffi {
+    use std::ptr;
+    use libc::{c_int, c_void};
+
+    #[link(name = "ChakraCore")]
+    extern "system" {
+        pub fn DllMain(instance: *mut c_void, reason: usize, reserved: *mut c_void) -> c_int;
+    }
+
+    pub unsafe fn initialize() {
+        // This is required on Unix platforms when using a shared library,
+        // because ChakraCore depends on `DllMain`, which is not called by
+        // default on non-windows platforms.
+        DllMain(ptr::null_mut(), 1, ptr::null_mut());
+        DllMain(ptr::null_mut(), 2, ptr::null_mut());
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::ptr;
@@ -22,6 +40,9 @@ mod tests {
     #[test]
     fn it_works() {
         unsafe {
+            #[cfg(all(unix, not(feature = "static")))]
+            ffi::initialize();
+
             let mut runtime = JsRuntimeHandle::new();
             js!(JsCreateRuntime(JsRuntimeAttributeNone, None, &mut runtime));
 
