@@ -162,20 +162,21 @@ mod build {
 
         let deps = if cfg!(feature = "static") {
             LIBS.iter()
-                .map(|&(dir, name)| (build_dir.join(dir), linking::format_lib(name)))
+                .map(|&(dir, name)| build_dir.join(dir).join(linking::format_lib(name)))
                 .collect()
         } else {
             vec![
                 // Windows requires an import library as well
                 #[cfg(windows)]
-                (build_dir.clone(), format!("{}.lib", LIBRARY)),
-                (build_dir, linking::format_lib(LIBRARY)),
+                build_dir.join(format!("{}.lib", LIBRARY)),
+                build_dir.join(linking::format_lib(LIBRARY)),
             ]
         };
 
-        for (dir, name) in deps {
-            fs::copy(dir.join(&name), lib_dir.join(&name))
-                .expect(&format!("Failed to copy '{}' to target directory", name));
+        for dependency in deps {
+            let file_name = dependency.file_name().unwrap();
+            fs::copy(&dependency, lib_dir.join(file_name))
+                .expect(&format!("Failed to copy '{:?}' to target directory", file_name));
         }
     }
 }
