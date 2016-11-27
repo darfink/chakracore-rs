@@ -8,12 +8,16 @@ macro_rules! jstry {
 }
 
 macro_rules! jsassert {
-    ($e: expr) => {
+    ($e: expr, $name: expr) => {
         // In some cases idiomatic code should prevent any errors from
         // happening (except for memory resource issues).
         assert!($e == ::chakracore_sys::JsErrorCode::NoError,
-                concat!("Call to '", stringify!($e), "' failed"))
-    }
+                concat!("Call to '", $name, "' failed"))
+    };
+
+    ($e: expr) => {
+        jsassert!($e, stringify!($e));
+    };
 }
 
 macro_rules! reference {

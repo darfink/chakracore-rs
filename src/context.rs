@@ -94,6 +94,12 @@ impl Context {
     pub unsafe fn get_current<'a>() -> Result<ContextGuard<'a>> {
         let mut reference = JsContextRef::new();
         jstry!(JsGetCurrentContext(&mut reference));
+
+        if reference.0.is_null() {
+            // For some reason this check is not done by default
+            jsassert!(JsErrorCode::NoCurrentContext, "JsGetCurrentContext");
+        }
+
         Ok(ContextGuard {
             context: Context::from_raw(reference),
             phantom: PhantomData,
@@ -141,6 +147,7 @@ impl Context {
 
 /// A guard that keeps a context active while it is in scope.
 #[must_use]
+#[derive(Debug)]
 pub struct ContextGuard<'a> {
     context: Context,
     phantom: PhantomData<&'a Context>,
