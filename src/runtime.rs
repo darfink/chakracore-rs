@@ -29,7 +29,7 @@ impl Runtime {
     /// Creates a new runtime.
     pub fn new() -> Result<Runtime> {
         #[cfg(all(unix, not(feature = "static")))]
-        ::ffi::initialize();
+        ffi::initialize();
 
         Self::builder().build()
     }

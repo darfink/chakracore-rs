@@ -21,9 +21,6 @@ pub mod error;
 pub mod script;
 pub mod value;
 
-#[cfg(all(unix, not(feature = "static")))]
-mod ffi;
-
 #[cfg(test)]
 mod tests {
     use super::*;
