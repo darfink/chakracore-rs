@@ -51,12 +51,12 @@ impl Context {
     /// The majority of APIs require an active context.
     pub fn make_current<'a>(&'a self) -> Result<ContextGuard<'a>> {
         // Preserve the previous context so it can be restored later
-        let current = unsafe { Self::get_current().map(|guard| guard.context.clone()) };
+        let current = unsafe { Self::get_current().map(|guard| guard.current.clone()) };
 
         self.enter().map(|_| {
             ContextGuard::<'a> {
                 previous: current,
-                context: self.clone(),
+                current: self.clone(),
                 phantom: PhantomData,
                 drop: true,
             }
@@ -101,7 +101,7 @@ impl Context {
         // The JSRT API returns null instead of an error code
         reference.0.as_ref().map(|_| ContextGuard {
             previous: None,
-            context: Context::from_raw(reference),
+            current: Context::from_raw(reference),
             phantom: PhantomData,
             drop: false,
         })
@@ -154,7 +154,7 @@ impl Context {
 #[derive(Debug)]
 pub struct ContextGuard<'a> {
     previous: Option<Context>,
-    context: Context,
+    current: Context,
     phantom: PhantomData<&'a Context>,
     drop: bool,
 }
@@ -162,7 +162,7 @@ pub struct ContextGuard<'a> {
 impl<'a> ContextGuard<'a> {
     /// Returns the guard's associated context.
     pub fn context(&self) -> Context {
-        self.context.clone()
+        self.current.clone()
     }
 
     /// Returns the active context's global object.
@@ -179,7 +179,7 @@ impl<'a> Drop for ContextGuard<'a> {
     /// Resets the currently active context.
     fn drop(&mut self) {
         if self.drop {
-            assert!(self.context.exit(self.previous.as_ref()).is_ok())
+            assert!(self.current.exit(self.previous.as_ref()).is_ok())
         }
     }
 }
