@@ -16,7 +16,6 @@ struct ContextData {
 #[derive(Clone, Debug)]
 pub struct Context(JsContextRef);
 
-// TODO: Use a stack for active contexts?
 // TODO: Should context lifetime explicitly depend on runtime?
 impl Context {
     /// Creates a new context and returns a handle to it.
@@ -51,8 +50,12 @@ impl Context {
     ///
     /// The majority of APIs require an active context.
     pub fn make_current<'a>(&'a self) -> Result<ContextGuard<'a>> {
+        // Preserve the previous context so it can be restored later
+        let current = unsafe { Self::get_current().map(|guard| guard.context.clone()) };
+
         self.enter().map(|_| {
             ContextGuard::<'a> {
+                previous: current,
                 context: self.clone(),
                 phantom: PhantomData,
                 drop: true,
@@ -91,16 +94,13 @@ impl Context {
     /// This `ContextGuard` does not reset the current context upon destruction,
     /// in contrast to a normally allocated `ContextGuard`. This is merely a
     /// reference.
-    pub unsafe fn get_current<'a>() -> Result<ContextGuard<'a>> {
+    pub unsafe fn get_current<'a>() -> Option<ContextGuard<'a>> {
         let mut reference = JsContextRef::new();
-        jstry!(JsGetCurrentContext(&mut reference));
+        jsassert!(JsGetCurrentContext(&mut reference));
 
-        if reference.0.is_null() {
-            // The JSRT API returns null instead of an error code
-            jsassert!(JsErrorCode::NoCurrentContext, "JsGetCurrentContext");
-        }
-
-        Ok(ContextGuard {
+        // The JSRT API returns null instead of an error code
+        reference.0.as_ref().map(|_| ContextGuard {
+            previous: None,
             context: Context::from_raw(reference),
             phantom: PhantomData,
             drop: false,
@@ -132,9 +132,13 @@ impl Context {
     }
 
     /// Unsets the current context.
-    fn exit(&self) -> Result<()> {
-        // This is called from a destructor, so assert instead of returning the error
-        jstry!(unsafe { JsSetCurrentContext(JsValueRef::new()) });
+    fn exit(&self, previous: Option<&Context>) -> Result<()> {
+        jstry!(unsafe {
+            let next = previous
+                .map(|context| context.as_raw())
+                .unwrap_or(JsValueRef::new());
+            JsSetCurrentContext(next)
+        });
         Ok(())
     }
 
@@ -149,6 +153,7 @@ impl Context {
 #[must_use]
 #[derive(Debug)]
 pub struct ContextGuard<'a> {
+    previous: Option<Context>,
     context: Context,
     phantom: PhantomData<&'a Context>,
     drop: bool,
@@ -174,7 +179,7 @@ impl<'a> Drop for ContextGuard<'a> {
     /// Resets the currently active context.
     fn drop(&mut self) {
         if self.drop {
-            assert!(self.context.exit().is_ok())
+            assert!(self.context.exit(self.previous.as_ref()).is_ok())
         }
     }
 }

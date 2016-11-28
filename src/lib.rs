@@ -35,8 +35,7 @@ mod tests {
         let (_runtime, context) = setup_env();
         let guard = context.make_current().unwrap();
 
-        // TODO: Wrap input in parantheses?
-        let result = script::eval(&guard, "(5 + 5)").unwrap();
+        let result = script::eval(&guard, "5 + 5").unwrap();
         assert_eq!(result.to_integer(&guard), 10);
     }
 
@@ -46,7 +45,7 @@ mod tests {
         let guard = context.make_current().unwrap();
 
         let error = script::eval(&guard, "null[0] = 3;");
-        let result = script::eval(&guard, "(5 + 5)").unwrap();
+        let result = script::eval(&guard, "5 + 5").unwrap();
 
         assert_eq!(result.to_integer(&guard), 10);
         match error.unwrap_err().kind() {
@@ -141,6 +140,24 @@ mod tests {
 
         assert_eq!(array.len(&guard), 10);
         assert_eq!(array.iter(&guard).fold(0, |acc, value| acc + value.to_integer(&guard)), 45);
+    }
+
+    #[test]
+    fn context_stack() {
+        let (runtime, context) = setup_env();
+        {
+            let get_current_raw = || unsafe { Context::get_current().unwrap().context().as_raw() };
+            let _guard = context.make_current().unwrap();
+
+            assert_eq!(get_current_raw().0, context.as_raw().0);
+            {
+                let inner_context = Context::new(&runtime).unwrap();
+                let _guard = inner_context.make_current().unwrap();
+                assert_eq!(get_current_raw().0, inner_context.as_raw().0);
+            }
+            assert_eq!(get_current_raw().0, context.as_raw().0);
+        }
+        assert!(unsafe { Context::get_current() }.is_none());
     }
 }
 

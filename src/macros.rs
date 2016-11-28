@@ -2,17 +2,19 @@ macro_rules! jstry {
     ($e: expr) => {
         match $e {
             ::chakracore_sys::JsErrorCode::NoError => (),
-            error @ _ => return Err(format!("JSRT call failed with {:?}", error).into()),
+            error @ _ => return Err(format!("JSRT call failed with: {:?}", error).into()),
         }
     }
 }
 
 macro_rules! jsassert {
     ($e: expr, $name: expr) => {
+        let result = $e;
+
         // In some cases idiomatic code should prevent any errors from
         // happening (except for memory resource issues).
-        assert!($e == ::chakracore_sys::JsErrorCode::NoError,
-                concat!("Call to '", $name, "' failed"))
+        assert!(result == ::chakracore_sys::JsErrorCode::NoError,
+                format!("Call to '{}' failed with: {:?}", $name, result));
     };
 
     ($e: expr) => {
