@@ -1,3 +1,4 @@
+/// Equivalent to the normal `try!` macro for JSRT function calls.
 macro_rules! jstry {
     ($e: expr) => {
         match $e {
@@ -7,6 +8,7 @@ macro_rules! jstry {
     }
 }
 
+/// Asserts the return value of a JSRT function call.
 macro_rules! jsassert {
     ($e: expr, $name: expr) => {
         let result = $e;
@@ -22,6 +24,7 @@ macro_rules! jsassert {
     };
 }
 
+/// Implements JSRT reference counting for a type.
 macro_rules! reference {
     ($typ:ident) => {
         impl Clone for $typ {
@@ -43,6 +46,7 @@ macro_rules! reference {
     }
 }
 
+/// Implements a relationship between two subtypes.
 macro_rules! subtype {
     ($child:ident, $parent:ident) => {
         impl From<$child> for $parent {
@@ -53,6 +57,7 @@ macro_rules! subtype {
     }
 }
 
+/// Implements an inheritance between two types.
 macro_rules! inherit {
     ($child:ident, $parent:ident) => {
         subtype!($child, $parent);
@@ -67,6 +72,7 @@ macro_rules! inherit {
     }
 }
 
+/// Used for JavaScript value type implementation.
 macro_rules! is_same {
     ($target:ident, $target_doc:expr) => {
         #[doc=$target_doc]
