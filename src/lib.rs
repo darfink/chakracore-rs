@@ -149,13 +149,13 @@ mod tests {
             let get_current_raw = || unsafe { Context::get_current().unwrap().context().as_raw() };
             let _guard = context.make_current().unwrap();
 
-            assert_eq!(get_current_raw().0, context.as_raw().0);
+            assert_eq!(get_current_raw(), context.as_raw());
             {
                 let inner_context = Context::new(&runtime).unwrap();
                 let _guard = inner_context.make_current().unwrap();
-                assert_eq!(get_current_raw().0, inner_context.as_raw().0);
+                assert_eq!(get_current_raw(), inner_context.as_raw());
             }
-            assert_eq!(get_current_raw().0, context.as_raw().0);
+            assert_eq!(get_current_raw(), context.as_raw());
         }
         assert!(unsafe { Context::get_current() }.is_none());
     }
@@ -179,10 +179,10 @@ mod bench {
 
         let guard = context.make_current().unwrap();
         let object = value::Object::new(&guard);
-        object.set(&guard, &guard.property("test"), &value::Number::new(&guard, 10));
+        object.set(&guard, &Property::new(&guard, "test"), &value::Number::new(&guard, 10));
 
         bench.iter(|| {
-            (0..10000).fold(0, |acc, _| acc + object.get(&guard, &Property::from_str(&guard, "test")).to_integer(&guard));
+            (0..10000).fold(0, |acc, _| acc + object.get(&guard, &Property::new(&guard, "test")).to_integer(&guard));
         });
     }
 }
