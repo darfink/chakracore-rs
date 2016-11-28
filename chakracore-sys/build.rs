@@ -313,7 +313,7 @@ mod binding {
         // that initializes the handle with a null pointer.
         regex_replace(&mut content, r"pub type (?P<name>\w+).+(?P<type>\*mut.+c_void);", &[
             "#[repr(C)]",
-            "#[derive(Copy, Clone, Debug)]",
+            "#[derive(Eq, PartialEq, Copy, Clone, Debug)]",
             "pub struct $name(pub $type);",
             "impl $name {",
                 "pub fn new() -> Self { $name(::std::ptr::null_mut()) }",
