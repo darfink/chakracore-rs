@@ -23,7 +23,7 @@ clang-sys = "0.8.0"
 regex = "0.1"
 
 [build-dependencies.libbindgen]
-git = "https://github.com/servo/rust-bindgen"
+version = "0.1.1"
 features = ["llvm_stable"]
 
 [features]
