@@ -1,5 +1,5 @@
 extern crate clang_sys;
-extern crate libbindgen;
+extern crate bindgen;
 extern crate pkg_config;
 extern crate regex;
 
@@ -251,7 +251,7 @@ mod binding {
     use std::env;
     use std::path::Path;
     use clang_sys::support::Clang;
-    use libbindgen;
+    use bindgen;
     use regex::Regex;
     use util;
 
@@ -259,7 +259,7 @@ mod binding {
         let clang = Clang::find(None).expect("No clang found, is it installed?");
 
         // Some default includes are not found without this (e.g 'stddef.h')
-        let mut builder = clang.c_search_paths.iter().fold(libbindgen::builder(), |builder, ref path| {
+        let mut builder = clang.c_search_paths.iter().fold(bindgen::builder(), |builder, ref path| {
             // Ensure all potential system paths are searched
             builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
         });
