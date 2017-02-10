@@ -271,7 +271,7 @@ mod binding {
         }
 
         // Convert 'ChakraCore.h' → 'ffi.rs'
-        let ffi = builder
+        let binding = builder
             // Source contains 'nullptr'
             .clang_arg("-xc++")
             .clang_arg("--std=c++11")
@@ -292,7 +292,7 @@ mod binding {
             .to_string();
 
         // Make the binding Rust friendly and platform agnostic
-        let binding = sanitize_interface(ffi);
+        let binding = sanitize_interface(binding);
 
         let out_dir_str = env::var_os("OUT_DIR").expect("No $OUT_DIR specified");
         let out_dir_path = Path::new(&out_dir_str);
@@ -319,18 +319,6 @@ mod binding {
                 "pub fn new() -> Self { $name(::std::ptr::null_mut()) }",
             "}"
         ].join("\n"));
-
-        // Remove all type aliases for underscored types:
-        // (e.g 'pub type JsErrorCode = _JsErrorCode').
-        regex_replace(&mut content, r"pub type (\w+) = _.+", "");
-
-        // This is an edge case (the type definition does not match the enum name)
-        regex_replace(&mut content, r"(?P<name>JsTTDMoveMode)s", "$name");
-
-        // ... and rename all underscored types. This is done so users can access
-        // enums without using weird, prefixed syntax, such as '_JsErrorCode'.
-        // (e.g '_JsErrorCode' → 'JsErrorCode')
-        regex_replace(&mut content, r"\b_(?P<name>\w+)", "$name");
 
         // Enums are scoped in Rust, but they are not in C/C++. This leads to
         // verbose and cumbersome code (e.g 'JsMemoryType::JsMemoryTypeAlloc'). To
