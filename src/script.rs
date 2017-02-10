@@ -24,7 +24,7 @@
 //! let result = add.call(&guard, &[]).unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```
-use std::{slice, ptr};
+use std::slice;
 use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
@@ -57,31 +57,20 @@ pub fn parse_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<v
 }
 
 /// A serialized JavaScript source, in a runtime-independent format.
-pub struct Buffer(Vec<u8>);
+pub struct Buffer(value::ArrayBuffer);
 
 impl Buffer {
     /// Serializes code and returns it as a buffer
-    pub fn new(guard: &ContextGuard, code: &str) -> Result<Buffer> {
+    pub fn new(guard: &ContextGuard, code: &str) -> Result<Self> {
         // The size of the serialized code is often much large than the source
         let code_source = create_code_buffer(guard, code);
-        let mut serialized_size = 0;
         Ok(unsafe {
+        let mut result = JsValueRef::new();
             jstry!(JsSerialize(code_source.as_raw(),
-                               ptr::null_mut(),
-                               &mut serialized_size,
+                               &mut result,
                                JsParseScriptAttributeNone));
-            let mut serialized_code = vec![0; serialized_size as usize];
-            jstry!(JsSerialize(code_source.as_raw(),
-                               serialized_code.as_mut_ptr(),
-                               &mut serialized_size,
-                               JsParseScriptAttributeNone));
-            Buffer(serialized_code)
+            Buffer(value::ArrayBuffer::from_raw(result))
         })
-    }
-
-    /// Constructs a script buffer directly from bytes
-    pub fn from_bytes(code: Vec<u8>) -> Buffer {
-        Buffer(code)
     }
 
     /// Parses the serialized source and returns it as a function.
@@ -90,7 +79,7 @@ impl Buffer {
         let mut result = JsValueRef::new();
         unsafe {
             // TODO: The api information is invalid, callback cannot be null
-            jstry!(JsParseSerialized(self.0.as_mut_ptr(),
+            jstry!(JsParseSerialized(self.0.as_raw(),
                                      None,
                                      generate_source_context(),
                                      name.as_raw(),
@@ -110,7 +99,7 @@ impl Buffer {
         let mut result = JsValueRef::new();
         unsafe {
             // TODO: Analyze why a callback is required and if it should be used
-            let code = JsRunSerialized(self.0.as_mut_ptr(),
+            let code = JsRunSerialized(self.0.as_raw(),
                                        None,
                                        generate_source_context(),
                                        name.as_raw(),
@@ -120,7 +109,7 @@ impl Buffer {
     }
 
     /// Consumes the buffer and returns its internal byte representation.
-    pub fn into_bytes(self) -> Vec<u8> {
+    pub fn into_buffer(self) -> value::ArrayBuffer {
         self.0
     }
 }
