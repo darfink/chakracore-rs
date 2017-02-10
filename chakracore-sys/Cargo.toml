@@ -15,7 +15,7 @@ license = "MIT"
 doctest = false
 
 [dependencies]
-libc = "0.2.17"
+libc = "0.2"
 
 [build-dependencies]
 pkg-config = "0.3.8"
