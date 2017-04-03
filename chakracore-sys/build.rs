@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 const LIBRARY: &'static str = "ChakraCore";
 const REPOSITORY: &'static str = "https://github.com/Microsoft/ChakraCore.git";
-const VERSION: &'static str = "1.4";
+const VERSION: &'static str = "1.4.2";
 const LIBS: [(&'static str, &'static str); 3] = [
     ("pal/src",         "Chakra.Pal"),
     ("lib/Common/Core", "Chakra.Common.Core"),
@@ -80,7 +80,7 @@ fn setup_default() -> (PathBuf, Vec<PathBuf>) {
         // Clone the repository for local access
         util::run_command("git", &[
             "clone",
-            &format!("--branch=release/{}", VERSION),
+            &format!("--branch=v{}", VERSION),
             REPOSITORY,
             src_dir.to_str().unwrap(),
         ], None);
