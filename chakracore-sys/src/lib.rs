@@ -73,7 +73,7 @@ mod tests {
 
             let name = "test";
             let mut name_value = JsValueRef::new();
-            js!(JsCreateStringUtf8(name.as_ptr(), name.len(), &mut name_value));
+            js!(JsCreateString(name.as_ptr() as *const libc::c_char, name.len(), &mut name_value));
 
             // Run the script.
             let mut result = JsValueRef::new();
@@ -91,11 +91,11 @@ mod tests {
 
             // Project script result back to Rust
             let mut size = 0;
-            let mut buffer = vec![0; 100];
-            js!(JsCopyStringUtf8(result_as_string,
-                                 buffer.as_mut_ptr(),
-                                 buffer.len(),
-                                 &mut size));
+            let mut buffer: Vec<u8> = vec![0; 100];
+            js!(JsCopyString(result_as_string,
+                             buffer.as_mut_ptr() as *mut libc::c_char,
+                             buffer.len(),
+                             &mut size));
             buffer.truncate(size);
 
             println!("Output: {}", str::from_utf8_unchecked(&buffer));

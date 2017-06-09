@@ -8,11 +8,9 @@ use std::path::{Path, PathBuf};
 
 const LIBRARY: &'static str = "ChakraCore";
 const REPOSITORY: &'static str = "https://github.com/Microsoft/ChakraCore.git";
-const VERSION: &'static str = "1.4.2";
-const LIBS: [(&'static str, &'static str); 3] = [
-    ("pal/src",         "Chakra.Pal"),
-    ("lib/Common/Core", "Chakra.Common.Core"),
-    ("lib/Jsrt",        "Chakra.Jsrt"),
+const VERSION: &'static str = "1.5.1";
+const LIBS: [(&'static str, &'static str); 1] = [
+    ("lib", "ChakraCoreStatic"),
 ];
 
 macro_rules! get(($name:expr) => (env::var($name).unwrap()));
@@ -152,7 +150,7 @@ mod build {
             util::run_command("./build.sh", &arguments, Some(&src_dir));
 
             // Hopefully this directory won't change
-            src_dir.join("BuildLinux/Test")
+            src_dir.join("out/Test")
         }
     }
 
@@ -176,7 +174,7 @@ mod build {
         for dependency in deps {
             let file_name = dependency.file_name().unwrap();
             fs::copy(&dependency, lib_dir.join(file_name))
-                .expect(&format!("Failed to copy '{:?}' to target directory", file_name));
+                .expect(&format!("Failed to copy '{:?}' to target directory", dependency));
         }
     }
 }
