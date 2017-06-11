@@ -17,10 +17,10 @@ If you are interested in idiomatic Rust bindings, check out
 
 ## Requirements
 
-This library builds the ChakraCore component in the source tree. It is cloned by
-the build script and built in test-mode (same as release, but includes more
-runtime checks). The current version used is `1.4`. It has also been tested with
-versions `1.2` and `1.3`. If custom build settings are desired, ChakraCore can
+This library builds the ChakraCore component in the source tree. It is cloned
+by the build script and built in test-mode (same as release, but includes more
+runtime checks). The current version used is `1.5.*`. It has also been tested
+with versions `1.2-1.4`. If custom build settings are desired, ChakraCore can
 be built manually, out of tree, and specified using two environment variables:
 
 * `CHAKRA_SOURCE`: The root of the ChakraCore checkout.
