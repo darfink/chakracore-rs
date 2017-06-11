@@ -3,7 +3,6 @@ use context::ContextGuard;
 use super::Value;
 
 /// A JavaScript boolean.
-#[derive(Clone)]
 pub struct Boolean(JsValueRef);
 
 impl Boolean {
@@ -12,13 +11,8 @@ impl Boolean {
         let mut value = JsValueRef::new();
         unsafe {
             jsassert!(JsBoolToBoolean(boolean, &mut value));
-            Boolean::from_raw(value)
+            Self::from_raw(value)
         }
-    }
-
-    /// Creates a number from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Boolean(reference)
     }
 
     /// Converts a JavaScript boolean to a bool.
@@ -31,4 +25,5 @@ impl Boolean {
     is_same!(Boolean, "Returns true if the value is a `Boolean`.");
 }
 
+reference!(Boolean);
 inherit!(Boolean, Value);

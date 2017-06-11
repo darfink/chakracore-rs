@@ -27,12 +27,17 @@ macro_rules! jsassert {
 /// Implements JSRT reference counting for a type.
 macro_rules! reference {
     ($typ:ident) => {
+        impl $typ {
+            /// Creates an instance from a raw pointer.
+            pub unsafe fn from_raw(value: JsRef) -> $typ {
+                jsassert!(JsAddRef(value, ::std::ptr::null_mut()));
+                $typ(value)
+            }
+        }
+
         impl Clone for $typ {
             fn clone(&self) -> $typ {
-                unsafe {
-                    jsassert!(JsAddRef(self.as_raw(), ::std::ptr::null_mut()));
-                    $typ::from_raw(self.as_raw())
-                }
+                unsafe { $typ::from_raw(self.as_raw()) }
             }
         }
 

@@ -5,7 +5,6 @@ use context::ContextGuard;
 use super::{Value, Object};
 
 /// A JavaScript external object.
-#[derive(Clone)]
 pub struct External(JsValueRef);
 
 // TODO: Make the entire implementation generic
@@ -25,7 +24,7 @@ impl External {
             jsassert!(JsCreateExternalObject(Box::into_raw(external) as *mut _,
                                             Some(Self::finalize::<T>),
                                             &mut value));
-            External::from_raw(value)
+            Self::from_raw(value)
         }
     }
 
@@ -39,12 +38,7 @@ impl External {
         jsassert!(JsCreateExternalObject(external as *mut _,
                                          None,
                                          &mut value));
-        External::from_raw(value)
-    }
-
-    /// Creates an external object from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        External(reference)
+        Self::from_raw(value)
     }
 
     /// Returns the external object's data.
@@ -72,6 +66,7 @@ impl External {
     }
 }
 
+reference!(External);
 inherit!(External, Object);
 subtype!(External, Value);
 

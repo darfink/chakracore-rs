@@ -3,7 +3,6 @@ use context::ContextGuard;
 use super::Value;
 
 /// A JavaScript string.
-#[derive(Clone)]
 pub struct String(JsValueRef);
 
 impl String {
@@ -14,11 +13,6 @@ impl String {
             jsassert!(JsCreateString(string.as_ptr() as _, string.len(), &mut value));
             Self::from_raw(value)
         }
-    }
-
-    /// Creates a string from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        String(reference)
     }
 
     /// Returns the length of the string.
@@ -36,4 +30,5 @@ impl String {
     is_same!(String, "Returns true if the value is a `String`.");
 }
 
+reference!(String);
 inherit!(String, Value);

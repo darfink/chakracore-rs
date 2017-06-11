@@ -6,7 +6,6 @@ use super::{Value, Object};
 use Property;
 
 /// A JavaScript array.
-#[derive(Clone)]
 pub struct Array(JsValueRef);
 
 /// An iterator for a JavaScript array.
@@ -18,7 +17,6 @@ pub struct ArrayIter<'a> {
 }
 
 /// A JavaScript array buffer.
-#[derive(Clone)]
 pub struct ArrayBuffer(JsValueRef);
 
 impl Array {
@@ -27,13 +25,8 @@ impl Array {
         let mut reference = JsValueRef::new();
         unsafe {
             jsassert!(JsCreateArray(length, &mut reference));
-            Array::from_raw(reference)
+            Self::from_raw(reference)
         }
-    }
-
-    /// Creates an array from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Array(reference)
     }
 
     /// Returns the length of the array.
@@ -61,7 +54,7 @@ impl ArrayBuffer {
         let mut reference = JsValueRef::new();
         unsafe {
             jsassert!(JsCreateArrayBuffer(size, &mut reference));
-            ArrayBuffer::from_raw(reference)
+            Self::from_raw(reference)
         }
     }
 
@@ -78,23 +71,18 @@ impl ArrayBuffer {
                                                   Some(Self::finalize::<T>),
                                                   Box::into_raw(data) as *mut _,
                                                   &mut buffer));
-            ArrayBuffer::from_raw(buffer)
+            Self::from_raw(buffer)
         }
     }
 
     /// Creates a new array buffer, wrapping external data.
-    pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> ArrayBuffer {
+    pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> Self {
         let base = data.as_mut_ptr() as *mut _;
         let size = (data.len() * mem::size_of::<T>()) as _;
 
         let mut buffer = JsValueRef::new();
         jsassert!(JsCreateExternalArrayBuffer(base, size, None, ptr::null_mut(), &mut buffer));
-        ArrayBuffer::from_raw(buffer)
-    }
-
-    /// Creates an array from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        ArrayBuffer(reference)
+        Self::from_raw(buffer)
     }
 
     is_same!(ArrayBuffer, "Returns true if the value is an `ArrayBuffer`.");
@@ -119,8 +107,10 @@ impl<'a> Iterator for ArrayIter<'a> {
     }
 }
 
+reference!(Array);
 inherit!(Array, Object);
 subtype!(Array, Value);
+reference!(ArrayBuffer);
 inherit!(ArrayBuffer, Object);
 subtype!(ArrayBuffer, Value);
 

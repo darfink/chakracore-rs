@@ -3,7 +3,6 @@ use chakracore_sys::*;
 use context::{Context, ContextGuard};
 
 /// A property identifier used with objects.
-#[derive(Clone)]
 pub struct Property(JsPropertyIdRef);
 
 impl Property {
@@ -21,11 +20,6 @@ impl Property {
             jsassert!(JsCreatePropertyId(bytes.as_ptr() as _, bytes.len(), &mut reference));
             Self::from_raw(reference)
         }
-    }
-
-    /// Creates a property identifier from a raw pointer.
-    pub unsafe fn from_raw(reference: JsPropertyIdRef) -> Self {
-        Property(reference)
     }
 
     /// Converts a JavaScript property to a native string.
@@ -48,6 +42,8 @@ impl fmt::Debug for Property {
         write!(f, "Property('{}')", output)
     }
 }
+
+reference!(Property);
 
 #[cfg(test)]
 mod tests {

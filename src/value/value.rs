@@ -81,15 +81,9 @@ macro_rules! representation {
 /// [*_representation()] -> value()`. A call to `*_representation` is only
 /// performed if required (i.e a string is not redundantly converted to a
 /// string).
-#[derive(Clone)]
 pub struct Value(JsValueRef);
 
 impl Value {
-    /// Creates a value from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Value(reference)
-    }
-
     // Transforms a value to another custom type
     downcast!(is_undefined,
               "Returns true if this value is `undefined`.",
@@ -240,6 +234,8 @@ impl fmt::Debug for Value {
         }
     }
 }
+
+reference!(Value);
 
 #[cfg(test)]
 mod tests {

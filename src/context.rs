@@ -14,7 +14,7 @@ struct ContextData {
 }
 
 /// A sandboxed execution context with its own set of built-in objects and functions.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Context(JsContextRef);
 
 // TODO: Should context lifetime explicitly depend on runtime?
@@ -41,11 +41,6 @@ impl Context {
 
             Ok(context)
         }
-    }
-
-    /// Creates a context from a raw pointer.
-    pub unsafe fn from_raw(reference: JsContextRef) -> Context {
-        Context(reference)
     }
 
     /// Returns an object's associated context.
@@ -163,6 +158,8 @@ impl Context {
         Box::from_raw(context.get_data());
     }
 }
+
+reference!(Context);
 
 /// A guard that keeps a context active while it is in scope.
 #[must_use]

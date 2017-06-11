@@ -13,7 +13,6 @@ macro_rules! ctor {
 }
 
 /// A JavaScript error.
-#[derive(Clone)]
 pub struct Error(JsValueRef);
 
 impl Error {
@@ -23,11 +22,6 @@ impl Error {
     ctor!(syntax_error, JsCreateSyntaxError, "Creates a new syntax error.");
     ctor!(type_error, JsCreateTypeError, "Creates a new type error.");
     ctor!(uri_error, JsCreateURIError, "Creates a new URI error.");
-
-    /// Creates an error from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Error(reference)
-    }
 
     /// Returns the error's message.
     pub fn message(&self, guard: &ContextGuard) -> String {
@@ -51,6 +45,7 @@ fn create_error(guard: &ContextGuard, message: &str, api: ErrorCall) -> Error {
     }
 }
 
+reference!(Error);
 inherit!(Error, Object);
 subtype!(Error, Value);
 

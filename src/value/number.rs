@@ -3,7 +3,6 @@ use context::ContextGuard;
 use super::Value;
 
 /// A JavaScript number.
-#[derive(Clone)]
 pub struct Number(JsValueRef);
 
 impl Number {
@@ -12,7 +11,7 @@ impl Number {
         let mut value = JsValueRef::new();
         unsafe {
             jsassert!(JsIntToNumber(number, &mut value));
-            Number::from_raw(value)
+            Self::from_raw(value)
         }
     }
 
@@ -21,13 +20,8 @@ impl Number {
         let mut value = JsValueRef::new();
         unsafe {
             jsassert!(JsDoubleToNumber(number, &mut value));
-            Number::from_raw(value)
+            Self::from_raw(value)
         }
-    }
-
-    /// Creates a number from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Number(reference)
     }
 
     /// Converts a JavaScript number to a double.
@@ -51,4 +45,5 @@ impl Number {
     is_same!(Number, "Returns true if the value is a `Number`.");
 }
 
+reference!(Number);
 inherit!(Number, Value);

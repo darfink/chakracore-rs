@@ -10,7 +10,6 @@ use Property;
 type BeforeCollectCallback = Fn(&Value);
 
 /// A JavaScript object.
-#[derive(Clone)]
 pub struct Object(JsValueRef);
 
 // TODO: Add `for .. in` iterator
@@ -20,13 +19,8 @@ impl Object {
         let mut value = JsValueRef::new();
         unsafe {
             jsassert!(JsCreateObject(&mut value));
-            Object::from_raw(value)
+            Self::from_raw(value)
         }
-    }
-
-    /// Creates an object from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Object(reference)
     }
 
     /// Sets an object's property's value.
@@ -173,6 +167,7 @@ impl Object {
     }
 }
 
+reference!(Object);
 inherit!(Object, Value);
 
 #[cfg(test)]

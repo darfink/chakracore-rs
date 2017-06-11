@@ -28,7 +28,6 @@ pub type FunctionCallback =
     Fn(&ContextGuard, CallbackInfo) -> CallbackResult + 'static;
 
 /// A JavaScript function object.
-#[derive(Clone)]
 pub struct Function(JsValueRef);
 
 impl Function {
@@ -45,11 +44,6 @@ impl Function {
             let name = super::String::new(guard, name);
             JsCreateNamedFunction(name.as_raw(), Some(Self::callback), context, reference)
         })
-    }
-
-    /// Creates a function from a raw pointer.
-    pub unsafe fn from_raw(reference: JsValueRef) -> Self {
-        Function(reference)
     }
 
     /// Returns whether the object is an instance of this `Function` or not.
@@ -118,7 +112,7 @@ impl Function {
         unsafe {
             let mut reference = JsValueRef::new();
             jsassert!(initialize(wrapper as *mut _, &mut reference));
-            let function = Function::from_raw(reference);
+            let function = Self::from_raw(reference);
 
             // Ensure the heap objects are freed
             function.set_collect_callback(Box::new(move |_| {
@@ -161,6 +155,7 @@ impl Function {
     }
 }
 
+reference!(Function);
 inherit!(Function, Object);
 subtype!(Function, Value);
 
