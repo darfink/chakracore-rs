@@ -56,64 +56,6 @@ pub fn parse_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<v
     Ok(unsafe { value::Function::from_raw(result) })
 }
 
-/// A serialized JavaScript source, in a runtime-independent format.
-pub struct Buffer(value::ArrayBuffer);
-
-impl Buffer {
-    /// Serializes code and returns it as a buffer
-    pub fn new(guard: &ContextGuard, code: &str) -> Result<Self> {
-        // The size of the serialized code is often much large than the source
-        let code_source = create_code_buffer(guard, code);
-        Ok(unsafe {
-        let mut result = JsValueRef::new();
-            jstry!(JsSerialize(code_source.as_raw(),
-                               &mut result,
-                               JsParseScriptAttributeNone));
-            Buffer(value::ArrayBuffer::from_raw(result))
-        })
-    }
-
-    /// Parses the serialized source and returns it as a function.
-    pub fn parse(&mut self, guard: &ContextGuard, name: &str) -> Result<value::Function> {
-        let name = value::String::new(guard, name);
-        let mut result = JsValueRef::new();
-        unsafe {
-            // TODO: The api information is invalid, callback cannot be null
-            jstry!(JsParseSerialized(self.0.as_raw(),
-                                     None,
-                                     generate_source_context(),
-                                     name.as_raw(),
-                                     &mut result));
-            Ok(value::Function::from_raw(result))
-        }
-    }
-
-    /// Runs the serialized code in a specificed context.
-    pub fn run(&mut self, guard: &ContextGuard) -> Result<value::Value> {
-        self.run_with_name(guard, "")
-    }
-
-    /// Runs the serialized code in a specificed context, and associates it with a name.
-    pub fn run_with_name(&mut self, guard: &ContextGuard, name: &str) -> Result<value::Value> {
-        let name = value::String::new(guard, name);
-        let mut result = JsValueRef::new();
-        unsafe {
-            // TODO: Analyze why a callback is required and if it should be used
-            let code = JsRunSerialized(self.0.as_raw(),
-                                       None,
-                                       generate_source_context(),
-                                       name.as_raw(),
-                                       &mut result);
-            util::handle_exception(guard, code).map(|_| value::Value::from_raw(result))
-        }
-    }
-
-    /// Consumes the buffer and returns its internal byte representation.
-    pub fn into_buffer(self) -> value::ArrayBuffer {
-        self.0
-    }
-}
-
 /// Used for processing code.
 #[derive(Copy, Clone, Debug)]
 enum CodeAction {
