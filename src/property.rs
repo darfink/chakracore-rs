@@ -18,8 +18,8 @@ impl Property {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();
         unsafe {
-            jsassert!(JsCreatePropertyIdUtf8(bytes.as_ptr() as _, bytes.len(), &mut reference));
-            Property::from_raw(reference)
+            jsassert!(JsCreatePropertyId(bytes.as_ptr() as _, bytes.len(), &mut reference));
+            Self::from_raw(reference)
         }
     }
 
@@ -30,7 +30,7 @@ impl Property {
 
     /// Converts a JavaScript property to a native string.
     pub fn to_string(&self, _guard: &ContextGuard) -> String {
-        ::util::to_string_impl(self.as_raw(), JsCopyPropertyIdUtf8).unwrap()
+        ::util::to_string_impl(self.as_raw(), JsCopyPropertyId).unwrap()
     }
 
     /// Returns the underlying raw pointer behind this property.

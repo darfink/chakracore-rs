@@ -4,8 +4,8 @@ use error::*;
 use context::ContextGuard;
 use value;
 
-/// Type for `JsCreateStringUtf8` & `JsCreatePropertyIdUtf8`
-pub type StringCall = unsafe extern "system" fn(JsRef, *mut u8, usize, *mut usize) -> JsErrorCode;
+/// Type for `JsCreateString` & `JsCreatePropertyId`
+pub type StringCall = unsafe extern "system" fn(JsRef, *mut i8, usize, *mut usize) -> JsErrorCode;
 
 /// This is dangerous because it may require an active context.
 pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> {
@@ -15,9 +15,9 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
         jstry!(callback(reference, ptr::null_mut(), 0, &mut size));
 
         // Allocate an appropriate buffer and retrieve the string
-        let mut buffer = vec![0; size];
+        let mut buffer: Vec<u8> = vec![0; size];
         jstry!(callback(reference,
-                        buffer.as_mut_ptr(),
+                        buffer.as_mut_ptr() as _,
                         buffer.len(),
                         ptr::null_mut()));
 

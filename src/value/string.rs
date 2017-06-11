@@ -11,8 +11,8 @@ impl String {
     pub fn new(_guard: &ContextGuard, string: &str) -> Self {
         let mut value = JsValueRef::new();
         unsafe {
-            jsassert!(JsCreateStringUtf8(string.as_ptr(), string.len(), &mut value));
-            String(value)
+            jsassert!(JsCreateString(string.as_ptr() as _, string.len(), &mut value));
+            Self::from_raw(value)
         }
     }
 
@@ -30,7 +30,7 @@ impl String {
 
     /// Converts a JavaScript string to a native string.
     pub fn value(&self) -> ::std::string::String {
-        ::util::to_string_impl(self.as_raw(), JsCopyStringUtf8).unwrap()
+        ::util::to_string_impl(self.as_raw(), JsCopyString).unwrap()
     }
 
     is_same!(String, "Returns true if the value is a `String`.");
