@@ -32,12 +32,21 @@ pub fn handle_exception(guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
         JsErrorCode::NoError => Ok(()),
         JsErrorCode::ScriptException => {
             // TODO: Use an exception with stack trace.
-            let mut reference = JsValueRef::new();
-            jsassert!(unsafe { JsGetAndClearException(&mut reference) });
-
-            let exception = unsafe { value::Value::from_raw(reference) };
+            let exception = get_and_clear_exception(guard);
             Err(ErrorKind::ScriptException(exception.to_string(guard)).into())
+        },
+        JsErrorCode::ScriptCompile => {
+            let exception = get_and_clear_exception(guard);
+            Err(ErrorKind::ScriptCompile(exception.to_string(guard)).into())
         },
         _ => Err(format!("JSRT call failed with {:?}", code).into()),
     }
+}
+
+fn get_and_clear_exception(_: &ContextGuard) -> value::Value {
+    let mut reference = JsValueRef::new();
+    jsassert!(unsafe { JsGetAndClearException(&mut reference) });
+
+    let exception = unsafe { value::Value::from_raw(reference) };
+    exception
 }

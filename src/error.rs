@@ -5,5 +5,9 @@ error_chain! {
             description("JavaScript exception")
             display("JavaScript exception: {}", message)
         }
+        ScriptCompile(message: String) {
+            description("JavaScript parse error")
+            display("JavaScript parse error: {}", message)
+        }
     }
 }
