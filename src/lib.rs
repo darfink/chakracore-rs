@@ -159,6 +159,36 @@ mod tests {
         }
         assert!(unsafe { Context::get_current() }.is_none());
     }
+
+    #[test]
+    fn object_properties() {
+        let (_runtime, context) = setup_env();
+        let guard = context.make_current().unwrap();
+
+        // Ensure a property can be created
+        let property = Property::new(&guard, "foo");
+        assert_eq!(property.to_string(&guard), "foo");
+
+        // Associate it with an object field
+        let object = value::Object::new(&guard);
+        object.set(&guard, &property, &value::Number::new(&guard, 10));
+        object.set(&guard, &Property::new(&guard, "bar"), &value::null(&guard));
+
+        // Ensure the field has been created with the designated value
+        assert_eq!(object.get(&guard, &property).to_integer(&guard), 10);
+
+        // Retrieve all the objects' properties
+        let properties = object.get_own_property_names(&guard)
+            .iter(&guard)
+            .map(|val| val.to_string(&guard))
+            .collect::<Vec<_>>();
+        assert_eq!(properties, ["foo", "bar"]);
+
+        // Remove the object's property
+        assert!(object.has(&guard, &property));
+        object.delete(&guard, &property);
+        assert!(!object.has(&guard, &property));
+    }
 }
 
 #[cfg(all(feature = "unstable", test))]
