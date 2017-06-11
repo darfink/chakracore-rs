@@ -53,3 +53,16 @@ fn create_error(guard: &ContextGuard, message: &str, api: ErrorCall) -> Error {
 
 inherit!(Error, Object);
 subtype!(Error, Value);
+
+#[cfg(test)]
+mod tests {
+    use {test, value};
+
+    #[test]
+    fn string_conversion() {
+        test::run_with_context(|guard| {
+            let error = value::Error::type_error(guard, "FooBar");
+            assert_eq!(error.to_string(guard), "TypeError: FooBar");
+        });
+    }
+}

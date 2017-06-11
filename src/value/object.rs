@@ -174,3 +174,38 @@ impl Object {
 }
 
 inherit!(Object, Value);
+
+#[cfg(test)]
+mod tests {
+    use {test, value, Property};
+
+    #[test]
+    fn properties() {
+        test::run_with_context(|guard| {
+            let object = value::Object::new(guard);
+
+            // Associate it with an object field
+            let prop_foo = Property::new(guard, "foo");
+            let prop_bar = Property::new(guard, "bar");
+
+            object.set(guard, &prop_foo, &value::Number::new(guard, 10));
+            object.set(guard, &prop_bar, &value::null(guard));
+
+            // Ensure the fields have been created with the designated value
+            assert_eq!(object.get(guard, &prop_foo).to_integer(guard), 10);
+            assert!(object.get(guard, &prop_bar).is_null());
+
+            // Retrieve all the objects' properties
+            let properties = object.get_own_property_names(guard)
+                .iter(guard)
+                .map(|val| val.to_string(guard))
+                .collect::<Vec<_>>();
+            assert_eq!(properties, ["foo", "bar"]);
+
+            // Remove the object's property
+            assert!(object.has(guard, &prop_foo));
+            object.delete(guard, &prop_foo);
+            assert!(!object.has(guard, &prop_foo));
+        });
+    }
+}

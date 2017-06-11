@@ -74,3 +74,27 @@ impl External {
 
 inherit!(External, Object);
 subtype!(External, Value);
+
+#[cfg(test)]
+mod tests {
+    use {test, value};
+
+    #[test]
+    fn destructor() {
+        static mut CALLED: bool = false;
+        {
+            struct Foo(i32);
+            impl Drop for Foo {
+                fn drop(&mut self) {
+                    assert_eq!(self.0, 10);
+                    unsafe { CALLED = true };
+                }
+            }
+
+            test::run_with_context(|guard| {
+                let _ = value::External::new(guard, Box::new(Foo(10)));
+            });
+        }
+        assert!(unsafe { CALLED });
+    }
+}

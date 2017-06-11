@@ -240,3 +240,17 @@ impl fmt::Debug for Value {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use {test, value, Property};
+
+    #[test]
+    fn json_conversion() {
+        test::run_with_context(|guard| {
+            let object = value::Object::new(guard);
+            object.set(guard, &Property::new(guard, "foo"), &value::Number::new(guard, 1337));
+            assert_eq!(object.to_json(guard), r#"{"foo":1337}"#);
+        });
+    }
+}

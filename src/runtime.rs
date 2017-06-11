@@ -170,3 +170,16 @@ impl Builder {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use {test, script};
+
+    #[test]
+    fn minimal() {
+        test::run_with_context(|guard| {
+            let result = script::eval(guard, "5 + 5").unwrap();
+            assert_eq!(result.to_integer(guard), 10);
+        });
+    }
+}

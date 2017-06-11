@@ -48,3 +48,16 @@ impl fmt::Debug for Property {
         write!(f, "Property('{}')", output)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use {test, Property};
+
+    #[test]
+    fn string_conversion() {
+        test::run_with_context(|guard| {
+            let property = Property::new(guard, "foo");
+            assert_eq!(property.to_string(guard), "foo");
+        });
+    }
+}

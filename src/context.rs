@@ -206,3 +206,65 @@ impl<'a> Drop for ContextGuard<'a> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use {test, value, script, Context, Property};
+
+    #[test]
+    fn global() {
+        test::run_with_context(|guard| {
+            let global = guard.global();
+            let dirname = Property::new(guard, "__dirname");
+
+            global.set(guard, &dirname, &value::String::new(guard, "FooBar"));
+            global.set_index(guard, 2, &value::Number::new(guard, 1337));
+
+            let result1 = script::eval(guard, "__dirname").unwrap();
+            let result2 = script::eval(guard, "this[2]").unwrap();
+
+            assert_eq!(result1.to_string(guard), "FooBar");
+            assert_eq!(result2.to_integer(guard), 1337);
+       });
+    }
+
+    #[test]
+    fn stack() {
+        let (runtime, context) = test::setup_env();
+        {
+            let get_current_raw = || unsafe { Context::get_current().unwrap().context().as_raw() };
+            let _guard = context.make_current().unwrap();
+
+            assert_eq!(get_current_raw(), context.as_raw());
+            {
+                let inner_context = Context::new(&runtime).unwrap();
+                let _guard = inner_context.make_current().unwrap();
+                assert_eq!(get_current_raw(), inner_context.as_raw());
+            }
+            assert_eq!(get_current_raw(), context.as_raw());
+        }
+        assert!(unsafe { Context::get_current() }.is_none());
+    }
+
+    #[test]
+    fn promise_queue() {
+        test::run_with_context(|guard| {
+            let result = script::eval(guard, "
+                var object = {};
+                Promise.resolve(5)
+                    .then(val => val + 5)
+                    .then(val => val / 5)
+                    .then(val => object.val = val);
+                object;").unwrap();
+
+            guard.execute_tasks();
+
+            let value = result
+                .into_object()
+                .unwrap()
+                .get(guard, &Property::new(guard, "val"))
+                .to_integer(guard);
+            assert_eq!(value, 2);
+        });
+    }
+}

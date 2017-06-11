@@ -163,3 +163,52 @@ impl Function {
 
 inherit!(Function, Object);
 subtype!(Function, Value);
+
+#[cfg(test)]
+mod tests {
+    use {test, value, script, Property};
+
+    #[test]
+    fn multiply() {
+        test::run_with_context(|guard| {
+            let captured_variable = 5.0;
+            let function = value::Function::new(guard, Box::new(move |guard, info| {
+                // Ensure the defaults are sensible
+                assert_eq!(info.is_construct_call, false);
+                assert_eq!(info.arguments.len(), 2);
+                assert_eq!(captured_variable, 5.0);
+
+                let result = info.arguments[0].to_double(guard)
+                           + info.arguments[1].to_double(guard)
+                           + captured_variable;
+                Ok(value::Number::from_double(guard, result).into())
+            }));
+
+            let result = function.call(guard, &[
+                &value::Number::new(guard, 5).into(),
+                &value::Number::from_double(guard, 10.5).into()
+            ]).unwrap();
+
+            assert_eq!(result.to_integer(guard), 20);
+            assert_eq!(result.to_double(guard), 20.5);
+        });
+    }
+
+    #[test]
+    fn exception() {
+        test::run_with_context(|guard| {
+            let function = value::Function::new(guard, Box::new(move |guard, _| {
+                Err(value::Error::new(guard, "Exception").into())
+            }));
+
+            let global = guard.global();
+            let property = Property::new(guard, "test");
+            global.set(guard, &property, &function);
+
+            let result = script::eval(guard,
+                "try { test(); } catch (ex) { ex.message; }").unwrap();
+
+            assert_eq!(result.to_string(guard), "Exception");
+        });
+    }
+}

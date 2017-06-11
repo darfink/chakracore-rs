@@ -99,3 +99,39 @@ fn generate_source_context() -> JsSourceContext {
     // TODO: handle source context identifier
     JsSourceContext::max_value()
 }
+
+#[cfg(test)]
+mod tests {
+    use {test, error, script};
+
+    #[test]
+    fn execute_exception() {
+        test::run_with_context(|guard| {
+            let error = script::eval(guard, "null[0] = 3;").unwrap_err();
+            let result = script::eval(guard, "5 + 5").unwrap();
+
+            assert_matches!(error.kind(), &error::ErrorKind::ScriptException(_));
+            assert_eq!(result.to_integer(guard), 10);
+        });
+    }
+
+    #[test]
+    fn compile_exception() {
+        test::run_with_context(|guard| {
+            let error = script::eval(guard, "err)").unwrap_err();
+            let result = script::eval(guard, "5 + 5").unwrap();
+
+            assert_eq!(result.to_integer(guard), 10);
+            assert_matches!(error.kind(), &error::ErrorKind::ScriptCompile(_));
+        });
+    }
+
+    #[test]
+    fn parse_script() {
+        test::run_with_context(|guard| {
+            let func = script::parse(guard, "new Number(10)").unwrap();
+            let result = func.call(guard, &[]).unwrap();
+            assert_eq!(result.to_integer(guard), 10);
+        });
+    }
+}

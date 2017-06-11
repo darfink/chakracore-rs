@@ -17,6 +17,9 @@ libc = "0.2"
 [dependencies.chakracore-sys]
 path = "chakracore-sys"
 
+[dev-dependencies]
+matches = "0.1"
+
 [features]
 static = ["chakracore-sys/static"]
 unstable = []
