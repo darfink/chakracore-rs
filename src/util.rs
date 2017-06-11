@@ -26,6 +26,8 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
     }
 }
 
+/// Retrieves and clears any exception thrown during compilation or execution.
+///
 /// The runtime is set to a disabled state whenever an exception is thrown.
 pub fn handle_exception(guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
     match code {
@@ -43,10 +45,10 @@ pub fn handle_exception(guard: &ContextGuard, code: JsErrorCode) -> Result<()> {
     }
 }
 
-fn get_and_clear_exception(_: &ContextGuard) -> value::Value {
-    let mut reference = JsValueRef::new();
-    jsassert!(unsafe { JsGetAndClearException(&mut reference) });
-
-    let exception = unsafe { value::Value::from_raw(reference) };
-    exception
+fn get_and_clear_exception(_guard: &ContextGuard) -> value::Value {
+    let mut exception = JsValueRef::new();
+    unsafe {
+        jsassert!(JsGetAndClearException(&mut exception));
+        value::Value::from_raw(exception)
+    }
 }

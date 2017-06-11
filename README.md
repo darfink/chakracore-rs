@@ -27,7 +27,7 @@ chakracore = "0.1.0"
 extern crate chakracore as js;
 ```
 
-This library, by itself is simple and easily installed, but its
+This library, by itself, is simple and easily installed, but its
 `chakracore-sys` dependency is *not*. To ensure a successful build, please view
 the `chakracore-sys` [build
 instructions](https://github.com/darfink/chakracore-rs/tree/master/chakracore-sys#requirements).

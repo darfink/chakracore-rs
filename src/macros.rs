@@ -13,8 +13,8 @@ macro_rules! jsassert {
     ($e: expr, $name: expr) => {
         let result = $e;
 
-        // In some cases idiomatic code should prevent any errors from
-        // happening (except for memory resource issues).
+        // In many cases idiomatic code prevents any errors from happening
+        // (except for memory resource issues).
         assert!(result == ::chakracore_sys::JsErrorCode::NoError,
                 format!("Call to '{}' failed with: {:?}", $name, result));
     };
