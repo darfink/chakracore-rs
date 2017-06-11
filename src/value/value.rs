@@ -66,7 +66,7 @@ macro_rules! representation {
 ///
 /// > `into_*`
 /// >> These do not modify any data. They only check the type of the
-/// underlying value. If the value is the targetted type (e.g `Object`), the
+/// underlying value. If the value is the designated type (e.g `Object`), the
 /// underlying pointer is copied and returned wrapped as the specific type.
 ///
 /// > `*_representation`
@@ -161,6 +161,16 @@ impl Value {
                 into_boolean,
                 boolean_representation,
                 value);
+
+    /// Converts the value to a native string, containing the value's JSON representation.
+    pub fn to_json(&self, guard: &ContextGuard) -> String {
+        // TODO: Replace this with a native function when available
+        let global = guard.global();
+        global.set(guard, &::Property::new(guard, "__jsonval"), self);
+
+        let result = ::script::eval(guard, "JSON.stringify(__jsonval)").unwrap();
+        result.to_string(guard)
+    }
 
     // Casts a value to the JavaScript expression of another type
     representation!(boolean_representation,
