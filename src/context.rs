@@ -9,6 +9,7 @@ use Runtime;
 
 /// Used for holding context instance data.
 struct ContextData {
+    promise_queue: Vec<value::Function>,
     user_data: AnyMap,
 }
 
@@ -25,10 +26,18 @@ impl Context {
             jstry!(JsCreateContext(runtime.as_raw(), &mut reference));
             jstry!(JsSetObjectBeforeCollectCallback(reference, ptr::null_mut(), Some(Self::collect)));
 
-            let context = Context::from_raw(reference);
+            let context = Self::from_raw(reference);
             context.set_data(Box::new(ContextData {
-                user_data: AnyMap::new()
+                promise_queue: Vec::new(),
+                user_data: AnyMap::new(),
             }))?;
+
+            /* Promise continuation callback requires an active context */
+            {
+                let _guard = context.make_current();
+                jstry!(JsSetPromiseContinuationCallback(
+                    Some(Self::promise_handler), context.get_data() as *mut _ as *mut _));
+            }
 
             Ok(context)
         }
@@ -43,7 +52,7 @@ impl Context {
     pub unsafe fn from_object(object: &value::Object) -> Result<Context> {
         let mut reference = JsContextRef::new();
         jstry!(JsGetContextOfObject(object.as_raw(), &mut reference));
-        Ok(Context::from_raw(reference))
+        Ok(Self::from_raw(reference))
     }
 
     /// Binds the context to the current scope.
@@ -101,7 +110,7 @@ impl Context {
         // The JSRT API returns null instead of an error code
         reference.0.as_ref().map(|_| ContextGuard {
             previous: None,
-            current: Context::from_raw(reference),
+            current: Self::from_raw(reference),
             phantom: PhantomData,
             drop: false,
         })
@@ -142,9 +151,15 @@ impl Context {
         Ok(())
     }
 
+    /// A promise handler, triggered whenever a promise method is used.
+    unsafe extern "system" fn promise_handler(task: JsValueRef, data: *mut ::libc::c_void) {
+        let data = (data as *mut ContextData).as_mut().unwrap();
+        data.promise_queue.push(value::Function::from_raw(task));
+    }
+
     /// A collect callback, triggered before the context is destroyed.
     unsafe extern "system" fn collect(context: JsContextRef, _: *mut ::libc::c_void) {
-        let context = Context::from_raw(context);
+        let context = Self::from_raw(context);
         Box::from_raw(context.get_data());
     }
 }
@@ -171,6 +186,14 @@ impl<'a> ContextGuard<'a> {
         unsafe {
             jsassert!(JsGetGlobalObject(&mut value));
             value::Object::from_raw(value)
+        }
+    }
+
+    /// Executes all the context's queued promise tasks.
+    pub fn execute_tasks(&self) {
+        let data = unsafe { self.current.get_data() };
+        while let Some(task) = data.promise_queue.pop() {
+            task.call(self, &[]).unwrap();
         }
     }
 }
