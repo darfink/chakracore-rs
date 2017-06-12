@@ -1,5 +1,5 @@
 use libc::c_void;
-use std::{mem, ptr};
+use std::{mem, ptr, slice};
 use chakracore_sys::*;
 use context::ContextGuard;
 use super::{Value, Object};
@@ -89,6 +89,19 @@ impl ArrayBuffer {
         Self::from_raw(buffer)
     }
 
+    /// Returns the underlying memory storage used by the array buffer.
+    ///
+    /// This may produce unexpected results if used in conjunction with the
+    /// unsafe `from_slice`.
+    pub fn as_slice(&self) -> &[u8] {
+        let mut data = ptr::null_mut();
+        let mut size = 0;
+        unsafe {
+            jsassert!(JsGetArrayBufferStorage(self.as_raw(), &mut data, &mut size));
+            slice::from_raw_parts(data, size as usize)
+        }
+    }
+
     is_same!(ArrayBuffer, "Returns true if the value is an `ArrayBuffer`.");
 
     /// A finalizer callback, triggered before an external buffer is removed.
@@ -134,6 +147,19 @@ mod tests {
 
             assert_eq!(array.len(guard), 10);
             assert_eq!(array.iter(guard).fold(0, |acc, value| acc + value.to_integer(guard)), 45);
+        });
+    }
+
+    #[test]
+    fn buffer_storage() {
+        test::run_with_context(|guard| {
+            let mut data = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            let array = value::ArrayBuffer::with_data(guard, data.clone());
+            assert_eq!(array.as_slice(), data.as_slice());
+
+            let array = unsafe { value::ArrayBuffer::from_slice(guard, &mut data) };
+            assert_eq!(array.as_slice(), data.as_slice());
         });
     }
 }
