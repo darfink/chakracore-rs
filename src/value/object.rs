@@ -1,4 +1,3 @@
-//! A JavaScript object and associated types.
 use libc::c_void;
 use chakracore_sys::*;
 use context::ContextGuard;

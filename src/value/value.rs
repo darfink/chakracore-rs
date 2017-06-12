@@ -54,15 +54,18 @@ macro_rules! representation {
 
 /// A JavaScript value, base class for all types.
 ///
-/// All values are tied to a specific context and cannot be reused between. The
-/// underlying object is represented only as a `JsValueRef`, a pointer to a
+/// All values are tied to a specific context and should not be reused in
+/// between.
+///
+/// The underlying object is represented as a `JsValueRef`, a reference to a
 /// ChakraCore value.
 ///
 /// This type implements the `Debug` trait, but it should be used carefully. It
-/// assumes there is an active context (the same as the value was created with).
+/// assumes there is an active context (the same context that the value was
+/// created with).
 ///
-/// Do not get intimidated by all conversion functions. They are very simple
-/// underneath. There are three different type of conversions:
+/// Do not get intimidated by all the conversion methods. They are very easy to
+/// grok — there are three different types:
 ///
 /// > `into_*`
 /// >> These do not modify any data. They only check the type of the
@@ -77,7 +80,7 @@ macro_rules! representation {
 ///
 /// > `to_*`
 /// >> These are utility functions to easily retrieve a native representation of
-/// the internal value. The actions performed are straightforward: `into_*() ->
+/// the internal value. The chain of actions performed is the following: `into_*() ->
 /// [*_representation()] -> value()`. A call to `*_representation` is only
 /// performed if required (i.e a string is not redundantly converted to a
 /// string).
@@ -138,13 +141,13 @@ impl Value {
                 string_representation,
                 value);
     nativecast!(to_integer,
-                "Converts the value to a native string, containing the value's integer representation.",
+                "Converts the value to a native integer, containing the value's integer representation.",
                 i32,
                 into_number,
                 number_representation,
                 value);
     nativecast!(to_double,
-                "Converts the value to a native `f64`, containing the value's floating point representation.",
+                "Converts the value to a native double, containing the value's floating point representation.",
                 f64,
                 into_number,
                 number_representation,

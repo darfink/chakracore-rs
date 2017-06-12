@@ -13,7 +13,13 @@ struct ContextData {
     user_data: AnyMap,
 }
 
-/// A sandboxed execution context with its own set of built-in objects and functions.
+/// A sandboxed execution context with its own set of built-in objects and
+/// functions.
+///
+/// In a browser or Node.JS environment, the task of executing promises is
+/// handled by the runtime. This is not the case with **ChakraCore**. To run
+/// promise chains, `execute_tasks` must be called at a regular interval. This
+/// is done using the `ContextGuard`.
 #[derive(Debug)]
 pub struct Context(JsContextRef);
 
@@ -67,9 +73,12 @@ impl Context {
         })
     }
 
-    /// Set user data associated with the context. Only one value per type. The
-    /// internal implementation uses `AnyMap`. Returns a previous value if
-    /// applicable. The data will live as long as the runtime keeps the context.
+    /// Set user data associated with the context.
+    ///
+    /// - Only one value per type.
+    /// - The internal implementation uses `AnyMap`.
+    /// - Returns a previous value if applicable.
+    /// - The data will live as long as the runtime keeps the context.
     pub fn insert_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
         unsafe { self.get_data().user_data.insert(value) }
     }
@@ -91,9 +100,8 @@ impl Context {
 
     /// Returns the active context in the current thread.
     ///
-    /// This is unsafe because there should be no reason to use it in idiomatic
-    /// code. Usage patterns should utilize `ContextGuard` instead. The
-    /// associated lifetime has no connection to an actual `Context`.
+    /// This is unsafe because there should be little reason to use it in
+    /// idiomatic code. Usage patterns should utilize `ContextGuard` instead.
     ///
     /// This `ContextGuard` does not reset the current context upon destruction,
     /// in contrast to a normally allocated `ContextGuard`. This is merely a

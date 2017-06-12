@@ -8,7 +8,7 @@
 //! # let runtime = js::Runtime::new().unwrap();
 //! # let context = js::Context::new(&runtime).unwrap();
 //! # let guard = context.make_current().unwrap();
-//! let result = js::script::eval(&guard, "(10 + 10)").unwrap();
+//! let result = js::script::eval(&guard, "10 + 10").unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```
 //!
@@ -20,7 +20,7 @@
 //! # let runtime = js::Runtime::new().unwrap();
 //! # let context = js::Context::new(&runtime).unwrap();
 //! # let guard = context.make_current().unwrap();
-//! let add = js::script::parse(&guard, "(10 + 10)").unwrap();
+//! let add = js::script::parse(&guard, "10 + 10").unwrap();
 //! let result = add.call(&guard, &[]).unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```

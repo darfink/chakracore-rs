@@ -1,23 +1,24 @@
 //! Javascript values that user code can interact with.
 //!
-//! The `Value` object acts as the base type for all others using dereference.
-//! Therefore all types have access to the `Value` type's methods and traits.
-//! Implicit traits such as `Debug` must be accessed by dereferencing. For
-//! example: the `Function` inherits `Object` which then inherits `Value`. To
-//! print a function using the debug trait, you need to dereference twice.
+//! The [Value](struct.Value.html) object acts as the base type for all others
+//! using dereference.  Therefore all types have access to the `Value` type's
+//! methods and traits.  Implicit traits such as `Debug`, must be accessed by
+//! dereferencing. For example: `Function` inherits `Object`, which in turn
+//! inherits `Value`. To print a function using the debug trait, you need to
+//! dereference twice.
 //!
 //! ```norun
 //! println("Output: {:?}", **function_value);
 //! ```
 //!
 //! Please note that the `Debug` trait should be carefully used. It relies
-//! implicitly on an active context, and that it's the same that the value was
-//! created with. Therefore it's mostly implemented to ease debugging. Prefer
-//! `to_string` in stable code.
+//! implicitly on an active context, and that it's the same context the value
+//! was created with. Therefore it's mostly implemented to ease debugging.
+//! Prefer `to_string` for safety.
 //!
 //! All created values are tied to a specific context. Because of this a
-//! `ContextGuard` is required when creating new values, and you cannot pass
-//! values to different scripts.
+//! `ContextGuard` is required whenever creating new values, and they should
+//! not be passed between different contexts.
 use context::ContextGuard;
 use chakracore_sys::*;
 
@@ -34,7 +35,7 @@ pub use self::value::Value;
 
 // Modules
 pub mod function;
-pub mod object;
+mod object;
 mod array;
 mod boolean;
 mod error;
@@ -43,7 +44,7 @@ mod number;
 mod string;
 mod value;
 
-/// Creates a false value.
+/// Creates a `false` value.
 pub fn false_(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
@@ -52,7 +53,7 @@ pub fn false_(_guard: &ContextGuard) -> Value {
     }
 }
 
-/// Creates a false value.
+/// Creates a `true` value.
 pub fn true_(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
@@ -61,7 +62,7 @@ pub fn true_(_guard: &ContextGuard) -> Value {
     }
 }
 
-/// Creates a null value.
+/// Creates a `null` value.
 pub fn null(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {
@@ -70,7 +71,7 @@ pub fn null(_guard: &ContextGuard) -> Value {
     }
 }
 
-/// Creates an undefined value.
+/// Creates an `undefined` value.
 pub fn undefined(_guard: &ContextGuard) -> Value {
     let mut value = JsValueRef::new();
     unsafe {

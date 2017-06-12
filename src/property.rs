@@ -8,11 +8,8 @@ pub struct Property(JsPropertyIdRef);
 impl Property {
     /// Creates a property identifier from a string.
     ///
-    /// If a property identifier with this name has already been created, it
-    /// will return it instead of creating a new one.
-    ///
-    /// Reuse the property identifier objects as much as possible. For each
-    /// constructor call, the string is copied and converted to UTF-16.
+    /// If a property identifier with this name has already been created, it will
+    /// be returned instead of creating a new one.
     pub fn new(_guard: &ContextGuard, name: &str) -> Self {
         let bytes = name.as_bytes();
         let mut reference = JsPropertyIdRef::new();

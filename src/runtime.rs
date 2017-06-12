@@ -14,7 +14,7 @@ pub struct Builder {
     attributes: JsRuntimeAttributes,
 }
 
-/// An isolated instance of the runtime.
+/// An isolated instance of a runtime.
 pub struct Runtime {
     #[allow(dead_code)]
     callback: Option<Box<Box<CollectCallback>>>,
@@ -135,7 +135,7 @@ impl Builder {
         self
     }
 
-    /// Set a callback for when the runtime collects objects.
+    /// Set a callback for when the runtime collects garbage.
     pub fn collect_callback(mut self, callback: Box<CollectCallback>) -> Self {
         self.collect_callback = Some(callback);
         self

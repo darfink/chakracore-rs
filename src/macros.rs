@@ -29,6 +29,13 @@ macro_rules! reference {
     ($typ:ident) => {
         impl $typ {
             /// Creates an instance from a raw pointer.
+            ///
+            /// This is used for managing the lifetime of JSRT objects. They are
+            /// tracked using reference counting; incrementing with `from_raw`,
+            /// and decrementing with `drop`.
+            ///
+            /// This is required to support items stored on the heap, since the
+            /// JSRT runtime only observes the stack.
             pub unsafe fn from_raw(value: JsRef) -> $typ {
                 jsassert!(JsAddRef(value, ::std::ptr::null_mut()));
                 $typ(value)
@@ -42,6 +49,7 @@ macro_rules! reference {
         }
 
         impl Drop for $typ {
+            /// Decrements the reference's counter.
             fn drop(&mut self) {
                 let mut count = 0;
                 jsassert!(unsafe { JsRelease(self.as_raw(), &mut count) });

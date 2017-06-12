@@ -76,6 +76,10 @@ impl ArrayBuffer {
     }
 
     /// Creates a new array buffer, wrapping external data.
+    ///
+    /// This is unsafe because the object does not take ownership of the
+    /// resource. Therefore the data may become a dangling pointer. The caller is
+    /// responsible for keeping the reference alive.
     pub unsafe fn from_slice<T: Sized>(_guard: &ContextGuard, data: &mut [T]) -> Self {
         let base = data.as_mut_ptr() as *mut _;
         let size = (data.len() * mem::size_of::<T>()) as _;
