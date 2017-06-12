@@ -158,12 +158,12 @@ impl Value {
 
     /// Converts the value to a native string, containing the value's JSON representation.
     pub fn to_json(&self, guard: &ContextGuard) -> String {
-        // TODO: Replace this with a native function when available
-        let global = guard.global();
-        global.set(guard, &::Property::new(guard, "__jsonval"), self);
-
-        let result = ::script::eval(guard, "JSON.stringify(__jsonval)").unwrap();
-        result.to_string(guard)
+        // TODO: Use native functionality when implemented
+        let stringify = ::script::eval(guard, "JSON.stringify")
+            .expect("JSON.stringify does not exist")
+            .into_function()
+            .expect("JSON.stringify is not a function");
+        stringify.call(guard, &[self]).unwrap().to_string(guard)
     }
 
     // Casts a value to the JavaScript expression of another type
