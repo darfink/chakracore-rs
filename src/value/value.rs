@@ -160,13 +160,13 @@ impl Value {
                 value);
 
     /// Converts the value to a native string, containing the value's JSON representation.
-    pub fn to_json(&self, guard: &ContextGuard) -> String {
+    pub fn to_json(&self, guard: &ContextGuard) -> ::error::Result<String> {
         // TODO: Use native functionality when implemented
         let stringify = ::script::eval(guard, "JSON.stringify")
             .expect("JSON.stringify does not exist")
             .into_function()
             .expect("JSON.stringify is not a function");
-        stringify.call(guard, &[self]).unwrap().to_string(guard)
+        stringify.call(guard, &[self]).map(|v| v.to_string(guard))
     }
 
     // Casts a value to the JavaScript expression of another type
@@ -249,7 +249,7 @@ mod tests {
         test::run_with_context(|guard| {
             let object = value::Object::new(guard);
             object.set(guard, &Property::new(guard, "foo"), &value::Number::new(guard, 1337));
-            assert_eq!(object.to_json(guard), r#"{"foo":1337}"#);
+            assert_eq!(object.to_json(guard).unwrap(), r#"{"foo":1337}"#);
         });
     }
 }
