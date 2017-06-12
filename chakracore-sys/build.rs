@@ -403,7 +403,7 @@ mod util {
         }
 
         if !command.status().ok().map_or(false, |res| res.success()) {
-            panic!(format!("Failed to run command {}", name));
+            panic!(format!("Failed to run command '{} {}'", name, arguments.join(" ")));
         }
     }
 
