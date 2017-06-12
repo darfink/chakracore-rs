@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `String` struct in crate `chakracore`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, String">
+
+    <title>chakracore::value::String - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct String</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#deref-methods">Methods from Deref&lt;Target=Value&gt;</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>chakracore</a>::<wbr><a href='index.html'>value</a></p><script>window.sidebarCurrent = {name: 'String', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>chakracore</a>::<wbr><a href='index.html'>value</a>::<wbr><a class="struct" href=''>String</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/chakracore/value/string.rs.html#6' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct String(_);</pre><div class='docblock'><p>A JavaScript string.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/value/string.rs.html#8-31' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(_guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>, string: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Self</code></span></h4>
+<div class='docblock'><p>Creates a string value from a native string.</p>
+</div><h4 id='method.len' class="method"><span id='len.v' class='invisible'><code>fn <a href='#method.len' class='fnname'>len</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code></span></h4>
+<div class='docblock'><p>Returns the length of the string.</p>
+</div><h4 id='method.value' class="method"><span id='value.v' class='invisible'><code>fn <a href='#method.value' class='fnname'>value</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Converts a JavaScript string to a native string.</p>
+</div><h4 id='method.is_same' class="method"><span id='is_same.v' class='invisible'><code>fn <a href='#method.is_same' class='fnname'>is_same</a>(value: &amp;<a class="struct" href="../../chakracore/value/struct.Value.html" title="struct chakracore::value::Value">Value</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if the value is a <code>String</code>.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#30-43' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from_raw' class="method"><span id='from_raw.v' class='invisible'><code>unsafe fn <a href='#method.from_raw' class='fnname'>from_raw</a>(value: <a class="struct" href="../../chakracore_sys/struct.JsRef.html" title="struct chakracore_sys::JsRef">JsRef</a>) -&gt; <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span></h4>
+<div class='docblock'><p>Creates an instance from a raw pointer.</p>
+
+<p>This is used for managing the lifetime of JSRT objects. They are
+tracked using reference counting; incrementing with <code>from_raw</code>,
+and decrementing with <code>drop</code>.</p>
+
+<p>This is required to support items stored on the heap, since the
+JSRT runtime only observes the stack.</p>
+</div></div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target = <a class="struct" href="../../chakracore/value/struct.Value.html" title="struct chakracore::value::Value">Value</a>&gt;</h2><div class='impl-items'><h4 id='method.is_undefined' class="method"><span id='is_undefined.v' class='invisible'><code>fn <a href='#method.is_undefined' class='fnname'>is_undefined</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is <code>undefined</code>.</p>
+</div><h4 id='method.is_null' class="method"><span id='is_null.v' class='invisible'><code>fn <a href='#method.is_null' class='fnname'>is_null</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is <code>null</code>.</p>
+</div><h4 id='method.is_number' class="method"><span id='is_number.v' class='invisible'><code>fn <a href='#method.is_number' class='fnname'>is_number</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is a <code>Number</code>.</p>
+</div><h4 id='method.into_number' class="method"><span id='into_number.v' class='invisible'><code>fn <a href='#method.into_number' class='fnname'>into_number</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.Number.html" title="struct chakracore::value::Number">Number</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as a <code>Number</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_string' class="method"><span id='is_string.v' class='invisible'><code>fn <a href='#method.is_string' class='fnname'>is_string</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is a <code>String</code>.</p>
+</div><h4 id='method.into_string' class="method"><span id='into_string.v' class='invisible'><code>fn <a href='#method.into_string' class='fnname'>into_string</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as a <code>String</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_boolean' class="method"><span id='is_boolean.v' class='invisible'><code>fn <a href='#method.is_boolean' class='fnname'>is_boolean</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is a <code>Boolean</code>.</p>
+</div><h4 id='method.into_boolean' class="method"><span id='into_boolean.v' class='invisible'><code>fn <a href='#method.into_boolean' class='fnname'>into_boolean</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.Boolean.html" title="struct chakracore::value::Boolean">Boolean</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as a <code>Boolean</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_object' class="method"><span id='is_object.v' class='invisible'><code>fn <a href='#method.is_object' class='fnname'>is_object</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is an <code>Object</code>.</p>
+</div><h4 id='method.into_object' class="method"><span id='into_object.v' class='invisible'><code>fn <a href='#method.into_object' class='fnname'>into_object</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.Object.html" title="struct chakracore::value::Object">Object</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as an <code>Object</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_external' class="method"><span id='is_external.v' class='invisible'><code>fn <a href='#method.is_external' class='fnname'>is_external</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is an <code>External</code>.</p>
+</div><h4 id='method.into_external' class="method"><span id='into_external.v' class='invisible'><code>fn <a href='#method.into_external' class='fnname'>into_external</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.External.html" title="struct chakracore::value::External">External</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as an <code>External</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_function' class="method"><span id='is_function.v' class='invisible'><code>fn <a href='#method.is_function' class='fnname'>is_function</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is a <code>Function</code>.</p>
+</div><h4 id='method.into_function' class="method"><span id='into_function.v' class='invisible'><code>fn <a href='#method.into_function' class='fnname'>into_function</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/function/struct.Function.html" title="struct chakracore::value::function::Function">Function</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as a <code>Function</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_array' class="method"><span id='is_array.v' class='invisible'><code>fn <a href='#method.is_array' class='fnname'>is_array</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is an <code>Array</code>.</p>
+</div><h4 id='method.into_array' class="method"><span id='into_array.v' class='invisible'><code>fn <a href='#method.into_array' class='fnname'>into_array</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.Array.html" title="struct chakracore::value::Array">Array</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as an <code>Array</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_array_buffer' class="method"><span id='is_array_buffer.v' class='invisible'><code>fn <a href='#method.is_array_buffer' class='fnname'>is_array_buffer</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is an <code>ArrayBuffer</code>.</p>
+</div><h4 id='method.into_array_buffer' class="method"><span id='into_array_buffer.v' class='invisible'><code>fn <a href='#method.into_array_buffer' class='fnname'>into_array_buffer</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.ArrayBuffer.html" title="struct chakracore::value::ArrayBuffer">ArrayBuffer</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as an <code>ArrayBuffer</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.is_promise' class="method"><span id='is_promise.v' class='invisible'><code>fn <a href='#method.is_promise' class='fnname'>is_promise</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Returns true if this value is a <code>Promise</code>.</p>
+</div><h4 id='method.into_promise' class="method"><span id='into_promise.v' class='invisible'><code>fn <a href='#method.into_promise' class='fnname'>into_promise</a>(self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/value/struct.Promise.html" title="struct chakracore::value::Promise">Promise</a>&gt;</code></span></h4>
+<div class='docblock'><p>Represent the value as a <code>Promise</code>. Does not affect the underlying value.</p>
+</div><h4 id='method.to_string' class="method"><span id='to_string.v' class='invisible'><code>fn <a href='#method.to_string' class='fnname'>to_string</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Converts the value to a native string, containing the value&#39;s string representation.</p>
+</div><h4 id='method.to_integer' class="method"><span id='to_integer.v' class='invisible'><code>fn <a href='#method.to_integer' class='fnname'>to_integer</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a></code></span></h4>
+<div class='docblock'><p>Converts the value to a native integer, containing the value&#39;s integer representation.</p>
+</div><h4 id='method.to_double' class="method"><span id='to_double.v' class='invisible'><code>fn <a href='#method.to_double' class='fnname'>to_double</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a></code></span></h4>
+<div class='docblock'><p>Converts the value to a native double, containing the value&#39;s floating point representation.</p>
+</div><h4 id='method.to_bool' class="method"><span id='to_bool.v' class='invisible'><code>fn <a href='#method.to_bool' class='fnname'>to_bool</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Converts the value to a native boolean, containing the value&#39;s bool representation.</p>
+</div><h4 id='method.to_json' class="method"><span id='to_json.v' class='invisible'><code>fn <a href='#method.to_json' class='fnname'>to_json</a>(&amp;self, guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Converts the value to a native string, containing the value&#39;s JSON representation.</p>
+</div><h4 id='method.boolean_representation' class="method"><span id='boolean_representation.v' class='invisible'><code>fn <a href='#method.boolean_representation' class='fnname'>boolean_representation</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="../../chakracore/value/struct.Boolean.html" title="struct chakracore::value::Boolean">Boolean</a></code></span></h4>
+<div class='docblock'><p>Creates a new boolean with this value represented as <code>Boolean</code>.</p>
+</div><h4 id='method.number_representation' class="method"><span id='number_representation.v' class='invisible'><code>fn <a href='#method.number_representation' class='fnname'>number_representation</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="../../chakracore/value/struct.Number.html" title="struct chakracore::value::Number">Number</a></code></span></h4>
+<div class='docblock'><p>Creates a new number with this value represented as <code>Number</code>.</p>
+</div><h4 id='method.object_representation' class="method"><span id='object_representation.v' class='invisible'><code>fn <a href='#method.object_representation' class='fnname'>object_representation</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="../../chakracore/value/struct.Object.html" title="struct chakracore::value::Object">Object</a></code></span></h4>
+<div class='docblock'><p>Creates a new object with this value represented as <code>Object</code>.</p>
+</div><h4 id='method.string_representation' class="method"><span id='string_representation.v' class='invisible'><code>fn <a href='#method.string_representation' class='fnname'>string_representation</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span></h4>
+<div class='docblock'><p>Creates a new string with this value represented as <code>String</code>.</p>
+</div><h4 id='method.get_type' class="method"><span id='get_type.v' class='invisible'><code>fn <a href='#method.get_type' class='fnname'>get_type</a>(&amp;self) -&gt; <a class="enum" href="../../chakracore_sys/enum._JsValueType.html" title="enum chakracore_sys::_JsValueType">JsValueType</a></code></span></h4>
+<div class='docblock'><p>Returns the type of the value. This method should be used with
+consideration. It does not keep track of custom types, such as
+<code>External</code>. It only returns the runtime&#39;s definition of a type.</p>
+</div><h4 id='method.equals' class="method"><span id='equals.v' class='invisible'><code>fn <a href='#method.equals' class='fnname'>equals</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>, that: &amp;<a class="struct" href="../../chakracore/value/struct.Value.html" title="struct chakracore::value::Value">Value</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Compare two values for equality (<code>==</code>).</p>
+</div><h4 id='method.strict_equals' class="method"><span id='strict_equals.v' class='invisible'><code>fn <a href='#method.strict_equals' class='fnname'>strict_equals</a>(&amp;self, _guard: &amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>, that: &amp;<a class="struct" href="../../chakracore/value/struct.Value.html" title="struct chakracore::value::Value">Value</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Compare two values for strict equality (<code>===</code>).</p>
+</div><h4 id='method.as_raw' class="method"><span id='as_raw.v' class='invisible'><code>fn <a href='#method.as_raw' class='fnname'>as_raw</a>(&amp;self) -&gt; <a class="type" href="../../chakracore_sys/type.JsValueRef.html" title="type chakracore_sys::JsValueRef">JsValueRef</a></code></span></h4>
+<div class='docblock'><p>Returns the underlying raw pointer.</p>
+</div></div><div class='impl-items'></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#45-49' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html" title="trait core::ops::Drop">Drop</a> for <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#51-58' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
+<div class='docblock'><p>Decrements the reference&#39;s counter.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a> for <a class="struct" href="../../chakracore/value/struct.String.html" title="struct chakracore::value::String">String</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#78-84' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Target' class="type"><span id='Target.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html#associatedtype.Target' class="type">Target</a> = <a class="struct" href="../../chakracore/value/struct.Value.html" title="struct chakracore::value::Value">Value</a></code></span></h4>
+<div class='docblock'><p>The resulting type after dereferencing</p>
+</div><h4 id='method.deref' class="method"><span id='deref.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html#tymethod.deref' class='fnname'>deref</a>(&amp;self) -&gt; &amp;Self::<a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Target</a></code></span></h4>
+<div class='docblock'><p>The method called to dereference a value</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "chakracore";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

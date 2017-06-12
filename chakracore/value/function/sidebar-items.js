@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CallbackInfo","The information passed to `FunctionCallback` closures."],["Function","A JavaScript function object."]],"type":[["CallbackResult","The result returned from a function callback."],["FunctionCallback","Callback type for functions."]]});

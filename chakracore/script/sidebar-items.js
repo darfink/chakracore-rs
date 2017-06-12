@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["eval","Evaluates code directly."],["eval_with_name","Evaluates code and associates it with a name."],["parse","Parses code and returns it as a function."],["parse_with_name","Parses code and associates it with a name, returns it as a function."]]});

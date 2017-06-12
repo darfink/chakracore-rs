@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `JsDiagGetStackProperties` fn in crate `chakracore_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, JsDiagGetStackProperties">
+
+    <title>chakracore_sys::JsDiagGetStackProperties - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc fn">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>chakracore_sys</a></p><script>window.sidebarCurrent = {name: 'JsDiagGetStackProperties', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>chakracore_sys</a>::<wbr><a class="fn" href=''>JsDiagGetStackProperties</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/chakracore_sys/Users/atomen/Projects/chakracore-rs/target/debug/build/chakracore-sys-5edced9a67c10a23/out/ffi.rs.html#2474-2476' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;system&quot; fn JsDiagGetStackProperties(<br>&nbsp;&nbsp;&nbsp;&nbsp;stackFrameIndex: <a class="type" href="../libc/type.c_uint.html" title="type libc::c_uint">c_uint</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;properties: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="../chakracore_sys/type.JsValueRef.html" title="type chakracore_sys::JsValueRef">JsValueRef</a><br>) -&gt; <a class="enum" href="../chakracore_sys/enum._JsErrorCode.html" title="enum chakracore_sys::_JsErrorCode">JsErrorCode</a></pre><div class='docblock'><p><summary>
+    Gets the list of properties corresponding to the frame.
+</summary>
+<param name="stackFrameIndex">Index of stack frame from JsDiagGetStackTrace.</param>
+<param name="properties">Object of properties array (properties, scopes and globals).</param>
+<remarks>
+    <para>
+    propertyAttributes is a bit mask of
+        NONE = 0x1,
+        HAVE_CHILDRENS = 0x2,
+        READ_ONLY_VALUE = 0x4,
+    </para>
+    <para>
+    {
+        &quot;thisObject&quot;: {
+            &quot;name&quot;: &quot;this&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;className&quot; : &quot;Object&quot;,
+            &quot;display&quot; : &quot;{...}&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 306
+        },
+        &quot;exception&quot; : {
+            &quot;name&quot; : &quot;{exception}&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;display&quot; : &quot;&#39;a&#39; is undefined&quot;,
+            &quot;className&quot; : &quot;Error&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 307
+        }
+        &quot;arguments&quot; : {
+            &quot;name&quot; : &quot;arguments&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;display&quot; : &quot;{...}&quot;,
+            &quot;className&quot; : &quot;Object&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 190
+        },
+        &quot;returnValue&quot; : {
+            &quot;name&quot; : &quot;[Return value]&quot;,
+            &quot;type&quot; : &quot;undefined&quot;,
+            &quot;propertyAttributes&quot; : 0,
+            &quot;handle&quot; : 192
+        },
+        &quot;functionCallsReturn&quot; : [{
+                &quot;name&quot; : &quot;[foo1 returned]&quot;,
+                &quot;type&quot; : &quot;number&quot;,
+                &quot;value&quot; : 1,
+                &quot;propertyAttributes&quot; : 2,
+                &quot;handle&quot; : 191
+            }
+        ],
+        &quot;locals&quot; : [],
+        &quot;scopes&quot; : [{
+                &quot;index&quot; : 0,
+                &quot;handle&quot; : 193
+            }
+        ],
+        &quot;globals&quot; : {
+            &quot;handle&quot; : 194
+        }
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "chakracore_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

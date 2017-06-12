@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `JsDiagEvaluate` fn in crate `chakracore_sys`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, JsDiagEvaluate">
+
+    <title>chakracore_sys::JsDiagEvaluate - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc fn">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>chakracore_sys</a></p><script>window.sidebarCurrent = {name: 'JsDiagEvaluate', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>chakracore_sys</a>::<wbr><a class="fn" href=''>JsDiagEvaluate</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/chakracore_sys/Users/atomen/Projects/chakracore-rs/target/debug/build/chakracore-sys-5edced9a67c10a23/out/ffi.rs.html#2599-2603' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;system&quot; fn JsDiagEvaluate(<br>&nbsp;&nbsp;&nbsp;&nbsp;expression: <a class="type" href="../chakracore_sys/type.JsValueRef.html" title="type chakracore_sys::JsValueRef">JsValueRef</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;stackFrameIndex: <a class="type" href="../libc/type.c_uint.html" title="type libc::c_uint">c_uint</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;parseAttributes: <a class="struct" href="../chakracore_sys/struct._JsParseScriptAttributes.html" title="struct chakracore_sys::_JsParseScriptAttributes">JsParseScriptAttributes</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;forceSetValueProp: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;evalResult: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="../chakracore_sys/type.JsValueRef.html" title="type chakracore_sys::JsValueRef">JsValueRef</a><br>) -&gt; <a class="enum" href="../chakracore_sys/enum._JsErrorCode.html" title="enum chakracore_sys::_JsErrorCode">JsErrorCode</a></pre><div class='docblock'><p><summary>
+    Evaluates an expression on given frame.
+</summary>
+<param name="expression">
+    Javascript String or ArrayBuffer (incl. ExternalArrayBuffer).
+</param>
+<param name="stackFrameIndex">Index of stack frame on which to evaluate the expression.</param>
+<param name="parseAttributes">
+    Defines how <code>expression</code> (JsValueRef) should be parsed.
+    - <code>JsParseScriptAttributeNone</code> when <code>expression</code> is a Utf8 encoded ArrayBuffer and/or a Javascript String (encoding independent)
+    - <code>JsParseScriptAttributeArrayBufferIsUtf16Encoded</code> when <code>expression</code> is Utf16 Encoded ArrayBuffer
+    - <code>JsParseScriptAttributeLibraryCode</code> has no use for this function and has similar effect with <code>JsParseScriptAttributeNone</code>
+</param>
+<param name="forceSetValueProp">Forces the result to contain the raw value of the expression result.</param>
+<param name="evalResult">Result of evaluation.</param>
+<remarks>
+    <para>
+    evalResult when evaluating &#39;this&#39; and return is JsNoError
+    {
+        &quot;name&quot; : &quot;this&quot;,
+        &quot;type&quot; : &quot;object&quot;,
+        &quot;className&quot; : &quot;Object&quot;,
+        &quot;display&quot; : &quot;{...}&quot;,
+        &quot;propertyAttributes&quot; : 1,
+        &quot;handle&quot; : 18
+    }</p>
+
+<pre class="rust rust-example-rendered">
+<span class="ident">evalResult</span> <span class="ident">when</span> <span class="ident">evaluating</span> <span class="ident">a</span> <span class="ident">script</span> <span class="ident">which</span> <span class="ident">throws</span> <span class="ident">JavaScript</span> <span class="ident">error</span> <span class="ident">and</span> <span class="kw">return</span> <span class="ident">is</span> <span class="ident">JsErrorScriptException</span>
+{
+    <span class="string">&quot;name&quot;</span> : <span class="string">&quot;a.b.c&quot;</span>,
+    <span class="string">&quot;type&quot;</span> : <span class="string">&quot;object&quot;</span>,
+    <span class="string">&quot;className&quot;</span> : <span class="string">&quot;Error&quot;</span>,
+    <span class="string">&quot;display&quot;</span> : <span class="string">&quot;&#39;a&#39; is undefined&quot;</span>,
+    <span class="string">&quot;propertyAttributes&quot;</span> : <span class="number">1</span>,
+    <span class="string">&quot;handle&quot;</span> : <span class="number">18</span>
+}
+<span class="op">&lt;</span><span class="op">/</span><span class="ident">para</span><span class="op">&gt;</span></pre>
+
+<p></remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, evalResult will contain the result
+    The code <c>JsErrorScriptException</c> if evaluate generated a JavaScript exception, evalResult will contain the error details
+    Other error code for invalid parameters or API was not called at break
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "chakracore_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

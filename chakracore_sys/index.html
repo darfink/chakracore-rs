@@ -1,0 +1,3782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `chakracore_sys` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, chakracore_sys">
+
+    <title>chakracore_sys - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Crate chakracore_sys</p><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'chakracore_sys', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>chakracore_sys</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/chakracore_sys/lib.rs.html#1-82' title='goto source code'>[src]</a></span></h1>
+<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsErrorCode.html" title="enum chakracore_sys::_JsErrorCode">_JsErrorCode</a> as JsErrorCode;</code></td></tr><tr><td><code>pub use self::<a class="struct" href="../chakracore_sys/struct._JsRuntimeAttributes.html" title="struct chakracore_sys::_JsRuntimeAttributes">_JsRuntimeAttributes</a> as JsRuntimeAttributes;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsTypedArrayType.html" title="enum chakracore_sys::_JsTypedArrayType">_JsTypedArrayType</a> as JsTypedArrayType;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsMemoryEventType.html" title="enum chakracore_sys::_JsMemoryEventType">_JsMemoryEventType</a> as JsMemoryEventType;</code></td></tr><tr><td><code>pub use self::<a class="struct" href="../chakracore_sys/struct._JsParseScriptAttributes.html" title="struct chakracore_sys::_JsParseScriptAttributes">_JsParseScriptAttributes</a> as JsParseScriptAttributes;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsPropertyIdType.html" title="enum chakracore_sys::_JsPropertyIdType">_JsPropertyIdType</a> as JsPropertyIdType;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsValueType.html" title="enum chakracore_sys::_JsValueType">_JsValueType</a> as JsValueType;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsDiagDebugEvent.html" title="enum chakracore_sys::_JsDiagDebugEvent">_JsDiagDebugEvent</a> as JsDiagDebugEvent;</code></td></tr><tr><td><code>pub use self::<a class="struct" href="../chakracore_sys/struct._JsDiagBreakOnExceptionAttributes.html" title="struct chakracore_sys::_JsDiagBreakOnExceptionAttributes">_JsDiagBreakOnExceptionAttributes</a> as JsDiagBreakOnExceptionAttributes;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../chakracore_sys/enum._JsDiagStepType.html" title="enum chakracore_sys::_JsDiagStepType">_JsDiagStepType</a> as JsDiagStepType;</code></td></tr><tr><td><code>pub use self::<a class="struct" href="../chakracore_sys/struct._JsTTDMoveModes.html" title="struct chakracore_sys::_JsTTDMoveModes">_JsTTDMoveModes</a> as JsTTDMoveMode;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.JsModuleRecord.html"
+                                  title='struct chakracore_sys::JsModuleRecord'>JsModuleRecord</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.JsRef.html"
+                                  title='struct chakracore_sys::JsRef'>JsRef</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A reference to an object owned by the Chakra garbage collector.
+</summary>
+<remarks>
+    A Chakra runtime will automatically track <c>JsRef</c> references as long as they are
+    stored in local variables or in parameters (i.e. on the stack). Storing a <c>JsRef</c>
+    somewhere other than on the stack requires calling <c>JsAddRef</c> and <c>JsRelease</c> to
+    manage the lifetime of the object, otherwise the garbage collector may free the object
+    while it is still in use.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.JsRuntimeHandle.html"
+                                  title='struct chakracore_sys::JsRuntimeHandle'>JsRuntimeHandle</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A handle to a Chakra runtime.
+</summary>
+<remarks>
+    <para>
+    Each Chakra runtime has its own independent execution engine, JIT compiler, and garbage
+    collected heap. As such, each runtime is completely isolated from other runtimes.
+    </para>
+    <para>
+    Runtimes can be used on any thread, but only one thread can call into a runtime at any
+    time.
+    </para>
+    <para>
+    NOTE: A <c>JsRuntimeHandle</c>, unlike other object references in the Chakra hosting API,
+    is not garbage collected since it contains the garbage collected heap itself. A runtime
+    will continue to exist until <c>JsDisposeRuntime</c> is called.
+    </para>
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.JsTTDStreamHandle.html"
+                                  title='struct chakracore_sys::JsTTDStreamHandle'>JsTTDStreamHandle</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A handle for URI&#39;s that TTD information is written to/read from.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct._JsDiagBreakOnExceptionAttributes.html"
+                                  title='struct chakracore_sys::_JsDiagBreakOnExceptionAttributes'>_JsDiagBreakOnExceptionAttributes</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Break on Exception attributes.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct._JsParseScriptAttributes.html"
+                                  title='struct chakracore_sys::_JsParseScriptAttributes'>_JsParseScriptAttributes</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Attribute mask for JsParseScriptWithAttributes
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct._JsRuntimeAttributes.html"
+                                  title='struct chakracore_sys::_JsRuntimeAttributes'>_JsRuntimeAttributes</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Attributes of a runtime.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct._JsTTDMoveModes.html"
+                                  title='struct chakracore_sys::_JsTTDMoveModes'>_JsTTDMoveModes</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TimeTravel move options as bit flag enum.
+</summary></p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.JsModuleHostInfoKind.html"
+                                  title='enum chakracore_sys::JsModuleHostInfoKind'>JsModuleHostInfoKind</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.JsParseModuleSourceFlags.html"
+                                  title='enum chakracore_sys::JsParseModuleSourceFlags'>JsParseModuleSourceFlags</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsDiagDebugEvent.html"
+                                  title='enum chakracore_sys::_JsDiagDebugEvent'>_JsDiagDebugEvent</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Debug events reported from ChakraCore engine.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsDiagStepType.html"
+                                  title='enum chakracore_sys::_JsDiagStepType'>_JsDiagStepType</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Stepping types.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsErrorCode.html"
+                                  title='enum chakracore_sys::_JsErrorCode'>_JsErrorCode</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    An error code returned from a Chakra hosting API.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsMemoryEventType.html"
+                                  title='enum chakracore_sys::_JsMemoryEventType'>_JsMemoryEventType</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Allocation callback event type.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsPropertyIdType.html"
+                                  title='enum chakracore_sys::_JsPropertyIdType'>_JsPropertyIdType</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Type enumeration of a JavaScript property
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsTypedArrayType.html"
+                                  title='enum chakracore_sys::_JsTypedArrayType'>_JsTypedArrayType</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    The type of a typed JavaScript array.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum._JsValueType.html"
+                                  title='enum chakracore_sys::_JsValueType'>_JsValueType</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    The JavaScript type of a JsValueRef.
+</summary></p>
+                           </td>
+                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsDiagBreakOnExceptionAttributeFirstChance.html"
+                                  title='constant chakracore_sys::JsDiagBreakOnExceptionAttributeFirstChance'>JsDiagBreakOnExceptionAttributeFirstChance</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsDiagBreakOnExceptionAttributeNone.html"
+                                  title='constant chakracore_sys::JsDiagBreakOnExceptionAttributeNone'>JsDiagBreakOnExceptionAttributeNone</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsDiagBreakOnExceptionAttributeUncaught.html"
+                                  title='constant chakracore_sys::JsDiagBreakOnExceptionAttributeUncaught'>JsDiagBreakOnExceptionAttributeUncaught</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsParseScriptAttributeArrayBufferIsUtf16Encoded.html"
+                                  title='constant chakracore_sys::JsParseScriptAttributeArrayBufferIsUtf16Encoded'>JsParseScriptAttributeArrayBufferIsUtf16Encoded</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsParseScriptAttributeLibraryCode.html"
+                                  title='constant chakracore_sys::JsParseScriptAttributeLibraryCode'>JsParseScriptAttributeLibraryCode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsParseScriptAttributeNone.html"
+                                  title='constant chakracore_sys::JsParseScriptAttributeNone'>JsParseScriptAttributeNone</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeAllowScriptInterrupt.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeAllowScriptInterrupt'>JsRuntimeAttributeAllowScriptInterrupt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeDisableBackgroundWork.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeDisableBackgroundWork'>JsRuntimeAttributeDisableBackgroundWork</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeDisableEval.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeDisableEval'>JsRuntimeAttributeDisableEval</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeDisableNativeCodeGeneration.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeDisableNativeCodeGeneration'>JsRuntimeAttributeDisableNativeCodeGeneration</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeDispatchSetExceptionsToDebugger.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeDispatchSetExceptionsToDebugger'>JsRuntimeAttributeDispatchSetExceptionsToDebugger</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeEnableExperimentalFeatures.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeEnableExperimentalFeatures'>JsRuntimeAttributeEnableExperimentalFeatures</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeEnableIdleProcessing.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeEnableIdleProcessing'>JsRuntimeAttributeEnableIdleProcessing</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsRuntimeAttributeNone.html"
+                                  title='constant chakracore_sys::JsRuntimeAttributeNone'>JsRuntimeAttributeNone</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveBreakOnEntry.html"
+                                  title='constant chakracore_sys::JsTTDMoveBreakOnEntry'>JsTTDMoveBreakOnEntry</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveFirstEvent.html"
+                                  title='constant chakracore_sys::JsTTDMoveFirstEvent'>JsTTDMoveFirstEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveKthEvent.html"
+                                  title='constant chakracore_sys::JsTTDMoveKthEvent'>JsTTDMoveKthEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveLastEvent.html"
+                                  title='constant chakracore_sys::JsTTDMoveLastEvent'>JsTTDMoveLastEvent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveNone.html"
+                                  title='constant chakracore_sys::JsTTDMoveNone'>JsTTDMoveNone</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveScanIntervalForContinue.html"
+                                  title='constant chakracore_sys::JsTTDMoveScanIntervalForContinue'>JsTTDMoveScanIntervalForContinue</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.JsTTDMoveScanIntervalForContinueInActiveBreakpointSegment.html"
+                                  title='constant chakracore_sys::JsTTDMoveScanIntervalForContinueInActiveBreakpointSegment'>JsTTDMoveScanIntervalForContinueInActiveBreakpointSegment</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsAddRef.html"
+                                  title='fn chakracore_sys::JsAddRef'>JsAddRef</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Adds a reference to a garbage collected object.
+</summary>
+<remarks>
+    This only needs to be called on <c>JsRef</c> handles that are not going to be stored
+    somewhere on the stack. Calling <c>JsAddRef</c> ensures that the object the <c>JsRef</c>
+    refers to will not be freed until <c>JsRelease</c> is called.
+</remarks>
+<param name="ref">The object to add a reference to.</param>
+<param name="count">The object&#39;s new reference count (can pass in null).</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsBoolToBoolean.html"
+                                  title='fn chakracore_sys::JsBoolToBoolean'>JsBoolToBoolean</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Boolean value from a <c>bool</c> value.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="value">The value to be converted.</param>
+<param name="booleanValue">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsBooleanToBool.html"
+                                  title='fn chakracore_sys::JsBooleanToBool'>JsBooleanToBool</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieves the <c>bool</c> value of a Boolean value.
+</summary>
+<param name="value">The value to be converted.</param>
+<param name="boolValue">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCallFunction.html"
+                                  title='fn chakracore_sys::JsCallFunction'>JsCallFunction</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Invokes a function.
+</summary>
+<remarks>
+    Requires thisArg as first argument of arguments.
+    Requires an active script context.
+</remarks>
+<param name="function">The function to invoke.</param>
+<param name="arguments">The arguments to the call.</param>
+<param name="argumentCount">The number of arguments being passed in to the function.</param>
+<param name="result">The value returned from the function invocation, if any.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCollectGarbage.html"
+                                  title='fn chakracore_sys::JsCollectGarbage'>JsCollectGarbage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Performs a full garbage collection.
+</summary>
+<param name="runtime">The runtime in which the garbage collection will be performed.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsConstructObject.html"
+                                  title='fn chakracore_sys::JsConstructObject'>JsConstructObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Invokes a function as a constructor.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="function">The function to invoke as a constructor.</param>
+<param name="arguments">The arguments to the call.</param>
+<param name="argumentCount">The number of arguments being passed in to the function.</param>
+<param name="result">The value returned from the function invocation.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsConvertValueToBoolean.html"
+                                  title='fn chakracore_sys::JsConvertValueToBoolean'>JsConvertValueToBoolean</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Converts the value to Boolean using standard JavaScript semantics.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="value">The value to be converted.</param>
+<param name="booleanValue">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsConvertValueToNumber.html"
+                                  title='fn chakracore_sys::JsConvertValueToNumber'>JsConvertValueToNumber</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Converts the value to number using standard JavaScript semantics.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="value">The value to be converted.</param>
+<param name="numberValue">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsConvertValueToObject.html"
+                                  title='fn chakracore_sys::JsConvertValueToObject'>JsConvertValueToObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Converts the value to object using standard JavaScript semantics.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="value">The value to be converted.</param>
+<param name="object">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsConvertValueToString.html"
+                                  title='fn chakracore_sys::JsConvertValueToString'>JsConvertValueToString</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Converts the value to string using standard JavaScript semantics.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="value">The value to be converted.</param>
+<param name="stringValue">The converted value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCopyPropertyId.html"
+                                  title='fn chakracore_sys::JsCopyPropertyId'>JsCopyPropertyId</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Copies the name associated with the property ID into a buffer.
+</summary>
+<remarks>
+    <para>
+        Requires an active script context.
+    </para>
+    <para>
+        When size of the <code>buffer</code> is unknown,
+        <code>buffer</code> argument can be nullptr.
+        <code>length</code> argument will return the size needed.
+    </para>
+</remarks>
+<param name="propertyId">The property ID to get the name of.</param>
+<param name="buffer">The buffer holding the name associated with the property ID, encoded as utf8</param>
+<param name="bufferSize">Size of the buffer.</param>
+<param name="written">Total number of characters written or to be written</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCopyString.html"
+                                  title='fn chakracore_sys::JsCopyString'>JsCopyString</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Write JavascriptString value into C string buffer (Utf8)
+</summary>
+<remarks>
+    <para>
+        When size of the <code>buffer</code> is unknown,
+        <code>buffer</code> argument can be nullptr.
+        In that case, <code>written</code> argument will return the length needed.
+    </para>
+</remarks>
+<param name="value">JavascriptString value</param>
+<param name="buffer">Pointer to buffer</param>
+<param name="bufferSize">Buffer size</param>
+<param name="written">Total number of characters written</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCopyStringUtf16.html"
+                                  title='fn chakracore_sys::JsCopyStringUtf16'>JsCopyStringUtf16</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Write string value into Utf16 string buffer
+</summary>
+<remarks>
+    <para>
+        When size of the <code>buffer</code> is unknown,
+        <code>buffer</code> argument can be nullptr.
+        In that case, <code>written</code> argument will return the length needed.
+    </para>
+    <para>
+        when start is out of range or &lt; 0, returns JsErrorInvalidArgument
+        and <code>written</code> will be equal to 0.
+        If calculated length is 0 (It can be due to string length or <code>start</code>
+        and length combination), then <code>written</code> will be equal to 0 and call
+        returns JsNoError
+    </para>
+</remarks>
+<param name="value">JavascriptString value</param>
+<param name="start">start offset of buffer</param>
+<param name="length">length to be written</param>
+<param name="buffer">Pointer to buffer</param>
+<param name="written">Total number of characters written</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateArray.html"
+                                  title='fn chakracore_sys::JsCreateArray'>JsCreateArray</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript array object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="length">The initial length of the array.</param>
+<param name="result">The new array object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateArrayBuffer.html"
+                                  title='fn chakracore_sys::JsCreateArrayBuffer'>JsCreateArrayBuffer</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript ArrayBuffer object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="byteLength">
+    The number of bytes in the ArrayBuffer.
+</param>
+<param name="result">The new ArrayBuffer object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateContext.html"
+                                  title='fn chakracore_sys::JsCreateContext'>JsCreateContext</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a script context for running scripts.
+</summary>
+<remarks>
+    Each script context has its own global object that is isolated from all other script
+    contexts.
+</remarks>
+<param name="runtime">The runtime the script context is being created in.</param>
+<param name="newContext">The created script context.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateDataView.html"
+                                  title='fn chakracore_sys::JsCreateDataView'>JsCreateDataView</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript DataView object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="arrayBuffer">
+    An existing ArrayBuffer object to use as the storage for the result DataView object.
+</param>
+<param name="byteOffset">
+    The offset in bytes from the start of arrayBuffer for result DataView to reference.
+</param>
+<param name="byteLength">
+    The number of bytes in the ArrayBuffer for result DataView to reference.
+</param>
+<param name="result">The new DataView object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateError.html"
+                                  title='fn chakracore_sys::JsCreateError'>JsCreateError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateExternalArrayBuffer.html"
+                                  title='fn chakracore_sys::JsCreateExternalArrayBuffer'>JsCreateExternalArrayBuffer</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript ArrayBuffer object to access external memory.
+</summary>
+<remarks>Requires an active script context.</remarks>
+<param name="data">A pointer to the external memory.</param>
+<param name="byteLength">The number of bytes in the external memory.</param>
+<param name="finalizeCallback">A callback for when the object is finalized. May be null.</param>
+<param name="callbackState">User provided state that will be passed back to finalizeCallback.</param>
+<param name="result">The new ArrayBuffer object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateExternalObject.html"
+                                  title='fn chakracore_sys::JsCreateExternalObject'>JsCreateExternalObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new object that stores some external data.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="data">External data that the object will represent. May be null.</param>
+<param name="finalizeCallback">
+    A callback for when the object is finalized. May be null.
+</param>
+<param name="object">The new object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateFunction.html"
+                                  title='fn chakracore_sys::JsCreateFunction'>JsCreateFunction</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript function.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="nativeFunction">The method to call when the function is invoked.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<param name="function">The new function object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateNamedFunction.html"
+                                  title='fn chakracore_sys::JsCreateNamedFunction'>JsCreateNamedFunction</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript function with name.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="name">The name of this function that will be used for diagnostics and stringification purposes.</param>
+<param name="nativeFunction">The method to call when the function is invoked.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<param name="function">The new function object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateObject.html"
+                                  title='fn chakracore_sys::JsCreateObject'>JsCreateObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The new object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreatePromise.html"
+                                  title='fn chakracore_sys::JsCreatePromise'>JsCreatePromise</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript Promise object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="promise">The new Promise object.</param>
+<param name="resolveFunction">The function called to resolve the created Promise object.</param>
+<param name="rejectFunction">The function called to reject the created Promise object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreatePropertyId.html"
+                                  title='fn chakracore_sys::JsCreatePropertyId'>JsCreatePropertyId</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates the property ID associated with the name.
+</summary>
+<remarks>
+    <para>
+        Property IDs are specific to a context and cannot be used across contexts.
+    </para>
+    <para>
+        Requires an active script context.
+    </para>
+</remarks>
+<param name="name">
+    The name of the property ID to get or create. The name may consist of only digits.
+    The string is expected to be ASCII / utf8 encoded.
+</param>
+<param name="length">length of the name in bytes</param>
+<param name="propertyId">The property ID in this runtime for the given name.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateRangeError.html"
+                                  title='fn chakracore_sys::JsCreateRangeError'>JsCreateRangeError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript RangeError error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateReferenceError.html"
+                                  title='fn chakracore_sys::JsCreateReferenceError'>JsCreateReferenceError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript ReferenceError error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateRuntime.html"
+                                  title='fn chakracore_sys::JsCreateRuntime'>JsCreateRuntime</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new runtime.
+</summary>
+<param name="attributes">The attributes of the runtime to be created.</param>
+<param name="threadService">The thread service for the runtime. Can be null.</param>
+<param name="runtime">The runtime created.</param>
+<remarks>In the edge-mode binary, chakra.dll, this function lacks the <c>runtimeVersion</c>
+parameter (compare to jsrt9.h).</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateString.html"
+                                  title='fn chakracore_sys::JsCreateString'>JsCreateString</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Create JavascriptString variable from ASCII or Utf8 string
+</summary>
+<remarks>
+    <para>
+        Input string can be either ASCII or Utf8
+    </para>
+</remarks>
+<param name="content">Pointer to string memory.</param>
+<param name="length">Number of bytes within the string</param>
+<param name="value">JsValueRef representing the JavascriptString</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateStringUtf16.html"
+                                  title='fn chakracore_sys::JsCreateStringUtf16'>JsCreateStringUtf16</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Create JavascriptString variable from Utf16 string
+</summary>
+<remarks>
+    <para>
+        Expects Utf16 string
+    </para>
+</remarks>
+<param name="content">Pointer to string memory.</param>
+<param name="length">Number of characters within the string</param>
+<param name="value">JsValueRef representing the JavascriptString</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateSymbol.html"
+                                  title='fn chakracore_sys::JsCreateSymbol'>JsCreateSymbol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript symbol.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="description">The string description of the symbol. Can be null.</param>
+<param name="result">The new symbol.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateSyntaxError.html"
+                                  title='fn chakracore_sys::JsCreateSyntaxError'>JsCreateSyntaxError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript SyntaxError error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateTypeError.html"
+                                  title='fn chakracore_sys::JsCreateTypeError'>JsCreateTypeError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript TypeError error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateTypedArray.html"
+                                  title='fn chakracore_sys::JsCreateTypedArray'>JsCreateTypedArray</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a Javascript typed array object.
+</summary>
+<remarks>
+    <para>
+    The <c>baseArray</c> can be an <c>ArrayBuffer</c>, another typed array, or a JavaScript
+    <c>Array</c>. The returned typed array will use the baseArray if it is an ArrayBuffer, or
+    otherwise create and use a copy of the underlying source array.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="arrayType">The type of the array to create.</param>
+<param name="baseArray">
+    The base array of the new array. Use <c>JS_INVALID_REFERENCE</c> if no base array.
+</param>
+<param name="byteOffset">
+    The offset in bytes from the start of baseArray (ArrayBuffer) for result typed array to reference.
+    Only applicable when baseArray is an ArrayBuffer object. Must be 0 otherwise.
+</param>
+<param name="elementLength">
+    The number of elements in the array. Only applicable when creating a new typed array without
+    baseArray (baseArray is <c>JS_INVALID_REFERENCE</c>) or when baseArray is an ArrayBuffer object.
+    Must be 0 otherwise.
+</param>
+<param name="result">The new typed array object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateURIError.html"
+                                  title='fn chakracore_sys::JsCreateURIError'>JsCreateURIError</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a new JavaScript URIError error object
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="message">Message for the error object.</param>
+<param name="error">The new error object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsCreateWeakReference.html"
+                                  title='fn chakracore_sys::JsCreateWeakReference'>JsCreateWeakReference</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a weak reference to a value.
+</summary>
+<param name="value">The value to be referenced.</param>
+<param name="weakRef">Weak reference to the value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDefineProperty.html"
+                                  title='fn chakracore_sys::JsDefineProperty'>JsDefineProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Defines a new object&#39;s own property from a property descriptor.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that has the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="propertyDescriptor">The property descriptor.</param>
+<param name="result">Whether the property was defined.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDeleteIndexedProperty.html"
+                                  title='fn chakracore_sys::JsDeleteIndexedProperty'>JsDeleteIndexedProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Delete the value at the specified index of an object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to operate on.</param>
+<param name="index">The index to delete.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDeleteProperty.html"
+                                  title='fn chakracore_sys::JsDeleteProperty'>JsDeleteProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Deletes an object&#39;s property.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that contains the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="useStrictRules">The property set should follow strict mode rules.</param>
+<param name="result">Whether the property was deleted.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagEvaluate.html"
+                                  title='fn chakracore_sys::JsDiagEvaluate'>JsDiagEvaluate</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Evaluates an expression on given frame.
+</summary>
+<param name="expression">
+    Javascript String or ArrayBuffer (incl. ExternalArrayBuffer).
+</param>
+<param name="stackFrameIndex">Index of stack frame on which to evaluate the expression.</param>
+<param name="parseAttributes">
+    Defines how <code>expression</code> (JsValueRef) should be parsed.
+    - <code>JsParseScriptAttributeNone</code> when <code>expression</code> is a Utf8 encoded ArrayBuffer and/or a Javascript String (encoding independent)
+    - <code>JsParseScriptAttributeArrayBufferIsUtf16Encoded</code> when <code>expression</code> is Utf16 Encoded ArrayBuffer
+    - <code>JsParseScriptAttributeLibraryCode</code> has no use for this function and has similar effect with <code>JsParseScriptAttributeNone</code>
+</param>
+<param name="forceSetValueProp">Forces the result to contain the raw value of the expression result.</param>
+<param name="evalResult">Result of evaluation.</param>
+<remarks>
+    <para>
+    evalResult when evaluating &#39;this&#39; and return is JsNoError
+    {
+        &quot;name&quot; : &quot;this&quot;,
+        &quot;type&quot; : &quot;object&quot;,
+        &quot;className&quot; : &quot;Object&quot;,
+        &quot;display&quot; : &quot;{...}&quot;,
+        &quot;propertyAttributes&quot; : 1,
+        &quot;handle&quot; : 18
+    }</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetBreakOnException.html"
+                                  title='fn chakracore_sys::JsDiagGetBreakOnException'>JsDiagGetBreakOnException</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets break on exception setting.
+</summary>
+<param name="runtimeHandle">Runtime from which to get break on exception attributes, should be in debug mode.</param>
+<param name="exceptionAttributes">Mask of JsDiagBreakOnExceptionAttributes.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The runtime should be in debug state. This API can be called from another runtime.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetBreakpoints.html"
+                                  title='fn chakracore_sys::JsDiagGetBreakpoints'>JsDiagGetBreakpoints</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    List all breakpoints in the current runtime.
+</summary>
+<param name="breakpoints">Array of breakpoints.</param>
+<remarks>
+    <para>
+    [{
+        &quot;breakpointId&quot; : 1,
+        &quot;scriptId&quot; : 1,
+        &quot;line&quot; : 0,
+        &quot;column&quot; : 62
+    }]
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetFunctionPosition.html"
+                                  title='fn chakracore_sys::JsDiagGetFunctionPosition'>JsDiagGetFunctionPosition</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the source information for a function object.
+</summary>
+<param name="function">JavaScript function.</param>
+<param name="functionPosition">Function position - scriptId, start line, start column, line number of first statement, column number of first statement.</param>
+<remarks>
+    <para>
+    {
+        &quot;scriptId&quot; : 1,
+        &quot;fileName&quot; : &quot;c:\Test\Test.js&quot;,
+        &quot;line&quot; : 1,
+        &quot;column&quot; : 2,
+        &quot;firstStatementLine&quot; : 6,
+        &quot;firstStatementColumn&quot; : 0
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetObjectFromHandle.html"
+                                  title='fn chakracore_sys::JsDiagGetObjectFromHandle'>JsDiagGetObjectFromHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the object corresponding to handle.
+</summary>
+<param name="objectHandle">Handle of object.</param>
+<param name="handleObject">Object corresponding to the handle.</param>
+<remarks>
+    <para>
+    {
+        &quot;scriptId&quot; : 24,
+         &quot;line&quot; : 1,
+         &quot;column&quot; : 63,
+         &quot;name&quot; : &quot;foo&quot;,
+         &quot;type&quot; : &quot;function&quot;,
+         &quot;handle&quot; : 2
+    }
+   </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetProperties.html"
+                                  title='fn chakracore_sys::JsDiagGetProperties'>JsDiagGetProperties</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the list of children of a handle.
+</summary>
+<param name="objectHandle">Handle of object.</param>
+<param name="fromCount">0-based from count of properties, usually 0.</param>
+<param name="totalCount">Number of properties to return.</param>
+<param name="propertiesObject">Array of properties.</param>
+<remarks>Handle should be from objects returned from call to JsDiagGetStackProperties.</remarks>
+<remarks>For scenarios where object have large number of properties totalCount can be used to control how many properties are given.</remarks>
+<remarks>
+    <para>
+    {
+        &quot;totalPropertiesOfObject&quot;: 10,
+        &quot;properties&quot; : [{
+                &quot;name&quot; : &quot;__proto__&quot;,
+                &quot;type&quot; : &quot;object&quot;,
+                &quot;display&quot; : &quot;{...}&quot;,
+                &quot;className&quot; : &quot;Object&quot;,
+                &quot;propertyAttributes&quot; : 1,
+                &quot;handle&quot; : 156
+            }
+        ],
+        &quot;debuggerOnlyProperties&quot; : [{
+                &quot;name&quot; : &quot;[Map]&quot;,
+                &quot;type&quot; : &quot;string&quot;,
+                &quot;value&quot; : &quot;size = 0&quot;,
+                &quot;propertyAttributes&quot; : 2,
+                &quot;handle&quot; : 157
+            }
+        ]
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetScripts.html"
+                                  title='fn chakracore_sys::JsDiagGetScripts'>JsDiagGetScripts</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets list of scripts.
+</summary>
+<param name="scriptsArray">Array of script objects.</param>
+<remarks>
+    <para>
+    [{
+        &quot;scriptId&quot; : 2,
+        &quot;fileName&quot; : &quot;c:\Test\Test.js&quot;,
+        &quot;lineCount&quot; : 4,
+        &quot;sourceLength&quot; : 111
+      }, {
+        &quot;scriptId&quot; : 3,
+        &quot;parentScriptId&quot; : 2,
+        &quot;scriptType&quot; : &quot;eval code&quot;,
+        &quot;lineCount&quot; : 1,
+        &quot;sourceLength&quot; : 12
+    }]
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetSource.html"
+                                  title='fn chakracore_sys::JsDiagGetSource'>JsDiagGetSource</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets source for a specific script identified by scriptId from JsDiagGetScripts.
+</summary>
+<param name="scriptId">Id of the script.</param>
+<param name="source">Source object.</param>
+<remarks>
+    <para>
+    {
+        &quot;scriptId&quot; : 1,
+        &quot;fileName&quot; : &quot;c:\Test\Test.js&quot;,
+        &quot;lineCount&quot; : 12,
+        &quot;sourceLength&quot; : 15154,
+        &quot;source&quot; : &quot;var x = 1;&quot;
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetStackProperties.html"
+                                  title='fn chakracore_sys::JsDiagGetStackProperties'>JsDiagGetStackProperties</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the list of properties corresponding to the frame.
+</summary>
+<param name="stackFrameIndex">Index of stack frame from JsDiagGetStackTrace.</param>
+<param name="properties">Object of properties array (properties, scopes and globals).</param>
+<remarks>
+    <para>
+    propertyAttributes is a bit mask of
+        NONE = 0x1,
+        HAVE_CHILDRENS = 0x2,
+        READ_ONLY_VALUE = 0x4,
+    </para>
+    <para>
+    {
+        &quot;thisObject&quot;: {
+            &quot;name&quot;: &quot;this&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;className&quot; : &quot;Object&quot;,
+            &quot;display&quot; : &quot;{...}&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 306
+        },
+        &quot;exception&quot; : {
+            &quot;name&quot; : &quot;{exception}&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;display&quot; : &quot;&#39;a&#39; is undefined&quot;,
+            &quot;className&quot; : &quot;Error&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 307
+        }
+        &quot;arguments&quot; : {
+            &quot;name&quot; : &quot;arguments&quot;,
+            &quot;type&quot; : &quot;object&quot;,
+            &quot;display&quot; : &quot;{...}&quot;,
+            &quot;className&quot; : &quot;Object&quot;,
+            &quot;propertyAttributes&quot; : 1,
+            &quot;handle&quot; : 190
+        },
+        &quot;returnValue&quot; : {
+            &quot;name&quot; : &quot;[Return value]&quot;,
+            &quot;type&quot; : &quot;undefined&quot;,
+            &quot;propertyAttributes&quot; : 0,
+            &quot;handle&quot; : 192
+        },
+        &quot;functionCallsReturn&quot; : [{
+                &quot;name&quot; : &quot;[foo1 returned]&quot;,
+                &quot;type&quot; : &quot;number&quot;,
+                &quot;value&quot; : 1,
+                &quot;propertyAttributes&quot; : 2,
+                &quot;handle&quot; : 191
+            }
+        ],
+        &quot;locals&quot; : [],
+        &quot;scopes&quot; : [{
+                &quot;index&quot; : 0,
+                &quot;handle&quot; : 193
+            }
+        ],
+        &quot;globals&quot; : {
+            &quot;handle&quot; : 194
+        }
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagGetStackTrace.html"
+                                  title='fn chakracore_sys::JsDiagGetStackTrace'>JsDiagGetStackTrace</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the stack trace information.
+</summary>
+<param name="stackTrace">Stack trace information.</param>
+<remarks>
+    <para>
+    [{
+        &quot;index&quot; : 0,
+        &quot;scriptId&quot; : 2,
+        &quot;line&quot; : 3,
+        &quot;column&quot; : 0,
+        &quot;sourceLength&quot; : 9,
+        &quot;sourceText&quot; : &quot;var x = 1&quot;,
+        &quot;functionHandle&quot; : 1
+    }]
+   </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagRemoveBreakpoint.html"
+                                  title='fn chakracore_sys::JsDiagRemoveBreakpoint'>JsDiagRemoveBreakpoint</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Remove a breakpoint.
+</summary>
+<param name="breakpointId">Breakpoint id returned from JsDiagSetBreakpoint.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagRequestAsyncBreak.html"
+                                  title='fn chakracore_sys::JsDiagRequestAsyncBreak'>JsDiagRequestAsyncBreak</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Request the runtime to break on next JavaScript statement.
+</summary>
+<param name="runtimeHandle">Runtime to request break.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The runtime should be in debug state. This API can be called from another runtime.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagSetBreakOnException.html"
+                                  title='fn chakracore_sys::JsDiagSetBreakOnException'>JsDiagSetBreakOnException</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets break on exception handling.
+</summary>
+<param name="runtimeHandle">Runtime to set break on exception attributes.</param>
+<param name="exceptionAttributes">Mask of JsDiagBreakOnExceptionAttributes to set.</param>
+<remarks>
+    <para>
+        If this API is not called the default value is set to JsDiagBreakOnExceptionAttributeUncaught in the runtime.
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The runtime should be in debug state. This API can be called from another runtime.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagSetBreakpoint.html"
+                                  title='fn chakracore_sys::JsDiagSetBreakpoint'>JsDiagSetBreakpoint</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets breakpoint in the specified script at give location.
+</summary>
+<param name="scriptId">Id of script from JsDiagGetScripts or JsDiagGetSource to put breakpoint.</param>
+<param name="lineNumber">0 based line number to put breakpoint.</param>
+<param name="columnNumber">0 based column number to put breakpoint.</param>
+<param name="breakpoint">Breakpoint object with id, line and column if success.</param>
+<remarks>
+    <para>
+    {
+        &quot;breakpointId&quot; : 1,
+        &quot;line&quot; : 2,
+        &quot;column&quot; : 4
+    }
+    </para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can be called when runtime is at a break or running.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagSetStepType.html"
+                                  title='fn chakracore_sys::JsDiagSetStepType'>JsDiagSetStepType</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the step type in the runtime after a debug break.
+</summary>
+<remarks>
+    Requires to be at a debug break.
+</remarks>
+<param name="resumeType">Type of JsDiagStepType.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The current runtime should be in debug state. This API can only be called when runtime is at a break.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagStartDebugging.html"
+                                  title='fn chakracore_sys::JsDiagStartDebugging'>JsDiagStartDebugging</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Starts debugging in the given runtime.
+</summary>
+<param name="runtimeHandle">Runtime to put into debug mode.</param>
+<param name="debugEventCallback">Registers a callback to be called on every JsDiagDebugEvent.</param>
+<param name="callbackState">User provided state that will be passed back to the callback.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The runtime should be active on the current thread and should not be in debug state.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDiagStopDebugging.html"
+                                  title='fn chakracore_sys::JsDiagStopDebugging'>JsDiagStopDebugging</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Stops debugging in the given runtime.
+</summary>
+<param name="runtimeHandle">Runtime to stop debugging.</param>
+<param name="callbackState">User provided state that was passed in JsDiagStartDebugging.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns>
+<remarks>
+    The runtime should be active on the current thread and in debug state.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDisableRuntimeExecution.html"
+                                  title='fn chakracore_sys::JsDisableRuntimeExecution'>JsDisableRuntimeExecution</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Suspends script execution and terminates any running scripts in a runtime.
+</summary>
+<remarks>
+    <para>
+    Calls to a suspended runtime will fail until <c>JsEnableRuntimeExecution</c> is called.
+    </para>
+    <para>
+    This API does not have to be called on the thread the runtime is active on. Although the
+    runtime will be set into a suspended state, an executing script may not be suspended
+    immediately; a running script will be terminated with an uncatchable exception as soon as
+    possible.
+    </para>
+    <para>
+    Suspending execution in a runtime that is already suspended is a no-op.
+    </para>
+</remarks>
+<param name="runtime">The runtime to be suspended.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDisposeRuntime.html"
+                                  title='fn chakracore_sys::JsDisposeRuntime'>JsDisposeRuntime</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Disposes a runtime.
+</summary>
+<remarks>
+    Once a runtime has been disposed, all resources owned by it are invalid and cannot be used.
+    If the runtime is active (i.e. it is set to be current on a particular thread), it cannot
+    be disposed.
+</remarks>
+<param name="runtime">The runtime to dispose.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsDoubleToNumber.html"
+                                  title='fn chakracore_sys::JsDoubleToNumber'>JsDoubleToNumber</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a number value from a <c>double</c> value.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="doubleValue">The <c>double</c> to convert to a number value.</param>
+<param name="value">The new number value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsEnableRuntimeExecution.html"
+                                  title='fn chakracore_sys::JsEnableRuntimeExecution'>JsEnableRuntimeExecution</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Enables script execution in a runtime.
+</summary>
+<remarks>
+    Enabling script execution in a runtime that already has script execution enabled is a
+    no-op.
+</remarks>
+<param name="runtime">The runtime to be enabled.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsEquals.html"
+                                  title='fn chakracore_sys::JsEquals'>JsEquals</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Compare two JavaScript values for equality.
+</summary>
+<remarks>
+    <para>
+    This function is equivalent to the <c>==</c> operator in Javascript.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="object1">The first object to compare.</param>
+<param name="object2">The second object to compare.</param>
+<param name="result">Whether the values are equal.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetAndClearException.html"
+                                  title='fn chakracore_sys::JsGetAndClearException'>JsGetAndClearException</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Returns the exception that caused the runtime of the current context to be in the
+    exception state and resets the exception state for that runtime.
+</summary>
+<remarks>
+    <para>
+    If the runtime of the current context is not in an exception state, this API will return
+    <c>JsErrorInvalidArgument</c>. If the runtime is disabled, this will return an exception
+    indicating that the script was terminated, but it will not clear the exception (the
+    exception will be cleared if the runtime is re-enabled using
+    <c>JsEnableRuntimeExecution</c>).
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="exception">The exception for the runtime of the current context.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetAndClearExceptionWithMetadata.html"
+                                  title='fn chakracore_sys::JsGetAndClearExceptionWithMetadata'>JsGetAndClearExceptionWithMetadata</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Returns metadata relating to the exception that caused the runtime of the current context
+    to be in the exception state and resets the exception state for that runtime. The metadata
+    includes a reference to the exception itself.
+</summary>
+<remarks>
+    <para>
+    If the runtime of the current context is not in an exception state, this API will return
+    <c>JsErrorInvalidArgument</c>. If the runtime is disabled, this will return an exception
+    indicating that the script was terminated, but it will not clear the exception (the
+    exception will be cleared if the runtime is re-enabled using
+    <c>JsEnableRuntimeExecution</c>).
+    </para>
+    <para>
+    The metadata value is a javascript object with the following properties: <c>exception</c>, the
+    thrown exception object; <c>line</c>, the 0 indexed line number where the exception was thrown;
+    <c>column</c>, the 0 indexed column number where the exception was thrown; <c>length</c>, the
+    source-length of the cause of the exception; <c>source</c>, a string containing the line of
+    source code where the exception was thrown; and <c>url</c>, a string containing the name of
+    the script file containing the code that threw the exception.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="metadata">The exception metadata for the runtime of the current context.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetArrayBufferStorage.html"
+                                  title='fn chakracore_sys::JsGetArrayBufferStorage'>JsGetArrayBufferStorage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Obtains the underlying memory storage used by an <c>ArrayBuffer</c>.
+</summary>
+<param name="arrayBuffer">The ArrayBuffer instance.</param>
+<param name="buffer">
+    The ArrayBuffer&#39;s buffer. The lifetime of the buffer returned is the same as the lifetime of the
+    the ArrayBuffer. The buffer pointer does not count as a reference to the ArrayBuffer for the purpose
+    of garbage collection.
+</param>
+<param name="bufferLength">The number of bytes in the buffer.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetContextData.html"
+                                  title='fn chakracore_sys::JsGetContextData'>JsGetContextData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the internal data set on JsrtContext.
+</summary>
+<param name="context">The context to get the data from.</param>
+<param name="data">The pointer to the data where data will be returned.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetContextOfObject.html"
+                                  title='fn chakracore_sys::JsGetContextOfObject'>JsGetContextOfObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the script context that the object belongs to.
+</summary>
+<param name="object">The object to get the context from.</param>
+<param name="context">The context the object belongs to.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetCurrentContext.html"
+                                  title='fn chakracore_sys::JsGetCurrentContext'>JsGetCurrentContext</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the current script context on the thread.
+</summary>
+<param name="currentContext">
+    The current script context on the thread, null if there is no current script context.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetDataViewStorage.html"
+                                  title='fn chakracore_sys::JsGetDataViewStorage'>JsGetDataViewStorage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Obtains the underlying memory storage used by a DataView.
+</summary>
+<param name="dataView">The DataView instance.</param>
+<param name="buffer">
+    The DataView&#39;s buffer. The lifetime of the buffer returned is the same as the lifetime of the
+    the DataView. The buffer pointer does not count as a reference to the DataView for the purpose
+    of garbage collection.
+</param>
+<param name="bufferLength">The number of bytes in the buffer.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetExtensionAllowed.html"
+                                  title='fn chakracore_sys::JsGetExtensionAllowed'>JsGetExtensionAllowed</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Returns a value that indicates whether an object is extensible or not.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to test.</param>
+<param name="value">Whether the object is extensible or not.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetExternalData.html"
+                                  title='fn chakracore_sys::JsGetExternalData'>JsGetExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieves the data from an external object.
+</summary>
+<param name="object">The external object.</param>
+<param name="externalData">
+    The external data stored in the object. Can be null if no external data is stored in the
+    object.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetFalseValue.html"
+                                  title='fn chakracore_sys::JsGetFalseValue'>JsGetFalseValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the value of <c>false</c> in the current script context.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="falseValue">The <c>false</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetGlobalObject.html"
+                                  title='fn chakracore_sys::JsGetGlobalObject'>JsGetGlobalObject</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the global object in the current script context.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="globalObject">The global object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetIndexedPropertiesExternalData.html"
+                                  title='fn chakracore_sys::JsGetIndexedPropertiesExternalData'>JsGetIndexedPropertiesExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieves an object&#39;s indexed properties external data information.
+</summary>
+<param name="object">The object.</param>
+<param name="data">The external data back store for the object&#39;s indexed properties.</param>
+<param name="arrayType">The array element type in external data.</param>
+<param name="elementLength">The number of array elements in external data.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetIndexedProperty.html"
+                                  title='fn chakracore_sys::JsGetIndexedProperty'>JsGetIndexedProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieve the value at the specified index of an object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to operate on.</param>
+<param name="index">The index to retrieve.</param>
+<param name="result">The retrieved value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetModuleHostInfo.html"
+                                  title='fn chakracore_sys::JsGetModuleHostInfo'>JsGetModuleHostInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieve the host info for the specified module.
+</summary>
+<param name="requestModule">The request module.</param>
+<param name="moduleHostInfo">The type of host info to get.</param>
+<param name="hostInfo">The host info to be retrieved.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetNullValue.html"
+                                  title='fn chakracore_sys::JsGetNullValue'>JsGetNullValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the value of <c>null</c> in the current script context.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="nullValue">The <c>null</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetOwnPropertyDescriptor.html"
+                                  title='fn chakracore_sys::JsGetOwnPropertyDescriptor'>JsGetOwnPropertyDescriptor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets a property descriptor for an object&#39;s own property.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that has the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="propertyDescriptor">The property descriptor.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetOwnPropertyNames.html"
+                                  title='fn chakracore_sys::JsGetOwnPropertyNames'>JsGetOwnPropertyNames</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the list of all properties on the object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object from which to get the property names.</param>
+<param name="propertyNames">An array of property names.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetOwnPropertySymbols.html"
+                                  title='fn chakracore_sys::JsGetOwnPropertySymbols'>JsGetOwnPropertySymbols</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the list of all symbol properties on the object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object from which to get the property symbols.</param>
+<param name="propertySymbols">An array of property symbols.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetProperty.html"
+                                  title='fn chakracore_sys::JsGetProperty'>JsGetProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets an object&#39;s property.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that contains the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="value">The value of the property.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetPropertyIdFromSymbol.html"
+                                  title='fn chakracore_sys::JsGetPropertyIdFromSymbol'>JsGetPropertyIdFromSymbol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the property ID associated with the symbol.
+</summary>
+<remarks>
+    <para>
+    Property IDs are specific to a context and cannot be used across contexts.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="symbol">
+    The symbol whose property ID is being retrieved.
+</param>
+<param name="propertyId">The property ID for the given symbol.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetPropertyIdType.html"
+                                  title='fn chakracore_sys::JsGetPropertyIdType'>JsGetPropertyIdType</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the type of property
+</summary>
+<remarks>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="propertyId">The property ID to get the type of.</param>
+<param name="propertyIdType">The JsPropertyIdType of the given property ID</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetPrototype.html"
+                                  title='fn chakracore_sys::JsGetPrototype'>JsGetPrototype</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Returns the prototype of an object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object whose prototype is to be returned.</param>
+<param name="prototypeObject">The object&#39;s prototype.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetRuntime.html"
+                                  title='fn chakracore_sys::JsGetRuntime'>JsGetRuntime</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the runtime that the context belongs to.
+</summary>
+<param name="context">The context to get the runtime from.</param>
+<param name="runtime">The runtime the context belongs to.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetRuntimeMemoryLimit.html"
+                                  title='fn chakracore_sys::JsGetRuntimeMemoryLimit'>JsGetRuntimeMemoryLimit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the current memory limit for a runtime.
+</summary>
+<remarks>
+    The memory limit of a runtime can be always be retrieved, regardless of whether or not the
+    runtime is active on another thread.
+</remarks>
+<param name="runtime">The runtime whose memory limit is to be retrieved.</param>
+<param name="memoryLimit">
+    The runtime&#39;s current memory limit, in bytes, or -1 if no limit has been set.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetRuntimeMemoryUsage.html"
+                                  title='fn chakracore_sys::JsGetRuntimeMemoryUsage'>JsGetRuntimeMemoryUsage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the current memory usage for a runtime.
+</summary>
+<remarks>
+    Memory usage can be always be retrieved, regardless of whether or not the runtime is active
+    on another thread.
+</remarks>
+<param name="runtime">The runtime whose memory usage is to be retrieved.</param>
+<param name="memoryUsage">The runtime&#39;s current memory usage, in bytes.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetStringLength.html"
+                                  title='fn chakracore_sys::JsGetStringLength'>JsGetStringLength</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the length of a string value.
+</summary>
+<param name="stringValue">The string value to get the length of.</param>
+<param name="length">The length of the string.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetSymbolFromPropertyId.html"
+                                  title='fn chakracore_sys::JsGetSymbolFromPropertyId'>JsGetSymbolFromPropertyId</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the symbol associated with the property ID.
+</summary>
+<remarks>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="propertyId">The property ID to get the symbol of.</param>
+<param name="symbol">The symbol associated with the property ID.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetTrueValue.html"
+                                  title='fn chakracore_sys::JsGetTrueValue'>JsGetTrueValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the value of <c>true</c> in the current script context.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="trueValue">The <c>true</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetTypedArrayInfo.html"
+                                  title='fn chakracore_sys::JsGetTypedArrayInfo'>JsGetTypedArrayInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Obtains frequently used properties of a typed array.
+</summary>
+<param name="typedArray">The typed array instance.</param>
+<param name="arrayType">The type of the array.</param>
+<param name="arrayBuffer">The ArrayBuffer backstore of the array.</param>
+<param name="byteOffset">The offset in bytes from the start of arrayBuffer referenced by the array.</param>
+<param name="byteLength">The number of bytes in the array.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetTypedArrayStorage.html"
+                                  title='fn chakracore_sys::JsGetTypedArrayStorage'>JsGetTypedArrayStorage</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Obtains the underlying memory storage used by a typed array.
+</summary>
+<param name="typedArray">The typed array instance.</param>
+<param name="buffer">
+    The array&#39;s buffer. The lifetime of the buffer returned is the same as the lifetime of the
+    the array. The buffer pointer does not count as a reference to the array for the purpose
+    of garbage collection.
+</param>
+<param name="bufferLength">The number of bytes in the buffer.</param>
+<param name="arrayType">The type of the array.</param>
+<param name="elementSize">
+    The size of an element of the array.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetUndefinedValue.html"
+                                  title='fn chakracore_sys::JsGetUndefinedValue'>JsGetUndefinedValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the value of <c>undefined</c> in the current script context.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="undefinedValue">The <c>undefined</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetValueType.html"
+                                  title='fn chakracore_sys::JsGetValueType'>JsGetValueType</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets the JavaScript type of a JsValueRef.
+</summary>
+<param name="value">The value whose type is to be returned.</param>
+<param name="type">The type of the value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsGetWeakReferenceValue.html"
+                                  title='fn chakracore_sys::JsGetWeakReferenceValue'>JsGetWeakReferenceValue</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Gets a strong reference to the value referred to by a weak reference.
+</summary>
+<param name="weakRef">A weak reference.</param>
+<param name="value">Reference to the value, or <c>JS_INVALID_REFERENCE</c> if the value is
+    no longer available.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsHasException.html"
+                                  title='fn chakracore_sys::JsHasException'>JsHasException</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Determines whether the runtime of the current context is in an exception state.
+</summary>
+<remarks>
+    <para>
+    If a call into the runtime results in an exception (either as the result of running a
+    script or due to something like a conversion failure), the runtime is placed into an
+    &quot;exception state.&quot; All calls into any context created by the runtime (except for the
+    exception APIs) will fail with <c>JsErrorInExceptionState</c> until the exception is
+    cleared.
+    </para>
+    <para>
+    If the runtime of the current context is in the exception state when a callback returns
+    into the engine, the engine will automatically rethrow the exception.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="hasException">
+    Whether the runtime of the current context is in the exception state.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsHasExternalData.html"
+                                  title='fn chakracore_sys::JsHasExternalData'>JsHasExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Determines whether an object is an external object.
+</summary>
+<param name="object">The object.</param>
+<param name="value">Whether the object is an external object.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsHasIndexedPropertiesExternalData.html"
+                                  title='fn chakracore_sys::JsHasIndexedPropertiesExternalData'>JsHasIndexedPropertiesExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Determines whether an object has its indexed properties in external data.
+</summary>
+<param name="object">The object.</param>
+<param name="value">Whether the object has its indexed properties in external data.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsHasIndexedProperty.html"
+                                  title='fn chakracore_sys::JsHasIndexedProperty'>JsHasIndexedProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Tests whether an object has a value at the specified index.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to operate on.</param>
+<param name="index">The index to test.</param>
+<param name="result">Whether the object has a value at the specified index.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsHasProperty.html"
+                                  title='fn chakracore_sys::JsHasProperty'>JsHasProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Determines whether an object has a property.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that may contain the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="hasProperty">Whether the object (or a prototype) has the property.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsIdle.html"
+                                  title='fn chakracore_sys::JsIdle'>JsIdle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Tells the runtime to do any idle processing it need to do.
+</summary>
+<remarks>
+    <para>
+    If idle processing has been enabled for the current runtime, calling <c>JsIdle</c> will
+    inform the current runtime that the host is idle and that the runtime can perform
+    memory cleanup tasks.
+    </para>
+    <para>
+    <c>JsIdle</c> can also return the number of system ticks until there will be more idle work
+    for the runtime to do. Calling <c>JsIdle</c> before this number of ticks has passed will do
+    no work.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="nextIdleTick">
+    The next system tick when there will be more idle work to do. Can be null. Returns the
+    maximum number of ticks if there no upcoming idle work to do.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsInitializeModuleRecord.html"
+                                  title='fn chakracore_sys::JsInitializeModuleRecord'>JsInitializeModuleRecord</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Initialize a ModuleRecord from host
+</summary>
+<remarks>
+    Bootstrap the module loading process by creating a new module record.
+</remarks>
+<param name="referencingModule">The referencingModule as in HostResolveImportedModule (15.2.1.17). nullptr if this is the top level module.</param>
+<param name="normalizedSpecifier">The host normalized specifier. This is the key to a unique ModuleRecord.</param>
+<param name="moduleRecord">The new ModuleRecord created. The host should not try to call this API twice with the same normalizedSpecifier.
+                          chakra will return an existing ModuleRecord if the specifier was passed in before.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsInstanceOf.html"
+                                  title='fn chakracore_sys::JsInstanceOf'>JsInstanceOf</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Performs JavaScript &quot;instanceof&quot; operator test.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to test.</param>
+<param name="constructor">The constructor function to test against.</param>
+<param name="result">Whether &quot;object instanceof constructor&quot; is true.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsIntToNumber.html"
+                                  title='fn chakracore_sys::JsIntToNumber'>JsIntToNumber</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Creates a number value from an <c>int</c> value.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="intValue">The <c>int</c> to convert to a number value.</param>
+<param name="value">The new number value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsIsRuntimeExecutionDisabled.html"
+                                  title='fn chakracore_sys::JsIsRuntimeExecutionDisabled'>JsIsRuntimeExecutionDisabled</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Returns a value that indicates whether script execution is disabled in the runtime.
+</summary>
+<param name="runtime">Specifies the runtime to check if execution is disabled.</param>
+<param name="isDisabled">If execution is disabled, <c>true</c>, <c>false</c> otherwise.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsModuleEvaluation.html"
+                                  title='fn chakracore_sys::JsModuleEvaluation'>JsModuleEvaluation</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Execute module code.
+</summary>
+<remarks>
+    This method implements 15.2.1.1.6.5, &quot;ModuleEvaluation&quot; concrete method.
+    When this methid is called, the chakra engine should have notified the host that the module and all its dependent are ready to be executed.
+    One moduleRecord will be executed only once. Additional execution call on the same moduleRecord will fail.
+</remarks>
+<param name="requestModule">The module to be executed.</param>
+<param name="result">The return value of the module.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsNumberToDouble.html"
+                                  title='fn chakracore_sys::JsNumberToDouble'>JsNumberToDouble</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieves the <c>double</c> value of a number value.
+</summary>
+<remarks>
+    This function retrieves the value of a number value. It will fail with
+    <c>JsErrorInvalidArgument</c> if the type of the value is not number.
+</remarks>
+<param name="value">The number value to convert to a <c>double</c> value.</param>
+<param name="doubleValue">The <c>double</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsNumberToInt.html"
+                                  title='fn chakracore_sys::JsNumberToInt'>JsNumberToInt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Retrieves the <c>int</c> value of a number value.
+</summary>
+<remarks>
+    This function retrieves the value of a number value and converts to an <c>int</c> value.
+    It will fail with <c>JsErrorInvalidArgument</c> if the type of the value is not number.
+</remarks>
+<param name="value">The number value to convert to an <c>int</c> value.</param>
+<param name="intValue">The <c>int</c> value.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsParse.html"
+                                  title='fn chakracore_sys::JsParse'>JsParse</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Parses a script and returns a function representing the script.
+</summary>
+<remarks>
+    <para>
+       Requires an active script context.
+    </para>
+    <para>
+        Script source can be either JavascriptString or JavascriptExternalArrayBuffer.
+        In case it is an ExternalArrayBuffer, and the encoding of the buffer is Utf16,
+        JsParseScriptAttributeArrayBufferIsUtf16Encoded is expected on parseAttributes.
+    </para>
+    <para>
+        Use JavascriptExternalArrayBuffer with Utf8/ASCII script source
+        for better performance and smaller memory footprint.
+    </para>
+</remarks>
+<param name="script">The script to run.</param>
+<param name="sourceContext">
+    A cookie identifying the script that can be used by debuggable script contexts.
+</param>
+<param name="sourceUrl">The location the script came from.</param>
+<param name="parseAttributes">Attribute mask for parsing the script</param>
+<param name="result">The result of the compiled script.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsParseModuleSource.html"
+                                  title='fn chakracore_sys::JsParseModuleSource'>JsParseModuleSource</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Parse the module source
+</summary>
+<remarks>
+This is basically ParseModule operation in ES6 spec. It is slightly different in that the ModuleRecord was initialized earlier, and passed in as an argument.
+</remarks>
+<param name="requestModule">The ModuleRecord that holds the parse tree of the source code.</param>
+<param name="sourceContext">A cookie identifying the script that can be used by debuggable script contexts.</param>
+<param name="script">The source script to be parsed, but not executed in this code.</param>
+<param name="scriptLength">The source length of sourceText. The input might contain embedded null.</param>
+<param name="sourceFlag">The type of the source code passed in. It could be UNICODE or utf8 at this time.</param>
+<param name="exceptionValueRef">The error object if there is parse error.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsParseSerialized.html"
+                                  title='fn chakracore_sys::JsParseSerialized'>JsParseSerialized</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Parses a serialized script and returns a function representing the script.
+    Provides the ability to lazy load the script source only if/when it is needed.
+</summary>
+<remarks>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="buffer">The serialized script as an ArrayBuffer (preferably ExternalArrayBuffer).</param>
+<param name="scriptLoadCallback">
+    Callback called when the source code of the script needs to be loaded.
+    This is an optional parameter, set to null if not needed.
+</param>
+<param name="sourceContext">
+    A cookie identifying the script that can be used by debuggable script contexts.
+    This context will passed into scriptLoadCallback.
+</param>
+<param name="sourceUrl">The location the script came from.</param>
+<param name="result">A function representing the script code.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsPreventExtension.html"
+                                  title='fn chakracore_sys::JsPreventExtension'>JsPreventExtension</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Makes an object non-extensible.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to make non-extensible.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsRelease.html"
+                                  title='fn chakracore_sys::JsRelease'>JsRelease</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Releases a reference to a garbage collected object.
+</summary>
+<remarks>
+    Removes a reference to a <c>JsRef</c> handle that was created by <c>JsAddRef</c>.
+</remarks>
+<param name="ref">The object to add a reference to.</param>
+<param name="count">The object&#39;s new reference count (can pass in null).</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsRun.html"
+                                  title='fn chakracore_sys::JsRun'>JsRun</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Executes a script.
+</summary>
+<remarks>
+    <para>
+       Requires an active script context.
+    </para>
+    <para>
+        Script source can be either JavascriptString or JavascriptExternalArrayBuffer.
+        In case it is an ExternalArrayBuffer, and the encoding of the buffer is Utf16,
+        JsParseScriptAttributeArrayBufferIsUtf16Encoded is expected on parseAttributes.
+    </para>
+    <para>
+        Use JavascriptExternalArrayBuffer with Utf8/ASCII script source
+        for better performance and smaller memory footprint.
+    </para>
+</remarks>
+<param name="script">The script to run.</param>
+<param name="sourceContext">
+    A cookie identifying the script that can be used by debuggable script contexts.
+</param>
+<param name="sourceUrl">The location the script came from</param>
+<param name="parseAttributes">Attribute mask for parsing the script</param>
+<param name="result">The result of the script, if any. This parameter can be null.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsRunSerialized.html"
+                                  title='fn chakracore_sys::JsRunSerialized'>JsRunSerialized</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Runs a serialized script.
+    Provides the ability to lazy load the script source only if/when it is needed.
+</summary>
+<remarks>
+    <para>
+    Requires an active script context.
+    </para>
+    <para>
+    The runtime will hold on to the buffer until all instances of any functions created from
+    the buffer are garbage collected.
+    </para>
+</remarks>
+<param name="buffer">The serialized script as an ArrayBuffer (preferably ExternalArrayBuffer).</param>
+<param name="scriptLoadCallback">Callback called when the source code of the script needs to be loaded.</param>
+<param name="sourceContext">
+    A cookie identifying the script that can be used by debuggable script contexts.
+    This context will passed into scriptLoadCallback.
+</param>
+<param name="sourceUrl">The location the script came from.</param>
+<param name="result">
+    The result of running the script, if any. This parameter can be null.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSerialize.html"
+                                  title='fn chakracore_sys::JsSerialize'>JsSerialize</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Serializes a parsed script to a buffer than can be reused.
+</summary>
+<remarks>
+    <para>
+    <c>JsSerializeScript</c> parses a script and then stores the parsed form of the script in a
+    runtime-independent format. The serialized script then can be deserialized in any
+    runtime without requiring the script to be re-parsed.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+    <para>
+        Script source can be either JavascriptString or JavascriptExternalArrayBuffer.
+        In case it is an ExternalArrayBuffer, and the encoding of the buffer is Utf16,
+        JsParseScriptAttributeArrayBufferIsUtf16Encoded is expected on parseAttributes.
+    </para>
+    <para>
+        Use JavascriptExternalArrayBuffer with Utf8/ASCII script source
+        for better performance and smaller memory footprint.
+    </para>
+</remarks>
+<param name="script">The script to serialize</param>
+<param name="buffer">ArrayBuffer</param>
+<param name="parseAttributes">Encoding for the script.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetContextData.html"
+                                  title='fn chakracore_sys::JsSetContextData'>JsSetContextData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the internal data of JsrtContext.
+</summary>
+<param name="context">The context to set the data to.</param>
+<param name="data">The pointer to the data to be set.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetCurrentContext.html"
+                                  title='fn chakracore_sys::JsSetCurrentContext'>JsSetCurrentContext</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the current script context on the thread.
+</summary>
+<param name="context">The script context to make current.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetException.html"
+                                  title='fn chakracore_sys::JsSetException'>JsSetException</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the runtime of the current context to an exception state.
+</summary>
+<remarks>
+    <para>
+    If the runtime of the current context is already in an exception state, this API will
+    return <c>JsErrorInExceptionState</c>.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="exception">
+    The JavaScript exception to set for the runtime of the current context.
+</param>
+<returns>
+    JsNoError if the engine was set into an exception state, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetExternalData.html"
+                                  title='fn chakracore_sys::JsSetExternalData'>JsSetExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the external data on an external object.
+</summary>
+<param name="object">The external object.</param>
+<param name="externalData">
+    The external data to be stored in the object. Can be null if no external data is
+    to be stored in the object.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetIndexedPropertiesToExternalData.html"
+                                  title='fn chakracore_sys::JsSetIndexedPropertiesToExternalData'>JsSetIndexedPropertiesToExternalData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets an object&#39;s indexed properties to external data. The external data will be used as back
+    store for the object&#39;s indexed properties and accessed like a typed array.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to operate on.</param>
+<param name="data">The external data to be used as back store for the object&#39;s indexed properties.</param>
+<param name="arrayType">The array element type in external data.</param>
+<param name="elementLength">The number of array elements in external data.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetIndexedProperty.html"
+                                  title='fn chakracore_sys::JsSetIndexedProperty'>JsSetIndexedProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Set the value at the specified index of an object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object to operate on.</param>
+<param name="index">The index to set.</param>
+<param name="value">The value to set.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetModuleHostInfo.html"
+                                  title='fn chakracore_sys::JsSetModuleHostInfo'>JsSetModuleHostInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Set the host info for the specified module.
+</summary>
+<param name="requestModule">The request module.</param>
+<param name="moduleHostInfo">The type of host info to be set.</param>
+<param name="hostInfo">The host info to be set.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetObjectBeforeCollectCallback.html"
+                                  title='fn chakracore_sys::JsSetObjectBeforeCollectCallback'>JsSetObjectBeforeCollectCallback</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets a callback function that is called by the runtime before garbage collection of
+    an object.
+</summary>
+<remarks>
+    <para>
+    The callback is invoked on the current runtime execution thread, therefore execution is
+    blocked until the callback completes.
+    </para>
+</remarks>
+<param name="ref">The object for which to register the callback.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<param name="objectBeforeCollectCallback">The callback function being set. Use null to clear
+    previously registered callback.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetPromiseContinuationCallback.html"
+                                  title='fn chakracore_sys::JsSetPromiseContinuationCallback'>JsSetPromiseContinuationCallback</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets a promise continuation callback function that is called by the context when a task
+    needs to be queued for future execution
+</summary>
+<remarks>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="promiseContinuationCallback">The callback function being set.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetProperty.html"
+                                  title='fn chakracore_sys::JsSetProperty'>JsSetProperty</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Puts an object&#39;s property.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object that contains the property.</param>
+<param name="propertyId">The ID of the property.</param>
+<param name="value">The new value of the property.</param>
+<param name="useStrictRules">The property set should follow strict mode rules.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetPrototype.html"
+                                  title='fn chakracore_sys::JsSetPrototype'>JsSetPrototype</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the prototype of an object.
+</summary>
+<remarks>
+    Requires an active script context.
+</remarks>
+<param name="object">The object whose prototype is to be changed.</param>
+<param name="prototypeObject">The object&#39;s new prototype.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetRuntimeBeforeCollectCallback.html"
+                                  title='fn chakracore_sys::JsSetRuntimeBeforeCollectCallback'>JsSetRuntimeBeforeCollectCallback</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets a callback function that is called by the runtime before garbage collection.
+</summary>
+<remarks>
+    <para>
+    The callback is invoked on the current runtime execution thread, therefore execution is
+    blocked until the callback completes.
+    </para>
+    <para>
+    The callback can be used by hosts to prepare for garbage collection. For example, by
+    releasing unnecessary references on Chakra objects.
+    </para>
+</remarks>
+<param name="runtime">The runtime for which to register the allocation callback.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<param name="beforeCollectCallback">The callback function being set.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetRuntimeMemoryAllocationCallback.html"
+                                  title='fn chakracore_sys::JsSetRuntimeMemoryAllocationCallback'>JsSetRuntimeMemoryAllocationCallback</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets a memory allocation callback for specified runtime
+</summary>
+<remarks>
+    <para>
+    Registering a memory allocation callback will cause the runtime to call back to the host
+    whenever it acquires memory from, or releases memory to, the OS. The callback routine is
+    called before the runtime memory manager allocates a block of memory. The allocation will
+    be rejected if the callback returns false. The runtime memory manager will also invoke the
+    callback routine after freeing a block of memory, as well as after allocation failures.
+    </para>
+    <para>
+    The callback is invoked on the current runtime execution thread, therefore execution is
+    blocked until the callback completes.
+    </para>
+    <para>
+    The return value of the callback is not stored; previously rejected allocations will not
+    prevent the runtime from invoking the callback again later for new memory allocations.
+    </para>
+</remarks>
+<param name="runtime">The runtime for which to register the allocation callback.</param>
+<param name="callbackState">
+    User provided state that will be passed back to the callback.
+</param>
+<param name="allocationCallback">
+    Memory allocation callback to be called for memory allocation events.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsSetRuntimeMemoryLimit.html"
+                                  title='fn chakracore_sys::JsSetRuntimeMemoryLimit'>JsSetRuntimeMemoryLimit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Sets the current memory limit for a runtime.
+</summary>
+<remarks>
+    <para>
+    A memory limit will cause any operation which exceeds the limit to fail with an &quot;out of
+    memory&quot; error. Setting a runtime&#39;s memory limit to -1 means that the runtime has no memory
+    limit. New runtimes  default to having no memory limit. If the new memory limit exceeds
+    current usage, the call will succeed and any future allocations in this runtime will fail
+    until the runtime&#39;s memory usage drops below the limit.
+    </para>
+    <para>
+    A runtime&#39;s memory limit can be always be set, regardless of whether or not the runtime is
+    active on another thread.
+    </para>
+</remarks>
+<param name="runtime">The runtime whose memory limit is to be set.</param>
+<param name="memoryLimit">
+    The new runtime memory limit, in bytes, or -1 for no memory limit.
+</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsStrictEquals.html"
+                                  title='fn chakracore_sys::JsStrictEquals'>JsStrictEquals</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Compare two JavaScript values for strict equality.
+</summary>
+<remarks>
+    <para>
+    This function is equivalent to the <c>===</c> operator in Javascript.
+    </para>
+    <para>
+    Requires an active script context.
+    </para>
+</remarks>
+<param name="object1">The first object to compare.</param>
+<param name="object2">The second object to compare.</param>
+<param name="result">Whether the values are strictly equal.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDCheckAndAssertIfTTDRunning.html"
+                                  title='fn chakracore_sys::JsTTDCheckAndAssertIfTTDRunning'>JsTTDCheckAndAssertIfTTDRunning</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    A check for unimplmented TTD actions in the host.
+    This API is a TEMPORARY API while we complete the implementation of TTD support in the Node host and will be deleted once that is complete.
+</summary>
+<param name="msg">The message to print if we should be catching this as a TTD operation.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDCreateContext.html"
+                                  title='fn chakracore_sys::JsTTDCreateContext'>JsTTDCreateContext</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Creates a script context that takes the TTD mode from the log or explicitly is not in TTD mode (regular takes mode from currently active script).
+</summary>
+<param name="runtime">The runtime the script context is being created in.</param>
+<param name="useRuntimeTTDMode">Set to true to use runtime TTD mode false to explicitly be non-TTD context.</param>
+<param name="newContext">The created script context.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDCreateRecordRuntime.html"
+                                  title='fn chakracore_sys::JsTTDCreateRecordRuntime'>JsTTDCreateRecordRuntime</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Creates a new runtime in Record Mode.
+</summary>
+<param name="attributes">The attributes of the runtime to be created.</param>
+<param name="snapInterval">The interval to wait between snapshots (measured in millis).</param>
+<param name="snapHistoryLength">The amount of history to maintain before discarding -- measured in number of snapshots and controls how far back in time a trace can be reversed.</param>
+<param name="openResourceStream">The <c>TTDOpenResourceStreamCallback</c> function for generating a JsTTDStreamHandle to read/write serialized data.</param>
+<param name="writeBytesToStream">The <c>JsTTDWriteBytesToStreamCallback</c> function for writing bytes to a JsTTDStreamHandle.</param>
+<param name="flushAndCloseStream">The <c>JsTTDFlushAndCloseStreamCallback</c> function for flushing and closing a JsTTDStreamHandle as needed.</param>
+<param name="threadService">The thread service for the runtime. Can be null.</param>
+<param name="runtime">The runtime created.</param>
+<remarks>
+    <para>See <c>JsCreateRuntime</c> for additional information.</para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDCreateReplayRuntime.html"
+                                  title='fn chakracore_sys::JsTTDCreateReplayRuntime'>JsTTDCreateReplayRuntime</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Creates a new runtime in Debug Mode.
+</summary>
+<param name="attributes">The attributes of the runtime to be created.</param>
+<param name="infoUri">The uri where the recorded Time-Travel data should be loaded from.</param>
+<param name="enableDebugging">A flag to enable addtional debugging operation support during replay.</param>
+<param name="openResourceStream">The <c>TTDOpenResourceStreamCallback</c> function for generating a JsTTDStreamHandle to read/write serialized data.</param>
+<param name="readBytesFromStream">The <c>JsTTDReadBytesFromStreamCallback</c> function for reading bytes from a JsTTDStreamHandle.</param>
+<param name="flushAndCloseStream">The <c>JsTTDFlushAndCloseStreamCallback</c> function for flushing and closing a JsTTDStreamHandle as needed.</param>
+<param name="threadService">The thread service for the runtime. Can be null.</param>
+<param name="runtime">The runtime created.</param>
+<remarks>
+    <para>See <c>JsCreateRuntime</c> for additional information.</para>
+</remarks>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDGetPreviousSnapshotInterval.html"
+                                  title='fn chakracore_sys::JsTTDGetPreviousSnapshotInterval'>JsTTDGetPreviousSnapshotInterval</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Get the snapshot interval that precedes the one given by currentSnapStartTime (or -1 if there is no such interval).
+</summary>
+<param name="runtimeHandle">The runtime handle that the script is executing in.</param>
+<param name="currentSnapStartTime">The current snapshot interval start time.</param>
+<param name="previousSnapTime">The resulting previous snapshot interval start time or -1 if no such time.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDGetSnapShotBoundInterval.html"
+                                  title='fn chakracore_sys::JsTTDGetSnapShotBoundInterval'>JsTTDGetSnapShotBoundInterval</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Get the snapshot interval that bounds the target event time.
+</summary>
+<param name="runtimeHandle">The runtime handle that the script is executing in.</param>
+<param name="targetEventTime">The event time we want to get the interval for.</param>
+<param name="startSnapTime">The snapshot time that comes before the desired event.</param>
+<param name="endSnapTime">The snapshot time that comes after the desired event (-1 if the leg ends before a snapshot appears).</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDGetSnapTimeTopLevelEventMove.html"
+                                  title='fn chakracore_sys::JsTTDGetSnapTimeTopLevelEventMove'>JsTTDGetSnapTimeTopLevelEventMove</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Before calling JsTTDMoveToTopLevelEvent (which inflates a snapshot and replays) check to see if we want to reset the script context.
+    We reset the script context if the move will require inflating from a different snapshot that the last one.
+</summary>
+<param name="runtimeHandle">The runtime handle that the script is executing in.</param>
+<param name="moveMode">Flags controlling the way the move it performed and how other parameters are interpreted.</param>
+<param name="kthEvent">When <c>moveMode == JsTTDMoveKthEvent</c> indicates which event, otherwise this parameter is ignored.</param>
+<param name="targetEventTime">The event time we want to move to or -1 if not relevant.</param>
+<param name="targetStartSnapTime">Out parameter with the event time of the snapshot that we should inflate from.</param>
+<param name="targetEndSnapTime">Optional Out parameter with the snapshot time following the event.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDHostExit.html"
+                                  title='fn chakracore_sys::JsTTDHostExit'>JsTTDHostExit</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the Js runtime the host is aborting the process and what the status code is.
+</summary>
+<param name="statusCode">The exit status code.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDMoveToTopLevelEvent.html"
+                                  title='fn chakracore_sys::JsTTDMoveToTopLevelEvent'>JsTTDMoveToTopLevelEvent</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Move to the given top-level call event time (assuming JsTTDPrepContextsForTopLevelEventMove) was called previously to reset any script contexts.
+    This also computes the ready-to-run snapshot if needed.
+</summary>
+<param name="runtimeHandle">The runtime handle that the script is executing in.</param>
+<param name="moveMode">Additional flags for controling how the move is done.</param>
+<param name="snapshotTime">The event time that we will start executing from to move to the given target time.</param>
+<param name="eventTime">The event that we want to move to.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDNotifyContextDestroy.html"
+                                  title='fn chakracore_sys::JsTTDNotifyContextDestroy'>JsTTDNotifyContextDestroy</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the time-travel system that a context has been identified as dead by the gc (and is being de-allocated).
+</summary>
+<param name="context">The script context that is now dead.</param>
+<returns>
+    The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDNotifyLongLivedReferenceAdd.html"
+                                  title='fn chakracore_sys::JsTTDNotifyLongLivedReferenceAdd'>JsTTDNotifyLongLivedReferenceAdd</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the TTD runtime that we are doing a weak add on a reference (we may use this in external API calls and the release will happen in a GC callback).
+</summary>
+<param name="value">The value we are adding the ref to.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDNotifyYield.html"
+                                  title='fn chakracore_sys::JsTTDNotifyYield'>JsTTDNotifyYield</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the Js runtime we are at a safe yield point in the event loop (i.e. no locals on the stack and we can proccess as desired).
+</summary>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDPauseTimeTravelBeforeRuntimeOperation.html"
+                                  title='fn chakracore_sys::JsTTDPauseTimeTravelBeforeRuntimeOperation'>JsTTDPauseTimeTravelBeforeRuntimeOperation</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Pause Time-Travel recording before executing code on behalf of debugger or other diagnostic/telemetry.
+</summary>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDPreExecuteSnapShotInterval.html"
+                                  title='fn chakracore_sys::JsTTDPreExecuteSnapShotInterval'>JsTTDPreExecuteSnapShotInterval</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><param name="moveMode">Additional flags for controling how the move is done.</param>
+<param name="newTargetEventTime">The updated target event time set according to the moveMode (-1 if not found).</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDRawBufferAsyncModificationRegister.html"
+                                  title='fn chakracore_sys::JsTTDRawBufferAsyncModificationRegister'>JsTTDRawBufferAsyncModificationRegister</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Get info for notifying the TTD system that a raw buffer it shares with the host has been modified.
+</summary>
+<param name="instance">The array buffer we want to monitor for contents modification.</param>
+<param name="initialModPos">The first position in the buffer that may be modified.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDRawBufferAsyncModifyComplete.html"
+                                  title='fn chakracore_sys::JsTTDRawBufferAsyncModifyComplete'>JsTTDRawBufferAsyncModifyComplete</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the event log that the contents of a naked byte* buffer passed to the host have been modified asynchronously.
+</summary>
+<param name="finalModPos">One past the last modified position in the buffer.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDRawBufferCopySyncIndirect.html"
+                                  title='fn chakracore_sys::JsTTDRawBufferCopySyncIndirect'>JsTTDRawBufferCopySyncIndirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the event log that the contents of one buffer have been copied to a second buffer.
+</summary>
+<param name="dst">The buffer that was written into.</param>
+<param name="dstIndex">The first index modified.</param>
+<param name="src">The buffer that was copied from.</param>
+<param name="srcIndex">The first index copied.</param>
+<param name="count">The number of bytes copied.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDRawBufferModifySyncIndirect.html"
+                                  title='fn chakracore_sys::JsTTDRawBufferModifySyncIndirect'>JsTTDRawBufferModifySyncIndirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Notify the event log that the contents of a naked byte* buffer passed to the host have been modified synchronously.
+</summary>
+<param name="buffer">The buffer that was modified.</param>
+<param name="index">The first index modified.</param>
+<param name="count">The number of bytes written.</param>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDReStartTimeTravelAfterRuntimeOperation.html"
+                                  title='fn chakracore_sys::JsTTDReStartTimeTravelAfterRuntimeOperation'>JsTTDReStartTimeTravelAfterRuntimeOperation</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    ReStart Time-Travel recording after executing code on behalf of debugger or other diagnostic/telemetry.
+</summary>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDReplayExecution.html"
+                                  title='fn chakracore_sys::JsTTDReplayExecution'>JsTTDReplayExecution</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Execute from the current point in the log to the end returning the error code.
+</summary>
+<param name="moveMode">Additional flags for controling how the move is done.</param>
+<param name="rootEventTime">The event time that we should move to next or notification (-1) that replay has ended.</param>
+<returns>
+    If the debugger requested an abort the code is JsNoError -- rootEventTime is the target event time we need to move to and re - execute from.
+    If we aborted at the end of the replay log the code is JsNoError -- rootEventTime is -1.
+    If there was an unhandled script exception the code is JsErrorCategoryScript.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDStart.html"
+                                  title='fn chakracore_sys::JsTTDStart'>JsTTDStart</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Start Time-Travel record or replay at next turn of event loop.
+</summary>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.JsTTDStop.html"
+                                  title='fn chakracore_sys::JsTTDStop'>JsTTDStop</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Stop Time-Travel record or replay.
+</summary>
+<returns>The code <c>JsNoError</c> if the operation succeeded, a failure code otherwise.</returns></p>
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.BYTE.html"
+                                  title='type chakracore_sys::BYTE'>BYTE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.ChakraBytePtr.html"
+                                  title='type chakracore_sys::ChakraBytePtr'>ChakraBytePtr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.ChakraCookie.html"
+                                  title='type chakracore_sys::ChakraCookie'>ChakraCookie</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsBackgroundWorkItemCallback.html"
+                                  title='type chakracore_sys::JsBackgroundWorkItemCallback'>JsBackgroundWorkItemCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A background work item callback.
+</summary>
+<remarks>
+    This is passed to the host&#39;s thread service (if provided) to allow the host to
+    invoke the work item callback on the background thread of its choice.
+</remarks>
+<param name="callbackState">Data argument passed to the thread service.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsBeforeCollectCallback.html"
+                                  title='type chakracore_sys::JsBeforeCollectCallback'>JsBeforeCollectCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A callback called before collection.
+</summary>
+<remarks>
+    Use <c>JsSetBeforeCollectCallback</c> to register this callback.
+</remarks>
+<param name="callbackState">The state passed to <c>JsSetBeforeCollectCallback</c>.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsContextRef.html"
+                                  title='type chakracore_sys::JsContextRef'>JsContextRef</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A reference to a script context.
+</summary>
+<remarks>
+    <para>
+    Each script context contains its own global object, distinct from the global object in
+    other script contexts.
+    </para>
+    <para>
+    Many Chakra hosting APIs require an &quot;active&quot; script context, which can be set using
+    <c>JsSetCurrentContext</c>. Chakra hosting APIs that require a current context to be set
+    will note that explicitly in their documentation.
+    </para>
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsDiagDebugEventCallback.html"
+                                  title='type chakracore_sys::JsDiagDebugEventCallback'>JsDiagDebugEventCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    User implemented callback routine for debug events.
+</summary>
+<remarks>
+    Use <c>JsDiagStartDebugging</c> to register the callback.
+</remarks>
+<param name="debugEvent">The type of JsDiagDebugEvent event.</param>
+<param name="eventData">Additional data related to the debug event.</param>
+<param name="callbackState">The state passed to <c>JsDiagStartDebugging</c>.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsFinalizeCallback.html"
+                                  title='type chakracore_sys::JsFinalizeCallback'>JsFinalizeCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A finalizer callback.
+</summary>
+<param name="data">
+    The external data that was passed in when creating the object being finalized.
+</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsMemoryAllocationCallback.html"
+                                  title='type chakracore_sys::JsMemoryAllocationCallback'>JsMemoryAllocationCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    User implemented callback routine for memory allocation events
+</summary>
+<remarks>
+    Use <c>JsSetRuntimeMemoryAllocationCallback</c> to register this callback.
+</remarks>
+<param name="callbackState">
+    The state passed to <c>JsSetRuntimeMemoryAllocationCallback</c>.
+</param>
+<param name="allocationEvent">The type of type allocation event.</param>
+<param name="allocationSize">The size of the allocation.</param>
+<returns>
+    For the <c>JsMemoryAllocate</c> event, returning <c>true</c> allows the runtime to continue
+    with the allocation. Returning false indicates the allocation request is rejected. The
+    return value is ignored for other allocation events.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsNativeFunction.html"
+                                  title='type chakracore_sys::JsNativeFunction'>JsNativeFunction</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A function callback.
+</summary>
+<param name="callee">
+    A function object that represents the function being invoked.
+</param>
+<param name="isConstructCall">Indicates whether this is a regular call or a &#39;new&#39; call.</param>
+<param name="arguments">The arguments to the call.</param>
+<param name="argumentCount">The number of arguments.</param>
+<param name="callbackState">
+    The state passed to <c>JsCreateFunction</c>.
+</param>
+<returns>The result of the call, if any.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsObjectBeforeCollectCallback.html"
+                                  title='type chakracore_sys::JsObjectBeforeCollectCallback'>JsObjectBeforeCollectCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A callback called before collecting an object.
+</summary>
+<remarks>
+    Use <c>JsSetObjectBeforeCollectCallback</c> to register this callback.
+</remarks>
+<param name="ref">The object to be collected.</param>
+<param name="callbackState">The state passed to <c>JsSetObjectBeforeCollectCallback</c>.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsPromiseContinuationCallback.html"
+                                  title='type chakracore_sys::JsPromiseContinuationCallback'>JsPromiseContinuationCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A promise continuation callback.
+</summary>
+<remarks>
+    The host can specify a promise continuation callback in <c>JsSetPromiseContinuationCallback</c>. If
+    a script creates a task to be run later, then the promise continuation callback will be called with
+    the task and the task should be put in a FIFO queue, to be run when the current script is
+    done executing.
+</remarks>
+<param name="task">The task, represented as a JavaScript function.</param>
+<param name="callbackState">The data argument to be passed to the callback.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsPropertyIdRef.html"
+                                  title='type chakracore_sys::JsPropertyIdRef'>JsPropertyIdRef</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A property identifier.
+</summary>
+<remarks>
+    Property identifiers are used to refer to properties of JavaScript objects instead of using
+    strings.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsSerializedLoadScriptCallback.html"
+                                  title='type chakracore_sys::JsSerializedLoadScriptCallback'>JsSerializedLoadScriptCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Called by the runtime to load the source code of the serialized script.
+</summary>
+<param name="sourceContext">The context passed to Js[Parse|Run]SerializedScriptCallback</param>
+<param name="script">The script returned.</param>
+<returns>
+    true if the operation succeeded, false otherwise.
+</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsSerializedScriptUnloadCallback.html"
+                                  title='type chakracore_sys::JsSerializedScriptUnloadCallback'>JsSerializedScriptUnloadCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    Called by the runtime when it is finished with all resources related to the script execution.
+    The caller should free the source if loaded, the byte code, and the context at this time.
+</summary>
+<param name="sourceContext">The context passed to Js[Parse|Run]SerializedScriptWithCallback</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsSourceContext.html"
+                                  title='type chakracore_sys::JsSourceContext'>JsSourceContext</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A cookie that identifies a script for debugging purposes.
+</summary></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsTTDFlushAndCloseStreamCallback.html"
+                                  title='type chakracore_sys::JsTTDFlushAndCloseStreamCallback'>JsTTDFlushAndCloseStreamCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Flush and close the stream represented by the HANDLE as needed.
+</summary>
+<remarks>
+    <para>Exactly one of read or write will be set to true.</para>
+</remarks>
+<param name="handle">The JsTTDStreamHandle to close.</param>
+<param name="read">If the handle was opened for reading.</param>
+<param name="write">If the handle was opened for writing.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsTTDReadBytesFromStreamCallback.html"
+                                  title='type chakracore_sys::JsTTDReadBytesFromStreamCallback'>JsTTDReadBytesFromStreamCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    A callback for reading data from a handle.
+</summary>
+<param name="handle">The JsTTDStreamHandle to read the data from.</param>
+<param name="buff">The buffer to place the data into.</param>
+<param name="size">The max number of bytes that should be read.</param>
+<param name="readCount">The actual number of bytes read and placed in the buffer.</param>
+<returns>true if the read was successful false otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsTTDWriteBytesToStreamCallback.html"
+                                  title='type chakracore_sys::JsTTDWriteBytesToStreamCallback'>JsTTDWriteBytesToStreamCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    A callback for writing data to a handle.
+</summary>
+<param name="handle">The JsTTDStreamHandle to write the data to.</param>
+<param name="buff">The buffer to copy the data from.</param>
+<param name="size">The max number of bytes that should be written.</param>
+<param name="readCount">The actual number of bytes written to the HANDLE.</param>
+<returns>true if the write was successful false otherwise.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsThreadServiceCallback.html"
+                                  title='type chakracore_sys::JsThreadServiceCallback'>JsThreadServiceCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A thread service callback.
+</summary>
+<remarks>
+    The host can specify a background thread service when calling <c>JsCreateRuntime</c>. If
+    specified, then background work items will be passed to the host using this callback. The
+    host is expected to either begin executing the background work item immediately and return
+    true or return false and the runtime will handle the work item in-thread.
+</remarks>
+<param name="callback">The callback for the background work item.</param>
+<param name="callbackState">The data argument to be passed to the callback.</param></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsValueRef.html"
+                                  title='type chakracore_sys::JsValueRef'>JsValueRef</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A reference to a JavaScript value.
+</summary>
+<remarks>
+    A JavaScript value is one of the following types of values: undefined, null, Boolean,
+    string, number, or object.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.JsWeakRef.html"
+                                  title='type chakracore_sys::JsWeakRef'>JsWeakRef</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    A weak reference to a JavaScript value.
+</summary>
+<remarks>
+    A value with only weak references is available for garbage-collection. A strong reference
+    to the value (<c>JsValueRef</c>) may be obtained from a weak reference if the value happens
+    to still be available.
+</remarks></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.TTDOpenResourceStreamCallback.html"
+                                  title='type chakracore_sys::TTDOpenResourceStreamCallback'>TTDOpenResourceStreamCallback</a></td>
+                           <td class='docblock-short'>
+                                <p><summary>
+    TTD API -- may change in future versions:
+    Construct a JsTTDStreamHandle that will be used to read/write the event log portion of the TTD data based on the uri
+    provided by JsTTDInitializeUriCallback.
+</summary>
+<remarks>
+    <para>Exactly one of read or write will be set to true.</para>
+</remarks>
+<param name="uriLength">The length of the uri array that the host passed in for storing log info.</param>
+<param name="uri">The URI that the host passed in for storing log info.</param>
+<param name="asciiNameLength">The length of the ascii name array that the host passed in for storing log info.</param>
+<param name="asciiResourceName">An optional ascii string giving a unique name to the resource that the JsTTDStreamHandle will be created for.</param>
+<param name="read">If the handle should be opened for reading.</param>
+<param name="write">If the handle should be opened for writing.</param>
+<returns>A JsTTDStreamHandle opened in read/write mode as specified.</returns></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.byte.html"
+                                  title='type chakracore_sys::byte'>byte</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "chakracore_sys";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

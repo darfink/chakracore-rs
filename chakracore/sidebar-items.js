@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["context","Execution contexts and sandboxing."],["error","Error types and utilities."],["runtime","Runtime and builder."],["script","Functionality for executing and parsing JavaScript."],["value","Javascript values that user code can interact with."]],"struct":[["Property","A property identifier used with objects."]]});

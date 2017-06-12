@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Builder","A builder for the runtime type."],["Runtime","An isolated instance of a runtime."]],"type":[["CollectCallback","A callback triggered before objects are collected."]]});
