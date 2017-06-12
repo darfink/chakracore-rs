@@ -19,8 +19,8 @@ macro_rules! jsassert {
     };
 }
 
-/// Implements JSRT reference counting for a type.
-macro_rules! reference {
+/// Shared base reference implementation.
+macro_rules! reference_base {
     ($typ:ident) => {
         impl $typ {
             /// Creates an instance from a raw pointer.
@@ -38,54 +38,27 @@ macro_rules! reference {
         }
 
         impl Clone for $typ {
+            /// Duplicates a reference counted type.
+            ///
+            /// The underlying pointer will be copied, and its reference count
+            /// will be incremented, returned wrapped as the type.
             fn clone(&self) -> $typ {
                 unsafe { $typ::from_raw(self.as_raw()) }
             }
         }
+    }
+}
+
+/// Implements JSRT reference counting for a non-value type.
+macro_rules! reference {
+    ($typ:ident) => {
+        reference_base!($typ);
 
         impl Drop for $typ {
-            /// Decrements the reference's counter.
+            /// Decrements the reference counter.
             fn drop(&mut self) {
-                let mut count = 0;
-                jsassert!(unsafe { JsRelease(self.as_raw(), &mut count) });
-                debug_assert!(count < ::libc::c_uint::max_value());
+                ::util::release_reference(self.as_raw());
             }
-        }
-    }
-}
-
-/// Implements a relationship between two subtypes.
-macro_rules! subtype {
-    ($child:ident, $parent:ident) => {
-        impl From<$child> for $parent {
-            fn from(child: $child) -> $parent {
-                unsafe { ::std::mem::transmute(child) }
-            }
-        }
-    }
-}
-
-/// Implements an inheritance between two types.
-macro_rules! inherit {
-    ($child:ident, $parent:ident) => {
-        subtype!($child, $parent);
-
-        impl ::std::ops::Deref for $child {
-            type Target = $parent;
-
-            fn deref(&self) -> &Self::Target {
-                unsafe { ::std::mem::transmute(self) }
-            }
-        }
-    }
-}
-
-/// Used for JavaScript value type implementation.
-macro_rules! is_same {
-    ($target:ident, $target_doc:expr) => {
-        #[doc=$target_doc]
-        pub fn is_same(value: &Value) -> bool {
-            value.get_type() == JsValueType::$target
         }
     };
 }

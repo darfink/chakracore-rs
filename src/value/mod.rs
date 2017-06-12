@@ -33,6 +33,9 @@ pub use self::object::Object;
 pub use self::string::String;
 pub use self::value::Value;
 
+#[macro_use]
+mod macros;
+
 // Modules
 pub mod function;
 mod object;

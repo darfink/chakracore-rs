@@ -26,6 +26,13 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
     }
 }
 
+/// Decrements a reference counter and asserts its value.
+pub fn release_reference(reference: JsRef) {
+    let mut count = 0;
+    jsassert!(unsafe { JsRelease(reference, &mut count) });
+    debug_assert!(count < ::libc::c_uint::max_value());
+}
+
 /// Converts a JSRT error code to a result.
 pub fn jstry(code: JsErrorCode) -> Result<()> {
     match code {

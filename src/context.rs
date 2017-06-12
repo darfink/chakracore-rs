@@ -2,10 +2,10 @@
 use std::marker::PhantomData;
 use std::ptr;
 use anymap::AnyMap;
-use error::*;
 use chakracore_sys::*;
-use value;
-use Runtime;
+use error::*;
+use util::jstry;
+use {value, Runtime};
 
 /// Used for holding context instance data.
 struct ContextData {
@@ -20,7 +20,7 @@ struct ContextData {
 /// handled by the runtime. This is not the case with **ChakraCore**. To run
 /// promise chains, `execute_tasks` must be called at a regular interval. This
 /// is done using the `ContextGuard`.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Context(JsContextRef);
 
 // TODO: Should context lifetime explicitly depend on runtime?
@@ -49,11 +49,18 @@ impl Context {
         }
     }
 
-    /// Returns an object's associated context.
-    pub unsafe fn from_object(object: &value::Object) -> Result<Context> {
+    /// Returns a recyclable value's associated context.
+    ///
+    /// This is unreliable, because types that have an associated context is
+    /// implementation defined (by the underlying runtime), based on whether they
+    /// are recyclable or not, therefore it should be avoided.
+    pub fn from_recyclable(object: &value::Value) -> Option<Context> {
         let mut reference = JsContextRef::new();
-        jstry!(JsGetContextOfObject(object.as_raw(), &mut reference));
-        Ok(Self::from_raw(reference))
+        unsafe {
+            jstry(JsGetContextOfObject(object.as_raw(), &mut reference))
+                .ok()
+                .map(|_| Self::from_raw(reference))
+        }
     }
 
     /// Binds the context to the current scope.
@@ -121,8 +128,7 @@ impl Context {
 
     /// Sets the internal data of the context.
     unsafe fn set_data(&self, data: Box<ContextData>) -> Result<()> {
-        jstry!(JsSetContextData(self.as_raw(), Box::into_raw(data) as *mut _));
-        Ok(())
+        jstry(JsSetContextData(self.as_raw(), Box::into_raw(data) as *mut _))
     }
 
     /// Gets the internal data of the context.
@@ -139,19 +145,17 @@ impl Context {
 
     /// Sets the current context.
     fn enter(&self) -> Result<()> {
-        jstry!(unsafe { JsSetCurrentContext(self.as_raw()) });
-        Ok(())
+        jstry(unsafe { JsSetCurrentContext(self.as_raw()) })
     }
 
     /// Unsets the current context.
     fn exit(&self, previous: Option<&Context>) -> Result<()> {
-        jstry!(unsafe {
+        jstry(unsafe {
             let next = previous
                 .map(|context| context.as_raw())
                 .unwrap_or(JsValueRef::new());
             JsSetCurrentContext(next)
-        });
-        Ok(())
+        })
     }
 
     /// A promise handler, triggered whenever a promise method is used.
