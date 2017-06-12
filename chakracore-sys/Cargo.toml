@@ -18,13 +18,10 @@ doctest = false
 libc = "0.2"
 
 [build-dependencies]
+bindgen = "0.25"
+clang-sys = "0.18.0"
 pkg-config = "0.3.8"
-clang-sys = "0.8.0"
-regex = "0.1"
-
-[build-dependencies.bindgen]
-version = "0.21.2"
-features = ["llvm_stable"]
+regex = "0.2"
 
 [features]
 static = []

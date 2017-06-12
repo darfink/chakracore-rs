@@ -257,9 +257,11 @@ mod binding {
         let clang = Clang::find(None).expect("No clang found, is it installed?");
 
         // Some default includes are not found without this (e.g 'stddef.h')
-        let mut builder = clang.c_search_paths.iter().fold(bindgen::builder(), |builder, ref path| {
+        let mut builder = clang.c_search_paths.iter().fold(bindgen::builder(), |builder, paths| {
             // Ensure all potential system paths are searched
-            builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
+            paths.iter().fold(builder, |builder, path| {
+                builder.clang_arg("-idirafter").clang_arg(path.to_str().unwrap())
+            })
         });
 
         if util::has_target("windows") {
@@ -344,7 +346,7 @@ mod binding {
     /// Replaces all occurences with a specified replacement.
     fn regex_replace(source: &mut String, ident: &str, replacement: &str) {
         let regex = Regex::new(ident).expect("Replacement regex has invalid syntax");
-        *source = regex.replace_all(&source, replacement);
+        *source = regex.replace_all(&source, replacement).into();
     }
 
     /// Returns a collection of the first capture group.
@@ -352,7 +354,7 @@ mod binding {
         Regex::new(ident)
             .expect("Find regex has invalid syntax")
             .captures_iter(source)
-            .map(|cap| cap.at(1).unwrap().to_string())
+            .map(|cap| cap[1].to_string())
             .collect()
     }
 }
