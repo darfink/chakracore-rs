@@ -26,6 +26,14 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
     }
 }
 
+/// Converts a JSRT error code to a result.
+pub fn jstry(code: JsErrorCode) -> Result<()> {
+    match code {
+        JsErrorCode::NoError => Ok(()),
+        error @ _ => Err(format!("JSRT call failed with: {:?}", error).into()),
+    }
+}
+
 /// Retrieves and clears any exception thrown during compilation or execution.
 ///
 /// The runtime is set to a disabled state whenever an exception is thrown.

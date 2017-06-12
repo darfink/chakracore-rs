@@ -1,11 +1,6 @@
 /// Equivalent to the normal `try!` macro for JSRT function calls.
 macro_rules! jstry {
-    ($e: expr) => {
-        match $e {
-            ::chakracore_sys::JsErrorCode::NoError => (),
-            error @ _ => return Err(format!("JSRT call failed with: {:?}", error).into()),
-        }
-    }
+    ($e: expr) => { ::util::jstry($e)?; }
 }
 
 /// Asserts the return value of a JSRT function call.
