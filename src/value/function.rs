@@ -1,5 +1,5 @@
 //! A JavaScript function and associated types.
-use std::{slice, mem};
+use std::slice;
 use libc::{c_void, c_ushort};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
@@ -128,7 +128,7 @@ impl Function {
                                        arguments: *mut JsValueRef,
                                        len: c_ushort,
                                        data: *mut c_void)
-                                       -> *mut c_void {
+                                       -> JsRef {
         // This memory is cleaned up during object collection
         let callback = data as *mut Box<FunctionCallback>;
 
@@ -146,10 +146,10 @@ impl Function {
 
         // Call the user supplied callback
         match (*callback)(&guard, info) {
-            Ok(value) => mem::transmute(value.as_raw()),
+            Ok(value) => value.as_raw(),
             Err(error) => {
                 jsassert!(JsSetException(error.as_raw()));
-                mem::transmute(error.as_raw())
+                error.as_raw()
             }
         }
     }
