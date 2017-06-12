@@ -5,7 +5,7 @@ use error::*;
 use chakracore_sys::*;
 
 /// A callback triggered before objects are collected.
-pub type CollectCallback = Fn() + 'static;
+pub type CollectCallback = Fn() + Send;
 
 /// A builder for the runtime type.
 pub struct Builder {
@@ -170,7 +170,9 @@ impl Builder {
 
 #[cfg(test)]
 mod tests {
-    use {test, script};
+    use std::thread;
+    use std::sync::{Arc, Mutex};
+    use {test, script, Runtime, Context};
 
     #[test]
     fn minimal() {
@@ -178,5 +180,33 @@ mod tests {
             let result = script::eval(guard, "5 + 5").unwrap();
             assert_eq!(result.to_integer(guard), 10);
         });
+    }
+
+    #[test]
+    fn collect_callback() {
+        let called = Arc::new(Mutex::new(false));
+        {
+            let called = called.clone();
+            let runtime = Runtime::builder()
+                .collect_callback(Box::new(move || *called.lock().unwrap() = true))
+                .build()
+                .unwrap();
+            runtime.collect().unwrap();
+        }
+        assert!(*called.lock().unwrap());
+    }
+
+    #[test]
+    fn thread_send() {
+        let runtime = Runtime::new().unwrap();
+        thread::spawn(move || {
+            let context = Context::new(&runtime).unwrap();
+            let guard = context.make_current().unwrap();
+            let result = script::eval(&guard, "[5, 'foo', {}]")
+                .unwrap()
+                .into_array()
+                .unwrap();
+            assert_eq!(result.len(&guard), 3);
+        }).join().unwrap();
     }
 }
