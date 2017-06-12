@@ -1,4 +1,6 @@
 # `chakracore-rs`
+[![crates.io version][crate-shield]][crate]
+[![Language (Rust)][rust-shield]][rust]
 
 This is a wrapper around the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1),
 used in [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge)
@@ -73,3 +75,9 @@ fn main() {
   assert_eq!(result.to_integer(&guard), 1337);
 }
 ```
+
+<!-- Links -->
+[crate-shield]: https://img.shields.io/crates/v/chakracore.svg?style=flat-square
+[crate]: https://crates.io/crates/chakracore
+[rust-shield]: https://img.shields.io/badge/powered%20by-rust-blue.svg?style=flat-square
+[rust]: https://www.rust-lang.org
