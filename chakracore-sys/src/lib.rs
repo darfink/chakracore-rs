@@ -6,6 +6,7 @@ extern crate libc;
 include!(concat!(env!("OUT_DIR"), "/ffi.rs"));
 
 unsafe impl Send for JsRuntimeHandle {}
+unsafe impl Send for JsRef {}
 
 #[cfg(test)]
 mod tests {
