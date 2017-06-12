@@ -12,7 +12,7 @@ a more stable library, use the underlying API directly:
 
 ## Documentation
 
-https://docs.rs/chakracore
+[Chakracore - Rust][docs]
 
 ## Installation
 
@@ -81,3 +81,4 @@ fn main() {
 [crate]: https://crates.io/crates/chakracore
 [rust-shield]: https://img.shields.io/badge/powered%20by-rust-blue.svg?style=flat-square
 [rust]: https://www.rust-lang.org
+[docs]: https://darfink.github.io/chakracore-rs/chakracore/index.html
