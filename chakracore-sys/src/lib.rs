@@ -5,6 +5,8 @@ extern crate libc;
 
 include!(concat!(env!("OUT_DIR"), "/ffi.rs"));
 
+unsafe impl Send for JsRuntimeHandle {}
+
 #[cfg(test)]
 mod tests {
     use std::ptr;
