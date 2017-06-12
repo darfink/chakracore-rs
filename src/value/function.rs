@@ -47,11 +47,11 @@ impl Function {
     }
 
     /// Returns whether the object is an instance of this `Function` or not.
-    pub fn instance_of(&self, _guard: &ContextGuard, object: super::Object) -> Result<bool> {
+    pub fn instance_of(&self, _guard: &ContextGuard, object: super::Object) -> bool {
         let mut result = false;
         unsafe {
-            jstry!(JsInstanceOf(object.as_raw(), self.as_raw(), &mut result));
-            Ok(result)
+            jsassert!(JsInstanceOf(object.as_raw(), self.as_raw(), &mut result));
+            result
         }
     }
 
@@ -204,6 +204,26 @@ mod tests {
                 "try { test(); } catch (ex) { ex.message; }").unwrap();
 
             assert_eq!(result.to_string(guard), "Exception");
+        });
+    }
+
+    #[test]
+    fn instance_of() {
+        test::run_with_context(|guard| {
+            let function = value::Function::new(guard, Box::new(move |_, info| {
+                assert!(info.is_construct_call);
+                Ok(info.this)
+            }));
+
+            let global = guard.global();
+            let property = Property::new(guard, "FooBar");
+            global.set(guard, &property, &function);
+
+            let result = script::eval(guard, "new FooBar()")
+                .unwrap()
+                .into_object()
+                .unwrap();
+            assert!(function.instance_of(guard, result));
         });
     }
 }
