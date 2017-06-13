@@ -42,10 +42,10 @@ impl External {
     }
 
     /// Returns the external object's data.
-    pub unsafe fn value<'a, T>(&'a self) -> &'a mut T {
+    pub unsafe fn value<T>(&self) -> &mut T {
         let mut data = ptr::null_mut();
         jsassert!(JsGetExternalData(self.as_raw(), &mut data));
-        (data as *mut T).as_mut().unwrap()
+        (data as *mut T).as_mut().expect("retrieving external data")
     }
 
     /// Returns true if the value is an `External`.

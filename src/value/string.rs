@@ -24,7 +24,7 @@ impl String {
 
     /// Converts a JavaScript string to a native string.
     pub fn value(&self) -> ::std::string::String {
-        ::util::to_string_impl(self.as_raw(), JsCopyString).unwrap()
+        ::util::to_string_impl(self.as_raw(), JsCopyString).expect("converting string to native")
     }
 
     is_same!(String, "Returns true if the value is a `String`.");

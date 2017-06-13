@@ -28,8 +28,8 @@ use std::slice;
 use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
+use util::{self, jstry};
 use value;
-use util;
 
 /// Evaluates code directly.
 pub fn eval(guard: &ContextGuard, code: &str) -> Result<value::Value> {
@@ -52,8 +52,7 @@ pub fn parse(guard: &ContextGuard, code: &str) -> Result<value::Function> {
 /// Parses code and associates it with a name, returns it as a function.
 pub fn parse_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<value::Function> {
     let (code, result) = process_code(guard, name, code, CodeAction::Parse);
-    jstry!(code);
-    Ok(unsafe { value::Function::from_raw(result) })
+    jstry(code).map(|_| unsafe { value::Function::from_raw(result) })
 }
 
 /// Used for processing code.

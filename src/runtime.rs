@@ -3,6 +3,7 @@ use std::time::{Duration, Instant};
 use libc::c_void;
 use error::*;
 use chakracore_sys::*;
+use util::jstry;
 
 /// A callback triggered before objects are collected.
 pub type CollectCallback = Fn() + Send;
@@ -23,8 +24,6 @@ pub struct Runtime {
     last_idle: Option<Instant>,
 }
 
-// TODO: Determine whether JsAddRef & JsRelease should be used
-// TODO: Add support for promises and thread queue
 impl Runtime {
     /// Creates a new runtime.
     pub fn new() -> Result<Runtime> {
@@ -42,8 +41,7 @@ impl Runtime {
 
     /// Performs a full garbage collection.
     pub fn collect(&self) -> Result<()> {
-        jstry!(unsafe { JsCollectGarbage(self.as_raw()) });
-        Ok(())
+        jstry(unsafe { JsCollectGarbage(self.as_raw()) })
     }
 
     /// Runs any idle tasks that are in the queue. The returned duration is the
@@ -199,13 +197,17 @@ mod tests {
     #[test]
     fn thread_send() {
         let runtime = Runtime::new().unwrap();
-        thread::spawn(move || {
-            let context = Context::new(&runtime).unwrap();
+        let context = Context::new(&runtime).unwrap();
+        let result = {
             let guard = context.make_current().unwrap();
-            let result = script::eval(&guard, "[5, 'foo', {}]")
+            script::eval(&guard, "[5, 'foo', {}]")
                 .unwrap()
                 .into_array()
-                .unwrap();
+                .unwrap()
+        };
+
+        thread::spawn(move || {
+            let guard = context.make_current().unwrap();
             assert_eq!(result.len(&guard), 3);
         }).join().unwrap();
     }

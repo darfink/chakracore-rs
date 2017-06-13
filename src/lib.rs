@@ -1,4 +1,23 @@
 #![cfg_attr(feature = "unstable", feature(test))]
+//! A library for interfacing with ChakraCore using the JSRT API.
+//!
+//! This crate provides abstractions over nearly every JSRT API available, in a
+//! thread- and memory-safe implementation.
+//!
+//! ```rust
+//! extern crate chakracore as js;
+//!
+//! fn main() {
+//!   let runtime = js::Runtime::new().unwrap();
+//!   let context = js::Context::new(&runtime).unwrap();
+//!   let guard = context.make_current().unwrap();
+//!
+//!   let result = js::script::eval(&guard, "(5 + 5)").unwrap();
+//!   assert_eq!(result.to_integer(&guard), 10);
+//! }
+//! ```
+//!
+//! *NOTE: During pre-release (0.X.X) stability may vary.*
 
 #[cfg(test)]
 #[macro_use]

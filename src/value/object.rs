@@ -2,8 +2,9 @@ use libc::c_void;
 use chakracore_sys::*;
 use context::ContextGuard;
 use error::*;
-use super::{Value, Array};
+use util::jstry;
 use Property;
+use super::{Value, Array};
 
 /// Callback type for collector.
 type BeforeCollectCallback = Fn(&Value);
@@ -96,10 +97,7 @@ impl Object {
     /// Sets the object's prototype. This will result in an error if it's called
     /// on the context's global object.
     pub fn set_prototype(&self, _guard: &ContextGuard, prototype: &Value) -> Result<()> {
-        unsafe {
-            jstry!(JsSetPrototype(self.as_raw(), prototype.as_raw()));
-            Ok(())
-        }
+        unsafe { jstry(JsSetPrototype(self.as_raw(), prototype.as_raw())) }
     }
 
     /// Returns the object's prototype.

@@ -1,6 +1,7 @@
 use libc::c_void;
 use std::{mem, ptr, slice};
 use chakracore_sys::*;
+use boolinator::Boolinator;
 use context::ContextGuard;
 use super::{Value, Object};
 use Property;
@@ -115,12 +116,10 @@ impl<'a> Iterator for ArrayIter<'a> {
 
     /// Returns the next element in the array.
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.size {
+        (self.index < self.size).as_some_from(|| {
             self.index += 1;
-            Some(self.array.get_index(self.guard, self.index - 1))
-        } else {
-            None
-        }
+            self.array.get_index(self.guard, self.index - 1)
+        })
     }
 }
 
