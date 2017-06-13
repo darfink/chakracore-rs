@@ -135,12 +135,9 @@ impl Context {
     unsafe fn get_data<'a>(&'a self) -> &'a mut ContextData {
         let mut data = ptr::null_mut();
         jsassert!(JsGetContextData(self.as_raw(), &mut data));
-        (data as *mut _).as_mut().unwrap()
-    }
-
-    /// Returns the underlying raw pointer.
-    pub fn as_raw(&self) -> JsContextRef {
-        self.0
+        (data as *mut _)
+            .as_mut()
+            .expect("retrieving context data")
     }
 
     /// Sets the current context.

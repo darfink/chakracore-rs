@@ -209,11 +209,6 @@ impl Value {
         jsassert!(unsafe { JsStrictEquals(self.as_raw(), that.as_raw(), &mut result) });
         result
     }
-
-    /// Returns the underlying raw pointer.
-    pub fn as_raw(&self) -> JsValueRef {
-        self.0
-    }
 }
 
 impl PartialEq for Value {

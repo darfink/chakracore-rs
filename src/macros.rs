@@ -11,7 +11,7 @@ macro_rules! jsassert {
         // In many cases idiomatic code prevents any errors from happening
         // (except for memory resource issues).
         assert!(result == ::chakracore_sys::JsErrorCode::NoError,
-                format!("Call to '{}' failed with: {:?}", $name, result));
+                format!("JSRT call to '{}' failed unexpectedly with: {:?}", $name, result));
     };
 
     ($e: expr) => {
@@ -31,9 +31,17 @@ macro_rules! reference_base {
             ///
             /// This is required to support items stored on the heap, since the
             /// JSRT runtime only observes the stack.
+            ///
+            /// If used in conjunction with a `Property` or any `Value`, it is
+            /// assumed a `Context` is active.
             pub unsafe fn from_raw(value: JsRef) -> $typ {
                 jsassert!(JsAddRef(value, ::std::ptr::null_mut()));
                 $typ(value)
+            }
+
+            /// Returns the underlying raw pointer.
+            pub fn as_raw(&self) -> JsRef {
+                self.0
             }
         }
 

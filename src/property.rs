@@ -21,12 +21,8 @@ impl Property {
 
     /// Converts a JavaScript property to a native string.
     pub fn to_string(&self, _guard: &ContextGuard) -> String {
-        ::util::to_string_impl(self.as_raw(), JsCopyPropertyId).unwrap()
-    }
-
-    /// Returns the underlying raw pointer behind this property.
-    pub fn as_raw(&self) -> JsPropertyIdRef {
-        self.0
+        ::util::to_string_impl(self.as_raw(), JsCopyPropertyId)
+            .expect("converting property to string")
     }
 }
 
