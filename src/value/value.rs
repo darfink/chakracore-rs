@@ -132,6 +132,11 @@ impl Value {
               into_array_buffer,
               "Represent the value as an `ArrayBuffer`. Does not affect the underlying value.",
               ArrayBuffer);
+    downcast!(is_promise,
+              "Returns true if this value is a `Promise`.",
+              into_promise,
+              "Represent the value as a `Promise`. Does not affect the underlying value.",
+              Promise);
 
     // Converts a value to a native type
     nativecast!(to_string,
@@ -163,9 +168,9 @@ impl Value {
     pub fn to_json(&self, guard: &ContextGuard) -> ::error::Result<String> {
         // TODO: Use native functionality when implemented
         let stringify = ::script::eval(guard, "JSON.stringify")
-            .expect("JSON.stringify does not exist")
+            .expect("retrieving JSON.stringify function")
             .into_function()
-            .expect("JSON.stringify is not a function");
+            .expect("converting JSON.stringify to function");
         stringify.call(guard, &[self]).map(|v| v.to_string(guard))
     }
 

@@ -30,6 +30,7 @@ pub use self::external::External;
 pub use self::function::Function;
 pub use self::number::Number;
 pub use self::object::Object;
+pub use self::promise::Promise;
 pub use self::string::String;
 pub use self::value::Value;
 
@@ -38,6 +39,7 @@ mod macros;
 
 // Modules
 pub mod function;
+pub mod promise;
 mod object;
 mod array;
 mod boolean;
