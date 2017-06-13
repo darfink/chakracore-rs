@@ -9,6 +9,7 @@
 
     <title>lib.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -567,530 +568,530 @@
 <span id="523">523</span>
 <span id="524">524</span>
 <span id="525">525</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! This crate provides the `AnyMap` type, a safe and convenient store for one value of each type.</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! This crate provides the `AnyMap` type, a safe and convenient store for one value of each type.</span>
 
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>all</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;bench&quot;</span>, <span class='ident'>test</span>), <span class='ident'>feature</span>(<span class='ident'>test</span>))]</span>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>warn</span>(<span class='ident'>missing_docs</span>, <span class='ident'>unused_results</span>)]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">cfg_attr</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bench&quot;</span>, <span class="ident">test</span>), <span class="ident">feature</span>(<span class="ident">test</span>))]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">warn</span>(<span class="ident">missing_docs</span>, <span class="ident">unused_results</span>)]</span>
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>all</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;bench&quot;</span>, <span class='ident'>test</span>))]</span>
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>test</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bench&quot;</span>, <span class="ident">test</span>))]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">test</span>;
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>any</span>::<span class='ident'>TypeId</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>::<span class='ident'>PhantomData</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">TypeId</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 
-<span class='kw'>use</span> <span class='ident'>raw</span>::<span class='ident'>RawMap</span>;
-<span class='kw'>use</span> <span class='ident'>any</span>::{<span class='ident'>UncheckedAnyExt</span>, <span class='ident'>IntoBox</span>, <span class='ident'>Any</span>};
+<span class="kw">use</span> <span class="ident">raw</span>::<span class="ident">RawMap</span>;
+<span class="kw">use</span> <span class="ident">any</span>::{<span class="ident">UncheckedAnyExt</span>, <span class="ident">IntoBox</span>, <span class="ident">Any</span>};
 
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>impl_common_methods</span> {
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_common_methods</span> {
     (
-        <span class='ident'>field</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ident</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>:<span class='ident'>ident</span>;
-        <span class='ident'>new</span>() <span class='op'>=&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>new</span>:<span class='ident'>expr</span>;
-        <span class='ident'>with_capacity</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>with_capacity_arg</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>with_capacity</span>:<span class='ident'>expr</span>;
-    ) <span class='op'>=&gt;</span> {
-        <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-            <span class='doccomment'>/// Create an empty collection.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span> {
-                    <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>new</span>,
+        <span class="ident">field</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>:<span class="ident">ident</span>;
+        <span class="ident">new</span>() <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">new</span>:<span class="ident">expr</span>;
+        <span class="ident">with_capacity</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_capacity_arg</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_capacity</span>:<span class="ident">expr</span>;
+    ) <span class="op">=&gt;</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+            <span class="doccomment">/// Create an empty collection.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">new</span>,
                 }
             }
 
-            <span class='doccomment'>/// Creates an empty collection with the given initial capacity.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>with_capacity_arg</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-                <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span> {
-                    <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>with_capacity</span>,
+            <span class="doccomment">/// Creates an empty collection with the given initial capacity.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_capacity</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_capacity_arg</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_capacity</span>,
                 }
             }
 
-            <span class='doccomment'>/// Returns the number of elements the collection can hold without reallocating.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>capacity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>capacity</span>()
+            <span class="doccomment">/// Returns the number of elements the collection can hold without reallocating.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">capacity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">capacity</span>()
             }
 
-            <span class='doccomment'>/// Reserves capacity for at least `additional` more elements to be inserted</span>
-            <span class='doccomment'>/// in the collection. The collection may reserve more space to avoid</span>
-            <span class='doccomment'>/// frequent reallocations.</span>
-            <span class='doccomment'>///</span>
-            <span class='doccomment'>/// # Panics</span>
-            <span class='doccomment'>///</span>
-            <span class='doccomment'>/// Panics if the new allocation size overflows `usize`.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reserve</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>additional</span>: <span class='ident'>usize</span>) {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>reserve</span>(<span class='ident'>additional</span>)
+            <span class="doccomment">/// Reserves capacity for at least `additional` more elements to be inserted</span>
+            <span class="doccomment">/// in the collection. The collection may reserve more space to avoid</span>
+            <span class="doccomment">/// frequent reallocations.</span>
+            <span class="doccomment">///</span>
+            <span class="doccomment">/// # Panics</span>
+            <span class="doccomment">///</span>
+            <span class="doccomment">/// Panics if the new allocation size overflows `usize`.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reserve</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">additional</span>: <span class="ident">usize</span>) {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">reserve</span>(<span class="ident">additional</span>)
             }
 
-            <span class='doccomment'>/// Shrinks the capacity of the collection as much as possible. It will drop</span>
-            <span class='doccomment'>/// down as much as possible while maintaining the internal rules</span>
-            <span class='doccomment'>/// and possibly leaving some space in accordance with the resize policy.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>shrink_to_fit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>shrink_to_fit</span>()
+            <span class="doccomment">/// Shrinks the capacity of the collection as much as possible. It will drop</span>
+            <span class="doccomment">/// down as much as possible while maintaining the internal rules</span>
+            <span class="doccomment">/// and possibly leaving some space in accordance with the resize policy.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shrink_to_fit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">shrink_to_fit</span>()
             }
 
-            <span class='doccomment'>/// Returns the number of items in the collection.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>len</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>len</span>()
+            <span class="doccomment">/// Returns the number of items in the collection.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">len</span>()
             }
 
-            <span class='doccomment'>/// Returns true if there are no items in the collection.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_empty</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>is_empty</span>()
+            <span class="doccomment">/// Returns true if there are no items in the collection.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">is_empty</span>()
             }
 
-            <span class='doccomment'>/// Removes all items from the collection. Keeps the allocated memory for reuse.</span>
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>clear</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
-                <span class='self'>self</span>.<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field</span>.<span class='ident'>clear</span>()
+            <span class="doccomment">/// Removes all items from the collection. Keeps the allocated memory for reuse.</span>
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+                <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>.<span class="ident">clear</span>()
             }
         }
     }
 }
 
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>any</span>;
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>raw</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">any</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">raw</span>;
 
-<span class='doccomment'>/// A collection containing zero or one values for any given type and allowing convenient,</span>
-<span class='doccomment'>/// type-safe access to those values.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// The type parameter `A` allows you to use a different value type; normally you will want it to</span>
-<span class='doccomment'>/// be `anymap::any::Any`, but there are other choices:</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// - If you want the entire map to be cloneable, use `CloneAny` instead of `Any`.</span>
-<span class='doccomment'>/// - You can add on `+ Send` and/or `+ Sync` (e.g. `Map&lt;Any + Send&gt;`) to add those bounds.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
-<span class='doccomment'>/// # use anymap::AnyMap;</span>
-<span class='doccomment'>/// let mut data = AnyMap::new();</span>
-<span class='doccomment'>/// assert_eq!(data.get(), None::&lt;&amp;i32&gt;);</span>
-<span class='doccomment'>/// data.insert(42i32);</span>
-<span class='doccomment'>/// assert_eq!(data.get(), Some(&amp;42i32));</span>
-<span class='doccomment'>/// data.remove::&lt;i32&gt;();</span>
-<span class='doccomment'>/// assert_eq!(data.get::&lt;i32&gt;(), None);</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// #[derive(Clone, PartialEq, Debug)]</span>
-<span class='doccomment'>/// struct Foo {</span>
-<span class='doccomment'>///     str: String,</span>
-<span class='doccomment'>/// }</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// assert_eq!(data.get::&lt;Foo&gt;(), None);</span>
-<span class='doccomment'>/// data.insert(Foo { str: format!(&quot;foo&quot;) });</span>
-<span class='doccomment'>/// assert_eq!(data.get(), Some(&amp;Foo { str: format!(&quot;foo&quot;) }));</span>
-<span class='doccomment'>/// data.get_mut::&lt;Foo&gt;().map(|foo| foo.str.push(&#39;t&#39;));</span>
-<span class='doccomment'>/// assert_eq!(&amp;*data.get::&lt;Foo&gt;().unwrap().str, &quot;foot&quot;);</span>
-<span class='doccomment'>/// ```</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Values containing non-static references are not permitted.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span> <span class='op'>=</span> <span class='ident'>Any</span><span class='op'>&gt;</span> {
-    <span class='ident'>raw</span>: <span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// A collection containing zero or one values for any given type and allowing convenient,</span>
+<span class="doccomment">/// type-safe access to those values.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The type parameter `A` allows you to use a different value type; normally you will want it to</span>
+<span class="doccomment">/// be `anymap::any::Any`, but there are other choices:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - If you want the entire map to be cloneable, use `CloneAny` instead of `Any`.</span>
+<span class="doccomment">/// - You can add on `+ Send` and/or `+ Sync` (e.g. `Map&lt;Any + Send&gt;`) to add those bounds.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```rust</span>
+<span class="doccomment">/// # use anymap::AnyMap;</span>
+<span class="doccomment">/// let mut data = AnyMap::new();</span>
+<span class="doccomment">/// assert_eq!(data.get(), None::&lt;&amp;i32&gt;);</span>
+<span class="doccomment">/// data.insert(42i32);</span>
+<span class="doccomment">/// assert_eq!(data.get(), Some(&amp;42i32));</span>
+<span class="doccomment">/// data.remove::&lt;i32&gt;();</span>
+<span class="doccomment">/// assert_eq!(data.get::&lt;i32&gt;(), None);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// #[derive(Clone, PartialEq, Debug)]</span>
+<span class="doccomment">/// struct Foo {</span>
+<span class="doccomment">///     str: String,</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(data.get::&lt;Foo&gt;(), None);</span>
+<span class="doccomment">/// data.insert(Foo { str: format!(&quot;foo&quot;) });</span>
+<span class="doccomment">/// assert_eq!(data.get(), Some(&amp;Foo { str: format!(&quot;foo&quot;) }));</span>
+<span class="doccomment">/// data.get_mut::&lt;Foo&gt;().map(|foo| foo.str.push(&#39;t&#39;));</span>
+<span class="doccomment">/// assert_eq!(&amp;*data.get::&lt;Foo&gt;().unwrap().str, &quot;foot&quot;);</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Values containing non-static references are not permitted.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span> <span class="op">=</span> <span class="ident">Any</span><span class="op">&gt;</span> {
+    <span class="ident">raw</span>: <span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>,
 }
 
-<span class='comment'>// #[derive(Clone)] would want A to implement Clone, but in reality it’s only Box&lt;A&gt; that can.</span>
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>: <span class='ident'>Clone</span> {
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-        <span class='ident'>Map</span> {
-            <span class='ident'>raw</span>: <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>clone</span>(),
+<span class="comment">// #[derive(Clone)] would want A to implement Clone, but in reality it’s only Box&lt;A&gt; that can.</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>: <span class="ident">Clone</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+        <span class="ident">Map</span> {
+            <span class="ident">raw</span>: <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">clone</span>(),
         }
     }
 }
 
-<span class='doccomment'>/// The most common type of `Map`: just using `Any`.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Why is this a separate type alias rather than a default value for `Map&lt;A&gt;`? `Map::new()`</span>
-<span class='doccomment'>/// doesn’t seem to be happy to infer that it should go with the default value.</span>
-<span class='doccomment'>/// It’s a bit sad, really. Ah well, I guess this approach will do.</span>
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>AnyMap</span> <span class='op'>=</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span><span class='op'>&gt;</span>;
+<span class="doccomment">/// The most common type of `Map`: just using `Any`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Why is this a separate type alias rather than a default value for `Map&lt;A&gt;`? `Map::new()`</span>
+<span class="doccomment">/// doesn’t seem to be happy to infer that it should go with the default value.</span>
+<span class="doccomment">/// It’s a bit sad, really. Ah well, I guess this approach will do.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">AnyMap</span> <span class="op">=</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span><span class="op">&gt;</span>;
 
-<span class='macro'>impl_common_methods</span><span class='macro'>!</span> {
-    <span class='ident'>field</span>: <span class='ident'>Map</span>.<span class='ident'>raw</span>;
-    <span class='ident'>new</span>() <span class='op'>=&gt;</span> <span class='ident'>RawMap</span>::<span class='ident'>new</span>();
-    <span class='ident'>with_capacity</span>(<span class='ident'>capacity</span>) <span class='op'>=&gt;</span> <span class='ident'>RawMap</span>::<span class='ident'>with_capacity</span>(<span class='ident'>capacity</span>);
+<span class="macro">impl_common_methods</span><span class="macro">!</span> {
+    <span class="ident">field</span>: <span class="ident">Map</span>.<span class="ident">raw</span>;
+    <span class="ident">new</span>() <span class="op">=&gt;</span> <span class="ident">RawMap</span>::<span class="ident">new</span>();
+    <span class="ident">with_capacity</span>(<span class="ident">capacity</span>) <span class="op">=&gt;</span> <span class="ident">RawMap</span>::<span class="ident">with_capacity</span>(<span class="ident">capacity</span>);
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Returns a reference to the value stored in the collection for the type `T`, if it exists.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>())
-            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>any</span><span class='op'>|</span> <span class='kw'>unsafe</span> { <span class='ident'>any</span>.<span class='ident'>downcast_ref_unchecked</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>() })
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Returns a reference to the value stored in the collection for the type `T`, if it exists.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">any</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">any</span>.<span class="ident">downcast_ref_unchecked</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() })
     }
 
-    <span class='doccomment'>/// Returns a mutable reference to the value stored in the collection for the type `T`,</span>
-    <span class='doccomment'>/// if it exists.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_mut</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>get_mut</span>(<span class='kw-2'>&amp;</span><span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>())
-            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>any</span><span class='op'>|</span> <span class='kw'>unsafe</span> { <span class='ident'>any</span>.<span class='ident'>downcast_mut_unchecked</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>() })
+    <span class="doccomment">/// Returns a mutable reference to the value stored in the collection for the type `T`,</span>
+    <span class="doccomment">/// if it exists.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">any</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">any</span>.<span class="ident">downcast_mut_unchecked</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() })
     }
 
-    <span class='doccomment'>/// Sets the value stored in the collection for the type `T`.</span>
-    <span class='doccomment'>/// If the collection already had a value of type `T`, that value is returned.</span>
-    <span class='doccomment'>/// Otherwise, `None` is returned.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>insert</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>value</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='kw'>unsafe</span> {
-            <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>insert</span>(<span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(), <span class='ident'>value</span>.<span class='ident'>into_box</span>())
-                .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>any</span><span class='op'>|</span> <span class='op'>*</span><span class='ident'>any</span>.<span class='ident'>downcast_unchecked</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>())
+    <span class="doccomment">/// Sets the value stored in the collection for the type `T`.</span>
+    <span class="doccomment">/// If the collection already had a value of type `T`, that value is returned.</span>
+    <span class="doccomment">/// Otherwise, `None` is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">insert</span>(<span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(), <span class="ident">value</span>.<span class="ident">into_box</span>())
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">any</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">any</span>.<span class="ident">downcast_unchecked</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
         }
     }
 
-    <span class='doccomment'>/// Removes the `T` value from the collection,</span>
-    <span class='doccomment'>/// returning it if there was one or `None` if there was not.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>())
-            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>any</span><span class='op'>|</span> <span class='op'>*</span><span class='kw'>unsafe</span> { <span class='ident'>any</span>.<span class='ident'>downcast_unchecked</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>() })
+    <span class="doccomment">/// Removes the `T` value from the collection,</span>
+    <span class="doccomment">/// returning it if there was one or `None` if there was not.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">any</span><span class="op">|</span> <span class="kw-2">*</span><span class="kw">unsafe</span> { <span class="ident">any</span>.<span class="ident">downcast_unchecked</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() })
     }
 
-    <span class='doccomment'>/// Returns true if the collection contains a value of type `T`.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>contains</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>())
+    <span class="doccomment">/// Returns true if the collection contains a value of type `T`.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">contains_key</span>(<span class="kw-2">&amp;</span><span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
     }
 
-    <span class='doccomment'>/// Gets the entry for the given type in the collection for in-place manipulation</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>entry</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Entry</span><span class='op'>&lt;</span><span class='ident'>A</span>, <span class='ident'>T</span><span class='op'>&gt;</span> {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>raw</span>.<span class='ident'>entry</span>(<span class='ident'>TypeId</span>::<span class='ident'>of</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>()) {
-            <span class='ident'>raw</span>::<span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='ident'>OccupiedEntry</span> {
-                <span class='ident'>inner</span>: <span class='ident'>e</span>,
-                <span class='ident'>type_</span>: <span class='ident'>PhantomData</span>,
+    <span class="doccomment">/// Gets the entry for the given type in the collection for in-place manipulation</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">entry</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">entry</span>(<span class="ident">TypeId</span>::<span class="ident">of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()) {
+            <span class="ident">raw</span>::<span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="ident">OccupiedEntry</span> {
+                <span class="ident">inner</span>: <span class="ident">e</span>,
+                <span class="ident">type_</span>: <span class="ident">PhantomData</span>,
             }),
-            <span class='ident'>raw</span>::<span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(<span class='ident'>VacantEntry</span> {
-                <span class='ident'>inner</span>: <span class='ident'>e</span>,
-                <span class='ident'>type_</span>: <span class='ident'>PhantomData</span>,
+            <span class="ident">raw</span>::<span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">VacantEntry</span> {
+                <span class="ident">inner</span>: <span class="ident">e</span>,
+                <span class="ident">type_</span>: <span class="ident">PhantomData</span>,
             }),
         }
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>as_ref</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>raw</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raw</span>
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='ident'>AsMut</span><span class='op'>&lt;</span><span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>as_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>raw</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="ident">AsMut</span><span class="op">&lt;</span><span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">as_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">raw</span>
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span> <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>into</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>RawMap</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>raw</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawMap</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">raw</span>
     }
 }
 
-<span class='doccomment'>/// A view into a single occupied location in an `Map`.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>OccupiedEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>inner</span>: <span class='ident'>raw</span>::<span class='ident'>OccupiedEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span>,
-    <span class='ident'>type_</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// A view into a single occupied location in an `Map`.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">inner</span>: <span class="ident">raw</span>::<span class="ident">OccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span><span class="op">&gt;</span>,
+    <span class="ident">type_</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>,
 }
 
-<span class='doccomment'>/// A view into a single empty location in an `Map`.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>VacantEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>inner</span>: <span class='ident'>raw</span>::<span class='ident'>VacantEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span>,
-    <span class='ident'>type_</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// A view into a single empty location in an `Map`.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">inner</span>: <span class="ident">raw</span>::<span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span><span class="op">&gt;</span>,
+    <span class="ident">type_</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>,
 }
 
-<span class='doccomment'>/// A view into a single location in an `Map`, which may be vacant or occupied.</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Entry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// An occupied Entry</span>
-    <span class='ident'>Occupied</span>(<span class='ident'>OccupiedEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>, <span class='ident'>V</span><span class='op'>&gt;</span>),
-    <span class='doccomment'>/// A vacant Entry</span>
-    <span class='ident'>Vacant</span>(<span class='ident'>VacantEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>, <span class='ident'>V</span><span class='op'>&gt;</span>),
+<span class="doccomment">/// A view into a single location in an `Map`, which may be vacant or occupied.</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// An occupied Entry</span>
+    <span class="ident">Occupied</span>(<span class="ident">OccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">V</span><span class="op">&gt;</span>),
+    <span class="doccomment">/// A vacant Entry</span>
+    <span class="ident">Vacant</span>(<span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">V</span><span class="op">&gt;</span>),
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='ident'>Entry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>, <span class='ident'>V</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Ensures a value is in the entry by inserting the default if empty, and returns</span>
-    <span class='doccomment'>/// a mutable reference to the value in the entry.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>or_insert</span>(<span class='self'>self</span>, <span class='ident'>default</span>: <span class='ident'>V</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>V</span> {
-        <span class='kw'>match</span> <span class='self'>self</span> {
-            <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='ident'>inner</span>) <span class='op'>=&gt;</span> <span class='ident'>inner</span>.<span class='ident'>into_mut</span>(),
-            <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(<span class='ident'>inner</span>) <span class='op'>=&gt;</span> <span class='ident'>inner</span>.<span class='ident'>insert</span>(<span class='ident'>default</span>),
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="ident">Entry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">V</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Ensures a value is in the entry by inserting the default if empty, and returns</span>
+    <span class="doccomment">/// a mutable reference to the value in the entry.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">or_insert</span>(<span class="self">self</span>, <span class="ident">default</span>: <span class="ident">V</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">V</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">into_mut</span>(),
+            <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">insert</span>(<span class="ident">default</span>),
         }
     }
 
-    <span class='doccomment'>/// Ensures a value is in the entry by inserting the result of the default function if empty,</span>
-    <span class='doccomment'>/// and returns a mutable reference to the value in the entry.</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>or_insert_with</span><span class='op'>&lt;</span><span class='ident'>F</span>: <span class='ident'>FnOnce</span>() <span class='op'>-&gt;</span> <span class='ident'>V</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>default</span>: <span class='ident'>F</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>V</span> {
-        <span class='kw'>match</span> <span class='self'>self</span> {
-            <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='ident'>inner</span>) <span class='op'>=&gt;</span> <span class='ident'>inner</span>.<span class='ident'>into_mut</span>(),
-            <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(<span class='ident'>inner</span>) <span class='op'>=&gt;</span> <span class='ident'>inner</span>.<span class='ident'>insert</span>(<span class='ident'>default</span>()),
+    <span class="doccomment">/// Ensures a value is in the entry by inserting the result of the default function if empty,</span>
+    <span class="doccomment">/// and returns a mutable reference to the value in the entry.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">or_insert_with</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FnOnce</span>() <span class="op">-&gt;</span> <span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">default</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">V</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">into_mut</span>(),
+            <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> <span class="ident">inner</span>.<span class="ident">insert</span>(<span class="ident">default</span>()),
         }
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='ident'>OccupiedEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>, <span class='ident'>V</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Gets a reference to the value in the entry</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>get</span>().<span class='ident'>downcast_ref_unchecked</span>() }
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="ident">OccupiedEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">V</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Gets a reference to the value in the entry</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">get</span>().<span class="ident">downcast_ref_unchecked</span>() }
     }
 
-    <span class='doccomment'>/// Gets a mutable reference to the value in the entry</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>get_mut</span>().<span class='ident'>downcast_mut_unchecked</span>() }
+    <span class="doccomment">/// Gets a mutable reference to the value in the entry</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">get_mut</span>().<span class="ident">downcast_mut_unchecked</span>() }
     }
 
-    <span class='doccomment'>/// Converts the OccupiedEntry into a mutable reference to the value in the entry</span>
-    <span class='doccomment'>/// with a lifetime bound to the collection itself</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_mut</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>into_mut</span>().<span class='ident'>downcast_mut_unchecked</span>() }
+    <span class="doccomment">/// Converts the OccupiedEntry into a mutable reference to the value in the entry</span>
+    <span class="doccomment">/// with a lifetime bound to the collection itself</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_mut</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">into_mut</span>().<span class="ident">downcast_mut_unchecked</span>() }
     }
 
-    <span class='doccomment'>/// Sets the value of the entry, and returns the entry&#39;s old value</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>insert</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>value</span>: <span class='ident'>V</span>) <span class='op'>-&gt;</span> <span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='op'>*</span><span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>insert</span>(<span class='ident'>value</span>.<span class='ident'>into_box</span>()).<span class='ident'>downcast_unchecked</span>() }
+    <span class="doccomment">/// Sets the value of the entry, and returns the entry&#39;s old value</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">V</span>) <span class="op">-&gt;</span> <span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">insert</span>(<span class="ident">value</span>.<span class="ident">into_box</span>()).<span class="ident">downcast_unchecked</span>() }
     }
 
-    <span class='doccomment'>/// Takes the value out of the entry, and returns it</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='op'>*</span><span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>remove</span>().<span class='ident'>downcast_unchecked</span>() }
-    }
-}
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span>, <span class='ident'>V</span>: <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;&gt;</span> <span class='ident'>VacantEntry</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>, <span class='ident'>V</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Sets the value of the entry with the VacantEntry&#39;s key,</span>
-    <span class='doccomment'>/// and returns a mutable reference to it</span>
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>insert</span>(<span class='self'>self</span>, <span class='ident'>value</span>: <span class='ident'>V</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>V</span> {
-        <span class='kw'>unsafe</span> { <span class='self'>self</span>.<span class='ident'>inner</span>.<span class='ident'>insert</span>(<span class='ident'>value</span>.<span class='ident'>into_box</span>()).<span class='ident'>downcast_mut_unchecked</span>() }
+    <span class="doccomment">/// Takes the value out of the entry, and returns it</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remove</span>().<span class="ident">downcast_unchecked</span>() }
     }
 }
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>all</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;bench&quot;</span>, <span class='ident'>test</span>))]</span>
-<span class='kw'>mod</span> <span class='ident'>bench</span> {
-    <span class='kw'>use</span> <span class='ident'>AnyMap</span>;
-    <span class='kw'>use</span> <span class='ident'>test</span>::<span class='ident'>Bencher</span>;
-    <span class='kw'>use</span> <span class='ident'>test</span>::<span class='ident'>black_box</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span>, <span class="ident">V</span>: <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="ident">VacantEntry</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>, <span class="ident">V</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Sets the value of the entry with the VacantEntry&#39;s key,</span>
+    <span class="doccomment">/// and returns a mutable reference to it</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span>(<span class="self">self</span>, <span class="ident">value</span>: <span class="ident">V</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">V</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">insert</span>(<span class="ident">value</span>.<span class="ident">into_box</span>()).<span class="ident">downcast_mut_unchecked</span>() }
+    }
+}
 
-    <span class='attribute'>#[<span class='ident'>bench</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>insertion</span>(<span class='ident'>b</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Bencher</span>) {
-        <span class='ident'>b</span>.<span class='ident'>iter</span>(<span class='op'>||</span> {
-            <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>AnyMap</span>::<span class='ident'>new</span>();
-            <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>100</span> {
-                <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>data</span>.<span class='ident'>insert</span>(<span class='number'>42</span>);
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bench&quot;</span>, <span class="ident">test</span>))]</span>
+<span class="kw">mod</span> <span class="ident">bench</span> {
+    <span class="kw">use</span> <span class="ident">AnyMap</span>;
+    <span class="kw">use</span> <span class="ident">test</span>::<span class="ident">Bencher</span>;
+    <span class="kw">use</span> <span class="ident">test</span>::<span class="ident">black_box</span>;
+
+    <span class="attribute">#[<span class="ident">bench</span>]</span>
+    <span class="kw">fn</span> <span class="ident">insertion</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bencher</span>) {
+        <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">AnyMap</span>::<span class="ident">new</span>();
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
+                <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">data</span>.<span class="ident">insert</span>(<span class="number">42</span>);
             }
         })
     }
 
-    <span class='attribute'>#[<span class='ident'>bench</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>get_missing</span>(<span class='ident'>b</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Bencher</span>) {
-        <span class='ident'>b</span>.<span class='ident'>iter</span>(<span class='op'>||</span> {
-            <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>AnyMap</span>::<span class='ident'>new</span>();
-            <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>100</span> {
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>data</span>.<span class='ident'>get</span>(), <span class='prelude-val'>None</span>::<span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>i32</span><span class='op'>&gt;</span>);
+    <span class="attribute">#[<span class="ident">bench</span>]</span>
+    <span class="kw">fn</span> <span class="ident">get_missing</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bencher</span>) {
+        <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
+            <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">AnyMap</span>::<span class="ident">new</span>();
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">data</span>.<span class="ident">get</span>(), <span class="prelude-val">None</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">i32</span><span class="op">&gt;</span>);
             }
         })
     }
 
-    <span class='attribute'>#[<span class='ident'>bench</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>get_present</span>(<span class='ident'>b</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Bencher</span>) {
-        <span class='ident'>b</span>.<span class='ident'>iter</span>(<span class='op'>||</span> {
-            <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>AnyMap</span>::<span class='ident'>new</span>();
-            <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>data</span>.<span class='ident'>insert</span>(<span class='number'>42</span>);
-            <span class='comment'>// These inner loops are a feeble attempt to drown the other factors.</span>
-            <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>100</span> {
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>data</span>.<span class='ident'>get</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>42</span>));
+    <span class="attribute">#[<span class="ident">bench</span>]</span>
+    <span class="kw">fn</span> <span class="ident">get_present</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bencher</span>) {
+        <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">AnyMap</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">data</span>.<span class="ident">insert</span>(<span class="number">42</span>);
+            <span class="comment">// These inner loops are a feeble attempt to drown the other factors.</span>
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">data</span>.<span class="ident">get</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="number">42</span>));
             }
         })
     }
 
-    <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>big_benchmarks</span> {
-        (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>T</span>:<span class='ident'>ident</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> (
-            <span class='attribute'>#[<span class='ident'>bench</span>]</span>
-            <span class='kw'>fn</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='ident'>b</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Bencher</span>) {
+    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">big_benchmarks</span> {
+        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">T</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> (
+            <span class="attribute">#[<span class="ident">bench</span>]</span>
+            <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>(<span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bencher</span>) {
                 $(
-                    <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>T</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>);
-                )<span class='op'>*</span>
+                    <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">T</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>);
+                )<span class="op">*</span>
 
-                <span class='ident'>b</span>.<span class='ident'>iter</span>(<span class='op'>||</span> {
-                    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>AnyMap</span>::<span class='ident'>new</span>();
+                <span class="ident">b</span>.<span class="ident">iter</span>(<span class="op">||</span> {
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">AnyMap</span>::<span class="ident">new</span>();
                     $(
-                        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>black_box</span>(<span class='ident'>data</span>.<span class='ident'>insert</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>T</span>(<span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>T</span>))));
-                    )<span class='op'>*</span>
+                        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">black_box</span>(<span class="ident">data</span>.<span class="ident">insert</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">T</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">T</span>))));
+                    )<span class="op">*</span>
                     $(
-                        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>black_box</span>(<span class='ident'>data</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>T</span><span class='op'>&gt;</span>());
-                    )<span class='op'>*</span>
+                        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">black_box</span>(<span class="ident">data</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">T</span><span class="op">&gt;</span>());
+                    )<span class="op">*</span>
                 })
             }
         );
     }
 
-    <span class='comment'>// Caution: if the macro does too much (e.g. assertions) this goes from being slow to being</span>
-    <span class='comment'>// *really* slow (like add a minute for each assertion on it) and memory-hungry (like, adding</span>
-    <span class='comment'>// several hundred megabytes to the peak for each assertion).</span>
-    <span class='macro'>big_benchmarks</span><span class='macro'>!</span> {
-        <span class='ident'>insert_and_get_on_260_types</span>,
-        <span class='ident'>A0</span> <span class='ident'>B0</span> <span class='ident'>C0</span> <span class='ident'>D0</span> <span class='ident'>E0</span> <span class='ident'>F0</span> <span class='ident'>G0</span> <span class='ident'>H0</span> <span class='ident'>I0</span> <span class='ident'>J0</span> <span class='ident'>K0</span> <span class='ident'>L0</span> <span class='ident'>M0</span> <span class='ident'>N0</span> <span class='ident'>O0</span> <span class='ident'>P0</span> <span class='ident'>Q0</span> <span class='ident'>R0</span> <span class='ident'>S0</span> <span class='ident'>T0</span> <span class='ident'>U0</span> <span class='ident'>V0</span> <span class='ident'>W0</span> <span class='ident'>X0</span> <span class='ident'>Y0</span> <span class='ident'>Z0</span>
-        <span class='ident'>A1</span> <span class='ident'>B1</span> <span class='ident'>C1</span> <span class='ident'>D1</span> <span class='ident'>E1</span> <span class='ident'>F1</span> <span class='ident'>G1</span> <span class='ident'>H1</span> <span class='ident'>I1</span> <span class='ident'>J1</span> <span class='ident'>K1</span> <span class='ident'>L1</span> <span class='ident'>M1</span> <span class='ident'>N1</span> <span class='ident'>O1</span> <span class='ident'>P1</span> <span class='ident'>Q1</span> <span class='ident'>R1</span> <span class='ident'>S1</span> <span class='ident'>T1</span> <span class='ident'>U1</span> <span class='ident'>V1</span> <span class='ident'>W1</span> <span class='ident'>X1</span> <span class='ident'>Y1</span> <span class='ident'>Z1</span>
-        <span class='ident'>A2</span> <span class='ident'>B2</span> <span class='ident'>C2</span> <span class='ident'>D2</span> <span class='ident'>E2</span> <span class='ident'>F2</span> <span class='ident'>G2</span> <span class='ident'>H2</span> <span class='ident'>I2</span> <span class='ident'>J2</span> <span class='ident'>K2</span> <span class='ident'>L2</span> <span class='ident'>M2</span> <span class='ident'>N2</span> <span class='ident'>O2</span> <span class='ident'>P2</span> <span class='ident'>Q2</span> <span class='ident'>R2</span> <span class='ident'>S2</span> <span class='ident'>T2</span> <span class='ident'>U2</span> <span class='ident'>V2</span> <span class='ident'>W2</span> <span class='ident'>X2</span> <span class='ident'>Y2</span> <span class='ident'>Z2</span>
-        <span class='ident'>A3</span> <span class='ident'>B3</span> <span class='ident'>C3</span> <span class='ident'>D3</span> <span class='ident'>E3</span> <span class='ident'>F3</span> <span class='ident'>G3</span> <span class='ident'>H3</span> <span class='ident'>I3</span> <span class='ident'>J3</span> <span class='ident'>K3</span> <span class='ident'>L3</span> <span class='ident'>M3</span> <span class='ident'>N3</span> <span class='ident'>O3</span> <span class='ident'>P3</span> <span class='ident'>Q3</span> <span class='ident'>R3</span> <span class='ident'>S3</span> <span class='ident'>T3</span> <span class='ident'>U3</span> <span class='ident'>V3</span> <span class='ident'>W3</span> <span class='ident'>X3</span> <span class='ident'>Y3</span> <span class='ident'>Z3</span>
-        <span class='ident'>A4</span> <span class='ident'>B4</span> <span class='ident'>C4</span> <span class='ident'>D4</span> <span class='ident'>E4</span> <span class='ident'>F4</span> <span class='ident'>G4</span> <span class='ident'>H4</span> <span class='ident'>I4</span> <span class='ident'>J4</span> <span class='ident'>K4</span> <span class='ident'>L4</span> <span class='ident'>M4</span> <span class='ident'>N4</span> <span class='ident'>O4</span> <span class='ident'>P4</span> <span class='ident'>Q4</span> <span class='ident'>R4</span> <span class='ident'>S4</span> <span class='ident'>T4</span> <span class='ident'>U4</span> <span class='ident'>V4</span> <span class='ident'>W4</span> <span class='ident'>X4</span> <span class='ident'>Y4</span> <span class='ident'>Z4</span>
-        <span class='ident'>A5</span> <span class='ident'>B5</span> <span class='ident'>C5</span> <span class='ident'>D5</span> <span class='ident'>E5</span> <span class='ident'>F5</span> <span class='ident'>G5</span> <span class='ident'>H5</span> <span class='ident'>I5</span> <span class='ident'>J5</span> <span class='ident'>K5</span> <span class='ident'>L5</span> <span class='ident'>M5</span> <span class='ident'>N5</span> <span class='ident'>O5</span> <span class='ident'>P5</span> <span class='ident'>Q5</span> <span class='ident'>R5</span> <span class='ident'>S5</span> <span class='ident'>T5</span> <span class='ident'>U5</span> <span class='ident'>V5</span> <span class='ident'>W5</span> <span class='ident'>X5</span> <span class='ident'>Y5</span> <span class='ident'>Z5</span>
-        <span class='ident'>A6</span> <span class='ident'>B6</span> <span class='ident'>C6</span> <span class='ident'>D6</span> <span class='ident'>E6</span> <span class='ident'>F6</span> <span class='ident'>G6</span> <span class='ident'>H6</span> <span class='ident'>I6</span> <span class='ident'>J6</span> <span class='ident'>K6</span> <span class='ident'>L6</span> <span class='ident'>M6</span> <span class='ident'>N6</span> <span class='ident'>O6</span> <span class='ident'>P6</span> <span class='ident'>Q6</span> <span class='ident'>R6</span> <span class='ident'>S6</span> <span class='ident'>T6</span> <span class='ident'>U6</span> <span class='ident'>V6</span> <span class='ident'>W6</span> <span class='ident'>X6</span> <span class='ident'>Y6</span> <span class='ident'>Z6</span>
-        <span class='ident'>A7</span> <span class='ident'>B7</span> <span class='ident'>C7</span> <span class='ident'>D7</span> <span class='ident'>E7</span> <span class='ident'>F7</span> <span class='ident'>G7</span> <span class='ident'>H7</span> <span class='ident'>I7</span> <span class='ident'>J7</span> <span class='ident'>K7</span> <span class='ident'>L7</span> <span class='ident'>M7</span> <span class='ident'>N7</span> <span class='ident'>O7</span> <span class='ident'>P7</span> <span class='ident'>Q7</span> <span class='ident'>R7</span> <span class='ident'>S7</span> <span class='ident'>T7</span> <span class='ident'>U7</span> <span class='ident'>V7</span> <span class='ident'>W7</span> <span class='ident'>X7</span> <span class='ident'>Y7</span> <span class='ident'>Z7</span>
-        <span class='ident'>A8</span> <span class='ident'>B8</span> <span class='ident'>C8</span> <span class='ident'>D8</span> <span class='ident'>E8</span> <span class='ident'>F8</span> <span class='ident'>G8</span> <span class='ident'>H8</span> <span class='ident'>I8</span> <span class='ident'>J8</span> <span class='ident'>K8</span> <span class='ident'>L8</span> <span class='ident'>M8</span> <span class='ident'>N8</span> <span class='ident'>O8</span> <span class='ident'>P8</span> <span class='ident'>Q8</span> <span class='ident'>R8</span> <span class='ident'>S8</span> <span class='ident'>T8</span> <span class='ident'>U8</span> <span class='ident'>V8</span> <span class='ident'>W8</span> <span class='ident'>X8</span> <span class='ident'>Y8</span> <span class='ident'>Z8</span>
-        <span class='ident'>A9</span> <span class='ident'>B9</span> <span class='ident'>C9</span> <span class='ident'>D9</span> <span class='ident'>E9</span> <span class='ident'>F9</span> <span class='ident'>G9</span> <span class='ident'>H9</span> <span class='ident'>I9</span> <span class='ident'>J9</span> <span class='ident'>K9</span> <span class='ident'>L9</span> <span class='ident'>M9</span> <span class='ident'>N9</span> <span class='ident'>O9</span> <span class='ident'>P9</span> <span class='ident'>Q9</span> <span class='ident'>R9</span> <span class='ident'>S9</span> <span class='ident'>T9</span> <span class='ident'>U9</span> <span class='ident'>V9</span> <span class='ident'>W9</span> <span class='ident'>X9</span> <span class='ident'>Y9</span> <span class='ident'>Z9</span>
+    <span class="comment">// Caution: if the macro does too much (e.g. assertions) this goes from being slow to being</span>
+    <span class="comment">// *really* slow (like add a minute for each assertion on it) and memory-hungry (like, adding</span>
+    <span class="comment">// several hundred megabytes to the peak for each assertion).</span>
+    <span class="macro">big_benchmarks</span><span class="macro">!</span> {
+        <span class="ident">insert_and_get_on_260_types</span>,
+        <span class="ident">A0</span> <span class="ident">B0</span> <span class="ident">C0</span> <span class="ident">D0</span> <span class="ident">E0</span> <span class="ident">F0</span> <span class="ident">G0</span> <span class="ident">H0</span> <span class="ident">I0</span> <span class="ident">J0</span> <span class="ident">K0</span> <span class="ident">L0</span> <span class="ident">M0</span> <span class="ident">N0</span> <span class="ident">O0</span> <span class="ident">P0</span> <span class="ident">Q0</span> <span class="ident">R0</span> <span class="ident">S0</span> <span class="ident">T0</span> <span class="ident">U0</span> <span class="ident">V0</span> <span class="ident">W0</span> <span class="ident">X0</span> <span class="ident">Y0</span> <span class="ident">Z0</span>
+        <span class="ident">A1</span> <span class="ident">B1</span> <span class="ident">C1</span> <span class="ident">D1</span> <span class="ident">E1</span> <span class="ident">F1</span> <span class="ident">G1</span> <span class="ident">H1</span> <span class="ident">I1</span> <span class="ident">J1</span> <span class="ident">K1</span> <span class="ident">L1</span> <span class="ident">M1</span> <span class="ident">N1</span> <span class="ident">O1</span> <span class="ident">P1</span> <span class="ident">Q1</span> <span class="ident">R1</span> <span class="ident">S1</span> <span class="ident">T1</span> <span class="ident">U1</span> <span class="ident">V1</span> <span class="ident">W1</span> <span class="ident">X1</span> <span class="ident">Y1</span> <span class="ident">Z1</span>
+        <span class="ident">A2</span> <span class="ident">B2</span> <span class="ident">C2</span> <span class="ident">D2</span> <span class="ident">E2</span> <span class="ident">F2</span> <span class="ident">G2</span> <span class="ident">H2</span> <span class="ident">I2</span> <span class="ident">J2</span> <span class="ident">K2</span> <span class="ident">L2</span> <span class="ident">M2</span> <span class="ident">N2</span> <span class="ident">O2</span> <span class="ident">P2</span> <span class="ident">Q2</span> <span class="ident">R2</span> <span class="ident">S2</span> <span class="ident">T2</span> <span class="ident">U2</span> <span class="ident">V2</span> <span class="ident">W2</span> <span class="ident">X2</span> <span class="ident">Y2</span> <span class="ident">Z2</span>
+        <span class="ident">A3</span> <span class="ident">B3</span> <span class="ident">C3</span> <span class="ident">D3</span> <span class="ident">E3</span> <span class="ident">F3</span> <span class="ident">G3</span> <span class="ident">H3</span> <span class="ident">I3</span> <span class="ident">J3</span> <span class="ident">K3</span> <span class="ident">L3</span> <span class="ident">M3</span> <span class="ident">N3</span> <span class="ident">O3</span> <span class="ident">P3</span> <span class="ident">Q3</span> <span class="ident">R3</span> <span class="ident">S3</span> <span class="ident">T3</span> <span class="ident">U3</span> <span class="ident">V3</span> <span class="ident">W3</span> <span class="ident">X3</span> <span class="ident">Y3</span> <span class="ident">Z3</span>
+        <span class="ident">A4</span> <span class="ident">B4</span> <span class="ident">C4</span> <span class="ident">D4</span> <span class="ident">E4</span> <span class="ident">F4</span> <span class="ident">G4</span> <span class="ident">H4</span> <span class="ident">I4</span> <span class="ident">J4</span> <span class="ident">K4</span> <span class="ident">L4</span> <span class="ident">M4</span> <span class="ident">N4</span> <span class="ident">O4</span> <span class="ident">P4</span> <span class="ident">Q4</span> <span class="ident">R4</span> <span class="ident">S4</span> <span class="ident">T4</span> <span class="ident">U4</span> <span class="ident">V4</span> <span class="ident">W4</span> <span class="ident">X4</span> <span class="ident">Y4</span> <span class="ident">Z4</span>
+        <span class="ident">A5</span> <span class="ident">B5</span> <span class="ident">C5</span> <span class="ident">D5</span> <span class="ident">E5</span> <span class="ident">F5</span> <span class="ident">G5</span> <span class="ident">H5</span> <span class="ident">I5</span> <span class="ident">J5</span> <span class="ident">K5</span> <span class="ident">L5</span> <span class="ident">M5</span> <span class="ident">N5</span> <span class="ident">O5</span> <span class="ident">P5</span> <span class="ident">Q5</span> <span class="ident">R5</span> <span class="ident">S5</span> <span class="ident">T5</span> <span class="ident">U5</span> <span class="ident">V5</span> <span class="ident">W5</span> <span class="ident">X5</span> <span class="ident">Y5</span> <span class="ident">Z5</span>
+        <span class="ident">A6</span> <span class="ident">B6</span> <span class="ident">C6</span> <span class="ident">D6</span> <span class="ident">E6</span> <span class="ident">F6</span> <span class="ident">G6</span> <span class="ident">H6</span> <span class="ident">I6</span> <span class="ident">J6</span> <span class="ident">K6</span> <span class="ident">L6</span> <span class="ident">M6</span> <span class="ident">N6</span> <span class="ident">O6</span> <span class="ident">P6</span> <span class="ident">Q6</span> <span class="ident">R6</span> <span class="ident">S6</span> <span class="ident">T6</span> <span class="ident">U6</span> <span class="ident">V6</span> <span class="ident">W6</span> <span class="ident">X6</span> <span class="ident">Y6</span> <span class="ident">Z6</span>
+        <span class="ident">A7</span> <span class="ident">B7</span> <span class="ident">C7</span> <span class="ident">D7</span> <span class="ident">E7</span> <span class="ident">F7</span> <span class="ident">G7</span> <span class="ident">H7</span> <span class="ident">I7</span> <span class="ident">J7</span> <span class="ident">K7</span> <span class="ident">L7</span> <span class="ident">M7</span> <span class="ident">N7</span> <span class="ident">O7</span> <span class="ident">P7</span> <span class="ident">Q7</span> <span class="ident">R7</span> <span class="ident">S7</span> <span class="ident">T7</span> <span class="ident">U7</span> <span class="ident">V7</span> <span class="ident">W7</span> <span class="ident">X7</span> <span class="ident">Y7</span> <span class="ident">Z7</span>
+        <span class="ident">A8</span> <span class="ident">B8</span> <span class="ident">C8</span> <span class="ident">D8</span> <span class="ident">E8</span> <span class="ident">F8</span> <span class="ident">G8</span> <span class="ident">H8</span> <span class="ident">I8</span> <span class="ident">J8</span> <span class="ident">K8</span> <span class="ident">L8</span> <span class="ident">M8</span> <span class="ident">N8</span> <span class="ident">O8</span> <span class="ident">P8</span> <span class="ident">Q8</span> <span class="ident">R8</span> <span class="ident">S8</span> <span class="ident">T8</span> <span class="ident">U8</span> <span class="ident">V8</span> <span class="ident">W8</span> <span class="ident">X8</span> <span class="ident">Y8</span> <span class="ident">Z8</span>
+        <span class="ident">A9</span> <span class="ident">B9</span> <span class="ident">C9</span> <span class="ident">D9</span> <span class="ident">E9</span> <span class="ident">F9</span> <span class="ident">G9</span> <span class="ident">H9</span> <span class="ident">I9</span> <span class="ident">J9</span> <span class="ident">K9</span> <span class="ident">L9</span> <span class="ident">M9</span> <span class="ident">N9</span> <span class="ident">O9</span> <span class="ident">P9</span> <span class="ident">Q9</span> <span class="ident">R9</span> <span class="ident">S9</span> <span class="ident">T9</span> <span class="ident">U9</span> <span class="ident">V9</span> <span class="ident">W9</span> <span class="ident">X9</span> <span class="ident">Y9</span> <span class="ident">Z9</span>
     }
 
-    <span class='macro'>big_benchmarks</span><span class='macro'>!</span> {
-        <span class='ident'>insert_and_get_on_26_types</span>,
-        <span class='ident'>A</span> <span class='ident'>B</span> <span class='ident'>C</span> <span class='ident'>D</span> <span class='ident'>E</span> <span class='ident'>F</span> <span class='ident'>G</span> <span class='ident'>H</span> <span class='ident'>I</span> <span class='ident'>J</span> <span class='ident'>K</span> <span class='ident'>L</span> <span class='ident'>M</span> <span class='ident'>N</span> <span class='ident'>O</span> <span class='ident'>P</span> <span class='ident'>Q</span> <span class='ident'>R</span> <span class='ident'>S</span> <span class='ident'>T</span> <span class='ident'>U</span> <span class='ident'>V</span> <span class='ident'>W</span> <span class='ident'>X</span> <span class='ident'>Y</span> <span class='ident'>Z</span>
+    <span class="macro">big_benchmarks</span><span class="macro">!</span> {
+        <span class="ident">insert_and_get_on_26_types</span>,
+        <span class="ident">A</span> <span class="ident">B</span> <span class="ident">C</span> <span class="ident">D</span> <span class="ident">E</span> <span class="ident">F</span> <span class="ident">G</span> <span class="ident">H</span> <span class="ident">I</span> <span class="ident">J</span> <span class="ident">K</span> <span class="ident">L</span> <span class="ident">M</span> <span class="ident">N</span> <span class="ident">O</span> <span class="ident">P</span> <span class="ident">Q</span> <span class="ident">R</span> <span class="ident">S</span> <span class="ident">T</span> <span class="ident">U</span> <span class="ident">V</span> <span class="ident">W</span> <span class="ident">X</span> <span class="ident">Y</span> <span class="ident">Z</span>
     }
 }
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>tests</span> {
-    <span class='kw'>use</span> {<span class='ident'>Map</span>, <span class='ident'>AnyMap</span>, <span class='ident'>Entry</span>};
-    <span class='kw'>use</span> <span class='ident'>any</span>::{<span class='ident'>Any</span>, <span class='ident'>CloneAny</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> {<span class="ident">Map</span>, <span class="ident">AnyMap</span>, <span class="ident">Entry</span>};
+    <span class="kw">use</span> <span class="ident">any</span>::{<span class="ident">Any</span>, <span class="ident">CloneAny</span>};
 
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>A</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>B</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>C</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>D</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>E</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>F</span>(<span class='ident'>i32</span>);
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>)]</span> <span class='kw'>struct</span> <span class='ident'>J</span>(<span class='ident'>i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">A</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">B</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">C</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">D</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">E</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">F</span>(<span class="ident">i32</span>);
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span> <span class="kw">struct</span> <span class="ident">J</span>(<span class="ident">i32</span>);
 
-    <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>test_entry</span> {
-        (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>init</span>:<span class='ident'>ty</span>) <span class='op'>=&gt;</span> {
-            <span class='attribute'>#[<span class='ident'>test</span>]</span>
-            <span class='kw'>fn</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>() {
-                <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>init</span><span class='op'>&gt;</span>::<span class='ident'>new</span>();
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>A</span>(<span class='number'>10</span>)), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>B</span>(<span class='number'>20</span>)), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>C</span>(<span class='number'>30</span>)), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>D</span>(<span class='number'>40</span>)), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>E</span>(<span class='number'>50</span>)), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>F</span>(<span class='number'>60</span>)), <span class='prelude-val'>None</span>);
+    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">test_entry</span> {
+        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">init</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
+            <span class="attribute">#[<span class="ident">test</span>]</span>
+            <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>() {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">init</span><span class="op">&gt;</span>::<span class="ident">new</span>();
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">A</span>(<span class="number">10</span>)), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">B</span>(<span class="number">20</span>)), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">C</span>(<span class="number">30</span>)), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">D</span>(<span class="number">40</span>)), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">E</span>(<span class="number">50</span>)), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">F</span>(<span class="number">60</span>)), <span class="prelude-val">None</span>);
 
-                <span class='comment'>// Existing key (insert)</span>
-                <span class='kw'>match</span> <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>() {
-                    <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(_) <span class='op'>=&gt;</span> <span class='macro'>unreachable</span><span class='macro'>!</span>(),
-                    <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='kw-2'>mut</span> <span class='ident'>view</span>) <span class='op'>=&gt;</span> {
-                        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>view</span>.<span class='ident'>get</span>(), <span class='kw-2'>&amp;</span><span class='ident'>A</span>(<span class='number'>10</span>));
-                        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>view</span>.<span class='ident'>insert</span>(<span class='ident'>A</span>(<span class='number'>100</span>)), <span class='ident'>A</span>(<span class='number'>10</span>));
+                <span class="comment">// Existing key (insert)</span>
+                <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>() {
+                    <span class="ident">Entry</span>::<span class="ident">Vacant</span>(_) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="kw-2">mut</span> <span class="ident">view</span>) <span class="op">=&gt;</span> {
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">view</span>.<span class="ident">get</span>(), <span class="kw-2">&amp;</span><span class="ident">A</span>(<span class="number">10</span>));
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">view</span>.<span class="ident">insert</span>(<span class="ident">A</span>(<span class="number">100</span>)), <span class="ident">A</span>(<span class="number">10</span>));
                     }
                 }
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>().<span class='ident'>unwrap</span>(), <span class='kw-2'>&amp;</span><span class='ident'>A</span>(<span class='number'>100</span>));
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>6</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="ident">A</span>(<span class="number">100</span>));
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">6</span>);
 
 
-                <span class='comment'>// Existing key (update)</span>
-                <span class='kw'>match</span> <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>B</span><span class='op'>&gt;</span>() {
-                    <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(_) <span class='op'>=&gt;</span> <span class='macro'>unreachable</span><span class='macro'>!</span>(),
-                    <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='kw-2'>mut</span> <span class='ident'>view</span>) <span class='op'>=&gt;</span> {
-                        <span class='kw'>let</span> <span class='ident'>v</span> <span class='op'>=</span> <span class='ident'>view</span>.<span class='ident'>get_mut</span>();
-                        <span class='kw'>let</span> <span class='ident'>new_v</span> <span class='op'>=</span> <span class='ident'>B</span>(<span class='ident'>v</span>.<span class='number'>0</span> <span class='op'>*</span> <span class='number'>10</span>);
-                        <span class='op'>*</span><span class='ident'>v</span> <span class='op'>=</span> <span class='ident'>new_v</span>;
+                <span class="comment">// Existing key (update)</span>
+                <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>() {
+                    <span class="ident">Entry</span>::<span class="ident">Vacant</span>(_) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="kw-2">mut</span> <span class="ident">view</span>) <span class="op">=&gt;</span> {
+                        <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">view</span>.<span class="ident">get_mut</span>();
+                        <span class="kw">let</span> <span class="ident">new_v</span> <span class="op">=</span> <span class="ident">B</span>(<span class="ident">v</span>.<span class="number">0</span> <span class="op">*</span> <span class="number">10</span>);
+                        <span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="ident">new_v</span>;
                     }
                 }
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>B</span><span class='op'>&gt;</span>().<span class='ident'>unwrap</span>(), <span class='kw-2'>&amp;</span><span class='ident'>B</span>(<span class='number'>200</span>));
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>6</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="ident">B</span>(<span class="number">200</span>));
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">6</span>);
 
 
-                <span class='comment'>// Existing key (remove)</span>
-                <span class='kw'>match</span> <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>C</span><span class='op'>&gt;</span>() {
-                    <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(_) <span class='op'>=&gt;</span> <span class='macro'>unreachable</span><span class='macro'>!</span>(),
-                    <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(<span class='ident'>view</span>) <span class='op'>=&gt;</span> {
-                        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>view</span>.<span class='ident'>remove</span>(), <span class='ident'>C</span>(<span class='number'>30</span>));
+                <span class="comment">// Existing key (remove)</span>
+                <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>() {
+                    <span class="ident">Entry</span>::<span class="ident">Vacant</span>(_) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="ident">view</span>) <span class="op">=&gt;</span> {
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">view</span>.<span class="ident">remove</span>(), <span class="ident">C</span>(<span class="number">30</span>));
                     }
                 }
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>C</span><span class='op'>&gt;</span>(), <span class='prelude-val'>None</span>);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>5</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(), <span class="prelude-val">None</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">5</span>);
 
 
-                <span class='comment'>// Inexistent key (insert)</span>
-                <span class='kw'>match</span> <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>J</span><span class='op'>&gt;</span>() {
-                    <span class='ident'>Entry</span>::<span class='ident'>Occupied</span>(_) <span class='op'>=&gt;</span> <span class='macro'>unreachable</span><span class='macro'>!</span>(),
-                    <span class='ident'>Entry</span>::<span class='ident'>Vacant</span>(<span class='ident'>view</span>) <span class='op'>=&gt;</span> {
-                        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>view</span>.<span class='ident'>insert</span>(<span class='ident'>J</span>(<span class='number'>1000</span>)), <span class='ident'>J</span>(<span class='number'>1000</span>));
+                <span class="comment">// Inexistent key (insert)</span>
+                <span class="kw">match</span> <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">J</span><span class="op">&gt;</span>() {
+                    <span class="ident">Entry</span>::<span class="ident">Occupied</span>(_) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">view</span>) <span class="op">=&gt;</span> {
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">view</span>.<span class="ident">insert</span>(<span class="ident">J</span>(<span class="number">1000</span>)), <span class="ident">J</span>(<span class="number">1000</span>));
                     }
                 }
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>J</span><span class='op'>&gt;</span>().<span class='ident'>unwrap</span>(), <span class='kw-2'>&amp;</span><span class='ident'>J</span>(<span class='number'>1000</span>));
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>6</span>);
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">J</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="ident">J</span>(<span class="number">1000</span>));
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">6</span>);
 
-                <span class='comment'>// Entry.or_insert on existing key</span>
-                <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>B</span><span class='op'>&gt;</span>().<span class='ident'>or_insert</span>(<span class='ident'>B</span>(<span class='number'>71</span>)).<span class='number'>0</span> <span class='op'>+=</span> <span class='number'>1</span>;
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>B</span><span class='op'>&gt;</span>().<span class='ident'>unwrap</span>(), <span class='kw-2'>&amp;</span><span class='ident'>B</span>(<span class='number'>201</span>));
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>6</span>);
+                <span class="comment">// Entry.or_insert on existing key</span>
+                <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>().<span class="ident">or_insert</span>(<span class="ident">B</span>(<span class="number">71</span>)).<span class="number">0</span> <span class="op">+=</span> <span class="number">1</span>;
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="ident">B</span>(<span class="number">201</span>));
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">6</span>);
 
-                <span class='comment'>// Entry.or_insert on nonexisting key</span>
-                <span class='ident'>map</span>.<span class='ident'>entry</span>::<span class='op'>&lt;</span><span class='ident'>C</span><span class='op'>&gt;</span>().<span class='ident'>or_insert</span>(<span class='ident'>C</span>(<span class='number'>300</span>)).<span class='number'>0</span> <span class='op'>+=</span> <span class='number'>1</span>;
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>C</span><span class='op'>&gt;</span>().<span class='ident'>unwrap</span>(), <span class='kw-2'>&amp;</span><span class='ident'>C</span>(<span class='number'>301</span>));
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>7</span>);
+                <span class="comment">// Entry.or_insert on nonexisting key</span>
+                <span class="ident">map</span>.<span class="ident">entry</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>().<span class="ident">or_insert</span>(<span class="ident">C</span>(<span class="number">300</span>)).<span class="number">0</span> <span class="op">+=</span> <span class="number">1</span>;
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(), <span class="kw-2">&amp;</span><span class="ident">C</span>(<span class="number">301</span>));
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">len</span>(), <span class="number">7</span>);
             }
         }
     }
 
-    <span class='macro'>test_entry</span><span class='macro'>!</span>(<span class='ident'>test_entry_any</span>, <span class='ident'>AnyMap</span>);
-    <span class='macro'>test_entry</span><span class='macro'>!</span>(<span class='ident'>test_entry_cloneany</span>, <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span><span class='op'>&gt;</span>);
+    <span class="macro">test_entry</span><span class="macro">!</span>(<span class="ident">test_entry_any</span>, <span class="ident">AnyMap</span>);
+    <span class="macro">test_entry</span><span class="macro">!</span>(<span class="ident">test_entry_cloneany</span>, <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span><span class="op">&gt;</span>);
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>test_clone</span>() {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span>: <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Map</span>::<span class='ident'>new</span>();
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>A</span>(<span class='number'>1</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>B</span>(<span class='number'>2</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>D</span>(<span class='number'>3</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>E</span>(<span class='number'>4</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>F</span>(<span class='number'>5</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>J</span>(<span class='number'>6</span>));
-        <span class='kw'>let</span> <span class='ident'>map2</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>clone</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>len</span>(), <span class='number'>6</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>A</span>(<span class='number'>1</span>)));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>B</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>B</span>(<span class='number'>2</span>)));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>C</span><span class='op'>&gt;</span>(), <span class='prelude-val'>None</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>D</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>D</span>(<span class='number'>3</span>)));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>E</span>(<span class='number'>4</span>)));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>F</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>F</span>(<span class='number'>5</span>)));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map2</span>.<span class='ident'>get</span>::<span class='op'>&lt;</span><span class='ident'>J</span><span class='op'>&gt;</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>J</span>(<span class='number'>6</span>)));
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_clone</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span>: <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Map</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">A</span>(<span class="number">1</span>));
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">B</span>(<span class="number">2</span>));
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">D</span>(<span class="number">3</span>));
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">E</span>(<span class="number">4</span>));
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">F</span>(<span class="number">5</span>));
+        <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">J</span>(<span class="number">6</span>));
+        <span class="kw">let</span> <span class="ident">map2</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">clone</span>();
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">len</span>(), <span class="number">6</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">A</span>(<span class="number">1</span>)));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">B</span>(<span class="number">2</span>)));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(), <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">D</span>(<span class="number">3</span>)));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">E</span>(<span class="number">4</span>)));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">F</span>(<span class="number">5</span>)));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">map2</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">J</span><span class="op">&gt;</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">J</span>(<span class="number">6</span>)));
     }
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>test_varieties</span>() {
-        <span class='kw'>fn</span> <span class='ident'>assert_send</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Send</span><span class='op'>&gt;</span>() { }
-        <span class='kw'>fn</span> <span class='ident'>assert_sync</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Sync</span><span class='op'>&gt;</span>() { }
-        <span class='kw'>fn</span> <span class='ident'>assert_clone</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Clone</span><span class='op'>&gt;</span>() { }
-        <span class='kw'>fn</span> <span class='ident'>assert_debug</span><span class='op'>&lt;</span><span class='ident'>T</span>: ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span><span class='op'>&gt;</span>() { }
-        <span class='ident'>assert_send</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_send</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_sync</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_sync</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_send</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_send</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_sync</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_sync</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_clone</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_clone</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_clone</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_clone</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
-        <span class='ident'>assert_debug</span>::<span class='op'>&lt;</span><span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;&gt;</span>();
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_varieties</span>() {
+        <span class="kw">fn</span> <span class="ident">assert_send</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Send</span><span class="op">&gt;</span>() { }
+        <span class="kw">fn</span> <span class="ident">assert_sync</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sync</span><span class="op">&gt;</span>() { }
+        <span class="kw">fn</span> <span class="ident">assert_clone</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span><span class="op">&gt;</span>() { }
+        <span class="kw">fn</span> <span class="ident">assert_debug</span><span class="op">&lt;</span><span class="ident">T</span>: ::<span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span>() { }
+        <span class="ident">assert_send</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_send</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_sync</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_sync</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_send</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_send</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_sync</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_sync</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_clone</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_clone</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_clone</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_clone</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
+        <span class="ident">assert_debug</span>::<span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>();
     }
 }
 </pre>
@@ -1150,11 +1151,8 @@
     <script>
         window.rootPath = "../../";
         window.currentCrate = "anymap";
-        window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

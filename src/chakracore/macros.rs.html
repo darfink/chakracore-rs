@@ -115,39 +115,10 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
-<span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
-<span id="85">85</span>
-<span id="86">86</span>
-<span id="87">87</span>
-<span id="88">88</span>
-<span id="89">89</span>
-<span id="90">90</span>
-<span id="91">91</span>
-<span id="92">92</span>
-<span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
-<span id="96">96</span>
 </pre><pre class="rust ">
 <span class="doccomment">/// Equivalent to the normal `try!` macro for JSRT function calls.</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">jstry</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>: <span class="ident">expr</span>) <span class="op">=&gt;</span> {
-        <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span> {
-            ::<span class="ident">chakracore_sys</span>::<span class="ident">JsErrorCode</span>::<span class="ident">NoError</span> <span class="op">=&gt;</span> (),
-            <span class="ident">error</span> @ _ <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;JSRT call failed with: {:?}&quot;</span>, <span class="ident">error</span>).<span class="ident">into</span>()),
-        }
-    }
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>: <span class="ident">expr</span>) <span class="op">=&gt;</span> { ::<span class="ident">util</span>::<span class="ident">jstry</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>)<span class="question-mark">?</span>; }
 }
 
 <span class="doccomment">/// Asserts the return value of a JSRT function call.</span>
@@ -158,7 +129,7 @@
         <span class="comment">// In many cases idiomatic code prevents any errors from happening</span>
         <span class="comment">// (except for memory resource issues).</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">result</span> <span class="op">==</span> ::<span class="ident">chakracore_sys</span>::<span class="ident">JsErrorCode</span>::<span class="ident">NoError</span>,
-                <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Call to &#39;{}&#39; failed with: {:?}&quot;</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, <span class="ident">result</span>));
+                <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;JSRT call to &#39;{}&#39; failed unexpectedly with: {:?}&quot;</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, <span class="ident">result</span>));
     };
 
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>: <span class="ident">expr</span>) <span class="op">=&gt;</span> {
@@ -166,8 +137,8 @@
     };
 }
 
-<span class="doccomment">/// Implements JSRT reference counting for a type.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">reference</span> {
+<span class="doccomment">/// Shared base reference implementation.</span>
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">reference_base</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
         <span class="kw">impl</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span> {
             <span class="doccomment">/// Creates an instance from a raw pointer.</span>
@@ -178,61 +149,42 @@
             <span class="doccomment">///</span>
             <span class="doccomment">/// This is required to support items stored on the heap, since the</span>
             <span class="doccomment">/// JSRT runtime only observes the stack.</span>
+            <span class="doccomment">///</span>
+            <span class="doccomment">/// If used in conjunction with a `Property` or any `Value`, it is</span>
+            <span class="doccomment">/// assumed a `Context` is active.</span>
             <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_raw</span>(<span class="ident">value</span>: <span class="ident">JsRef</span>) <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span> {
                 <span class="macro">jsassert</span><span class="macro">!</span>(<span class="ident">JsAddRef</span>(<span class="ident">value</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>()));
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span>(<span class="ident">value</span>)
             }
+
+            <span class="doccomment">/// Returns the underlying raw pointer.</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">JsRef</span> {
+                <span class="self">self</span>.<span class="number">0</span>
+            }
         }
 
         <span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span> {
+            <span class="doccomment">/// Duplicates a reference counted type.</span>
+            <span class="doccomment">///</span>
+            <span class="doccomment">/// The underlying pointer will be copied, and its reference count</span>
+            <span class="doccomment">/// will be incremented, returned wrapped as the type.</span>
             <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span> {
                 <span class="kw">unsafe</span> { <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span>::<span class="ident">from_raw</span>(<span class="self">self</span>.<span class="ident">as_raw</span>()) }
             }
         }
+    }
+}
+
+<span class="doccomment">/// Implements JSRT reference counting for a non-value type.</span>
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">reference</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+        <span class="macro">reference_base</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span>);
 
         <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">typ</span> {
-            <span class="doccomment">/// Decrements the reference&#39;s counter.</span>
+            <span class="doccomment">/// Decrements the reference counter.</span>
             <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
-                <span class="macro">jsassert</span><span class="macro">!</span>(<span class="kw">unsafe</span> { <span class="ident">JsRelease</span>(<span class="self">self</span>.<span class="ident">as_raw</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">count</span>) });
-                <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">count</span> <span class="op">&lt;</span> ::<span class="ident">libc</span>::<span class="ident">c_uint</span>::<span class="ident">max_value</span>());
+                ::<span class="ident">util</span>::<span class="ident">release_reference</span>(<span class="self">self</span>.<span class="ident">as_raw</span>());
             }
-        }
-    }
-}
-
-<span class="doccomment">/// Implements a relationship between two subtypes.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">subtype</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-        <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span> {
-            <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">child</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span>) <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span> {
-                <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">child</span>) }
-            }
-        }
-    }
-}
-
-<span class="doccomment">/// Implements an inheritance between two types.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">inherit</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-        <span class="macro">subtype</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span>);
-
-        <span class="kw">impl</span> ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">child</span> {
-            <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">parent</span>;
-
-            <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Target</span> {
-                <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="self">self</span>) }
-            }
-        }
-    }
-}
-
-<span class="doccomment">/// Used for JavaScript value type implementation.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">is_same</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target_doc</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {
-        <span class="attribute">#[<span class="ident">doc</span><span class="op">=</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">target_doc</span>]</span>
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_same</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-            <span class="ident">value</span>.<span class="ident">get_type</span>() <span class="op">==</span> <span class="ident">JsValueType</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>
         }
     };
 }

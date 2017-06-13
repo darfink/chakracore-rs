@@ -9,6 +9,7 @@
 
     <title>anymap::OccupiedEntry - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc struct">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='index.html'>anymap</a></p><script>window.sidebarCurrent = {name: 'OccupiedEntry', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct OccupiedEntry</p><div class="block items"><ul><li><a href="#methods">Methods</a></li></ul></div><p class='location'><a href='index.html'>anymap</a></p><script>window.sidebarCurrent = {name: 'OccupiedEntry', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,26 +43,24 @@
         </form>
     </nav>
 
-    <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>anymap</a>::<wbr><a class='struct' href=''>OccupiedEntry</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>anymap</a>::<wbr><a class="struct" href=''>OccupiedEntry</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-521' class='srclink' href='../src/anymap/lib.rs.html#226-229' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct OccupiedEntry&lt;'a,&nbsp;A:&nbsp;?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../anymap/any/trait.UncheckedAnyExt.html' title='anymap::any::UncheckedAnyExt'>UncheckedAnyExt</a>,&nbsp;V:&nbsp;'a&gt; {
-    // some fields omitted
-}</pre><div class='docblock'><p>A view into a single occupied location in an <code>Map</code>.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;A:&nbsp;?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../anymap/any/trait.UncheckedAnyExt.html' title='anymap::any::UncheckedAnyExt'>UncheckedAnyExt</a>,&nbsp;V:&nbsp;IntoBox&lt;A&gt;&gt; <a class='struct' href='../anymap/struct.OccupiedEntry.html' title='anymap::OccupiedEntry'>OccupiedEntry</a>&lt;'a,&nbsp;A,&nbsp;V&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-556' class='srclink' href='../src/anymap/lib.rs.html#267-298' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.get' class='method'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self) -&gt; &amp;V</code></h4>
+               </span><a class='srclink' href='../src/anymap/lib.rs.html#226-229' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct OccupiedEntry&lt;'a, A:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../anymap/any/trait.UncheckedAnyExt.html" title="trait anymap::any::UncheckedAnyExt">UncheckedAnyExt</a>, V:&nbsp;'a&gt; { /* fields omitted */ }</pre><div class='docblock'><p>A view into a single occupied location in an <code>Map</code>.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a, A:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a> + <a class="trait" href="../anymap/any/trait.UncheckedAnyExt.html" title="trait anymap::any::UncheckedAnyExt">UncheckedAnyExt</a>, V:&nbsp;IntoBox&lt;A&gt;&gt; <a class="struct" href="../anymap/struct.OccupiedEntry.html" title="struct anymap::OccupiedEntry">OccupiedEntry</a>&lt;'a, A, V&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/anymap/lib.rs.html#267-298' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.get' class="method"><span id='get.v' class='invisible'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self) -&gt; &amp;V</code></span></h4>
 <div class='docblock'><p>Gets a reference to the value in the entry</p>
-</div><h4 id='method.get_mut' class='method'><code>fn <a href='#method.get_mut' class='fnname'>get_mut</a>(&amp;mut self) -&gt; &amp;mut V</code></h4>
+</div><h4 id='method.get_mut' class="method"><span id='get_mut.v' class='invisible'><code>fn <a href='#method.get_mut' class='fnname'>get_mut</a>(&amp;mut self) -&gt; &amp;mut V</code></span></h4>
 <div class='docblock'><p>Gets a mutable reference to the value in the entry</p>
-</div><h4 id='method.into_mut' class='method'><code>fn <a href='#method.into_mut' class='fnname'>into_mut</a>(self) -&gt; &amp;'a mut V</code></h4>
+</div><h4 id='method.into_mut' class="method"><span id='into_mut.v' class='invisible'><code>fn <a href='#method.into_mut' class='fnname'>into_mut</a>(self) -&gt; &amp;'a mut V</code></span></h4>
 <div class='docblock'><p>Converts the OccupiedEntry into a mutable reference to the value in the entry
 with a lifetime bound to the collection itself</p>
-</div><h4 id='method.insert' class='method'><code>fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self, value: V) -&gt; V</code></h4>
+</div><h4 id='method.insert' class="method"><span id='insert.v' class='invisible'><code>fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self, value: V) -&gt; V</code></span></h4>
 <div class='docblock'><p>Sets the value of the entry, and returns the entry&#39;s old value</p>
-</div><h4 id='method.remove' class='method'><code>fn <a href='#method.remove' class='fnname'>remove</a>(self) -&gt; V</code></h4>
+</div><h4 id='method.remove' class="method"><span id='remove.v' class='invisible'><code>fn <a href='#method.remove' class='fnname'>remove</a>(self) -&gt; V</code></span></h4>
 <div class='docblock'><p>Takes the value out of the entry, and returns it</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
@@ -119,11 +118,8 @@ with a lifetime bound to the collection itself</p>
     <script>
         window.rootPath = "../";
         window.currentCrate = "anymap";
-        window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

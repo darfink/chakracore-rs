@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/chakracore/value/mod.rs.html#1-90' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/chakracore/value/mod.rs.html#1-93' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Javascript values that user code can interact with.</p>
 
 <p>The <a href="struct.Value.html">Value</a> object acts as the base type for all others
@@ -70,13 +70,20 @@ Prefer <code>to_string</code> for safety.</p>
 <code>ContextGuard</code> is required whenever creating new values, and they should
 not be passed between different contexts.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use self::<a class="mod" href="./function/index.html">function</a>::<a class="struct" href="../../chakracore/value/function/struct.Function.html" title="struct chakracore::value::function::Function">Function</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr><td><code>pub use self::<a class="mod" href="./function/index.html">function</a>::<a class="struct" href="../../chakracore/value/function/struct.Function.html" title="struct chakracore::value::function::Function">Function</a>;</code></td></tr><tr><td><code>pub use self::<a class="mod" href="./promise/index.html">promise</a>::<a class="struct" href="../../chakracore/value/promise/struct.Promise.html" title="struct chakracore::value::promise::Promise">Promise</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="mod" href="function/index.html"
                                   title='mod chakracore::value::function'>function</a></td>
                            <td class='docblock-short'>
                                 <p>A JavaScript function and associated types.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="promise/index.html"
+                                  title='mod chakracore::value::promise'>promise</a></td>
+                           <td class='docblock-short'>
+                                
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
@@ -134,13 +141,6 @@ not be passed between different contexts.</p>
                                   title='struct chakracore::value::Object'>Object</a></td>
                            <td class='docblock-short'>
                                 <p>A JavaScript object.</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Promise.html"
-                                  title='struct chakracore::value::Promise'>Promise</a></td>
-                           <td class='docblock-short'>
-                                <p>A JavaScript promise.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

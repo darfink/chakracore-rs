@@ -48,9 +48,9 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/chakracore/property.rs.html#6' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/chakracore/property.rs.html#7' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Property(_);</pre><div class='docblock'><p>A property identifier used with objects.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/property.rs.html#8-31' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/property.rs.html#9-28' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(_guard: &amp;<a class="struct" href="../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Self</code></span></h4>
 <div class='docblock'><p>Creates a property identifier from a string.</p>
 
@@ -58,9 +58,7 @@
 be returned instead of creating a new one.</p>
 </div><h4 id='method.to_string' class="method"><span id='to_string.v' class='invisible'><code>fn <a href='#method.to_string' class='fnname'>to_string</a>(&amp;self, _guard: &amp;<a class="struct" href="../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
 <div class='docblock'><p>Converts a JavaScript property to a native string.</p>
-</div><h4 id='method.as_raw' class="method"><span id='as_raw.v' class='invisible'><code>fn <a href='#method.as_raw' class='fnname'>as_raw</a>(&amp;self) -&gt; <a class="type" href="../chakracore_sys/type.JsPropertyIdRef.html" title="type chakracore_sys::JsPropertyIdRef">JsPropertyIdRef</a></code></span></h4>
-<div class='docblock'><p>Returns the underlying raw pointer behind this property.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#30-43' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#25-46' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.from_raw' class="method"><span id='from_raw.v' class='invisible'><code>unsafe fn <a href='#method.from_raw' class='fnname'>from_raw</a>(value: <a class="struct" href="../chakracore_sys/struct.JsRef.html" title="struct chakracore_sys::JsRef">JsRef</a>) -&gt; <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span></h4>
 <div class='docblock'><p>Creates an instance from a raw pointer.</p>
 
@@ -70,18 +68,31 @@ and decrementing with <code>drop</code>.</p>
 
 <p>This is required to support items stored on the heap, since the
 JSRT runtime only observes the stack.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/property.rs.html#33-41' title='goto source code'>[src]</a></span></h3>
+
+<p>If used in conjunction with a <code>Property</code> or any <code>Value</code>, it is
+assumed a <code>Context</code> is active.</p>
+</div><h4 id='method.as_raw' class="method"><span id='as_raw.v' class='invisible'><code>fn <a href='#method.as_raw' class='fnname'>as_raw</a>(&amp;self) -&gt; <a class="struct" href="../chakracore_sys/struct.JsRef.html" title="struct chakracore_sys::JsRef">JsRef</a></code></span></h4>
+<div class='docblock'><p>Returns the underlying raw pointer.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq">PartialEq</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/property.rs.html#6' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class="method"><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class="method"><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/property.rs.html#30-39' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
-<div class='docblock'><p>Only use for debugging, it relies on an implicit active context and uses
-several unwraps.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#45-49' title='goto source code'>[src]</a></span></h3>
+<div class='docblock'><p>Only use for debugging, it relies on an implicit active context and
+panics otherwise.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#48-56' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span></h4>
-<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+<div class='docblock'><p>Duplicates a reference counted type.</p>
+
+<p>The underlying pointer will be copied, and its reference count
+will be incremented, returned wrapped as the type.</p>
 </div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
 <div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html" title="trait core::ops::Drop">Drop</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#51-58' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html" title="trait core::ops::Drop">Drop</a> for <a class="struct" href="../chakracore/struct.Property.html" title="struct chakracore::Property">Property</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/chakracore/macros.rs.html#65-70' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>Decrements the reference&#39;s counter.</p>
+<div class='docblock'><p>Decrements the reference counter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

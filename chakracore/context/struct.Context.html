@@ -48,24 +48,45 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/chakracore/context.rs.html#24' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/chakracore/context.rs.html#27' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Context(_);</pre><div class='docblock'><p>A sandboxed execution context with its own set of built-in objects and
 functions.</p>
+
+<p>The majority of APIs require an active context.</p>
 
 <p>In a browser or Node.JS environment, the task of executing promises is
 handled by the runtime. This is not the case with <strong>ChakraCore</strong>. To run
 promise chains, <code>execute_tasks</code> must be called at a regular interval. This
 is done using the <code>ContextGuard</code>.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/context.rs.html#27-168' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/context.rs.html#30-209' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(runtime: &amp;<a class="struct" href="../../chakracore/runtime/struct.Runtime.html" title="struct chakracore::runtime::Runtime">Runtime</a>) -&gt; <a class="type" href="../../chakracore/error/type.Result.html" title="type chakracore::error::Result">Result</a>&lt;<a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a>&gt;</code></span></h4>
 <div class='docblock'><p>Creates a new context and returns a handle to it.</p>
-</div><h4 id='method.from_object' class="method"><span id='from_object.v' class='invisible'><code>unsafe fn <a href='#method.from_object' class='fnname'>from_object</a>(object: &amp;<a class="struct" href="../../chakracore/value/struct.Object.html" title="struct chakracore::value::Object">Object</a>) -&gt; <a class="type" href="../../chakracore/error/type.Result.html" title="type chakracore::error::Result">Result</a>&lt;<a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a>&gt;</code></span></h4>
-<div class='docblock'><p>Returns an object&#39;s associated context.</p>
 </div><h4 id='method.make_current' class="method"><span id='make_current.v' class='invisible'><code>fn <a href='#method.make_current' class='fnname'>make_current</a>&lt;'a&gt;(&amp;'a self) -&gt; <a class="type" href="../../chakracore/error/type.Result.html" title="type chakracore::error::Result">Result</a>&lt;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>&lt;'a&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Binds the context to the current scope.</p>
+</div><h4 id='method.get_current' class="method"><span id='get_current.v' class='invisible'><code>unsafe fn <a href='#method.get_current' class='fnname'>get_current</a>&lt;'a&gt;() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>&lt;'a&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Returns the active context in the current thread.</p>
 
-<p>The majority of APIs require an active context.</p>
-</div><h4 id='method.insert_user_data' class="method"><span id='insert_user_data.v' class='invisible'><code>fn <a href='#method.insert_user_data' class='fnname'>insert_user_data</a>&lt;T&gt;(&amp;self, value: T) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: 'static,&nbsp;</span></code></span></h4>
+<p>This is unsafe because there should be little reason to use it in
+idiomatic code.</p>
+
+<p>Usage patterns should utilize <code>ContextGuard</code> or
+<code>exec_with_current</code> instead.</p>
+
+<p>This <code>ContextGuard</code> does not reset the current context upon destruction,
+in contrast to a normally allocated <code>ContextGuard</code>. This is merely a
+hollow reference.</p>
+</div><h4 id='method.exec_with' class="method"><span id='exec_with.v' class='invisible'><code>fn <a href='#method.exec_with' class='fnname'>exec_with</a>&lt;Ret, T:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.FnOnce.html" title="trait core::ops::FnOnce">FnOnce</a>(&amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; Ret&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;callback: T<br>) -&gt; <a class="type" href="../../chakracore/error/type.Result.html" title="type chakracore::error::Result">Result</a>&lt;Ret&gt;</code></span></h4>
+<div class='docblock'><p>Binds the context to the closure&#39;s scope.</p>
+
+<pre><code class="language-c">let result = context.exec_with(|guard| script::eval(guard, &quot;1 + 1&quot;)).unwrap();
+</code></pre>
+</div><h4 id='method.exec_with_current' class="method"><span id='exec_with_current.v' class='invisible'><code>fn <a href='#method.exec_with_current' class='fnname'>exec_with_current</a>&lt;Ret, T:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.FnOnce.html" title="trait core::ops::FnOnce">FnOnce</a>(&amp;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>) -&gt; Ret&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;callback: T<br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;Ret&gt;</code></span></h4>
+<div class='docblock'><p>Executes a closure with the thread&#39;s active context.</p>
+
+<p>This is a safe alternative to <code>get_current</code>. It will either return the
+closures result wrapped in <code>Some</code>, or <code>None</code>, if no context is currently
+active.</p>
+</div><h4 id='method.insert_user_data' class="method"><span id='insert_user_data.v' class='invisible'><code>fn <a href='#method.insert_user_data' class='fnname'>insert_user_data</a>&lt;T&gt;(&amp;self, value: T) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,&nbsp;</span></code></span></h4>
 <div class='docblock'><p>Set user data associated with the context.</p>
 
 <ul>
@@ -74,24 +95,13 @@ is done using the <code>ContextGuard</code>.</p>
 <li>Returns a previous value if applicable.</li>
 <li>The data will live as long as the runtime keeps the context.</li>
 </ul>
-</div><h4 id='method.remove_user_data' class="method"><span id='remove_user_data.v' class='invisible'><code>fn <a href='#method.remove_user_data' class='fnname'>remove_user_data</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: 'static,&nbsp;</span></code></span></h4>
+</div><h4 id='method.remove_user_data' class="method"><span id='remove_user_data.v' class='invisible'><code>fn <a href='#method.remove_user_data' class='fnname'>remove_user_data</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,&nbsp;</span></code></span></h4>
 <div class='docblock'><p>Remove user data associated with the context.</p>
-</div><h4 id='method.get_user_data' class="method"><span id='get_user_data.v' class='invisible'><code>fn <a href='#method.get_user_data' class='fnname'>get_user_data</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: 'static,&nbsp;</span></code></span></h4>
+</div><h4 id='method.get_user_data' class="method"><span id='get_user_data.v' class='invisible'><code>fn <a href='#method.get_user_data' class='fnname'>get_user_data</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,&nbsp;</span></code></span></h4>
 <div class='docblock'><p>Get user data associated with the context.</p>
-</div><h4 id='method.get_user_data_mut' class="method"><span id='get_user_data_mut.v' class='invisible'><code>fn <a href='#method.get_user_data_mut' class='fnname'>get_user_data_mut</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;mut T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: 'static,&nbsp;</span></code></span></h4>
+</div><h4 id='method.get_user_data_mut' class="method"><span id='get_user_data_mut.v' class='invisible'><code>fn <a href='#method.get_user_data_mut' class='fnname'>get_user_data_mut</a>&lt;T&gt;(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;mut T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,&nbsp;</span></code></span></h4>
 <div class='docblock'><p>Get mutable user data associated with the context.</p>
-</div><h4 id='method.get_current' class="method"><span id='get_current.v' class='invisible'><code>unsafe fn <a href='#method.get_current' class='fnname'>get_current</a>&lt;'a&gt;() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../chakracore/context/struct.ContextGuard.html" title="struct chakracore::context::ContextGuard">ContextGuard</a>&lt;'a&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Returns the active context in the current thread.</p>
-
-<p>This is unsafe because there should be little reason to use it in
-idiomatic code. Usage patterns should utilize <code>ContextGuard</code> instead.</p>
-
-<p>This <code>ContextGuard</code> does not reset the current context upon destruction,
-in contrast to a normally allocated <code>ContextGuard</code>. This is merely a
-reference.</p>
-</div><h4 id='method.as_raw' class="method"><span id='as_raw.v' class='invisible'><code>fn <a href='#method.as_raw' class='fnname'>as_raw</a>(&amp;self) -&gt; <a class="type" href="../../chakracore_sys/type.JsContextRef.html" title="type chakracore_sys::JsContextRef">JsContextRef</a></code></span></h4>
-<div class='docblock'><p>Returns the underlying raw pointer.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#30-43' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#25-46' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.from_raw' class="method"><span id='from_raw.v' class='invisible'><code>unsafe fn <a href='#method.from_raw' class='fnname'>from_raw</a>(value: <a class="struct" href="../../chakracore_sys/struct.JsRef.html" title="struct chakracore_sys::JsRef">JsRef</a>) -&gt; <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span></h4>
 <div class='docblock'><p>Creates an instance from a raw pointer.</p>
 
@@ -101,17 +111,30 @@ and decrementing with <code>drop</code>.</p>
 
 <p>This is required to support items stored on the heap, since the
 JSRT runtime only observes the stack.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/context.rs.html#23' title='goto source code'>[src]</a></span></h3>
+
+<p>If used in conjunction with a <code>Property</code> or any <code>Value</code>, it is
+assumed a <code>Context</code> is active.</p>
+</div><h4 id='method.as_raw' class="method"><span id='as_raw.v' class='invisible'><code>fn <a href='#method.as_raw' class='fnname'>as_raw</a>(&amp;self) -&gt; <a class="struct" href="../../chakracore_sys/struct.JsRef.html" title="struct chakracore_sys::JsRef">JsRef</a></code></span></h4>
+<div class='docblock'><p>Returns the underlying raw pointer.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/context.rs.html#26' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#45-49' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq">PartialEq</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/context.rs.html#26' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class="method"><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class="method"><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#48-56' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span></h4>
-<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+<div class='docblock'><p>Duplicates a reference counted type.</p>
+
+<p>The underlying pointer will be copied, and its reference count
+will be incremented, returned wrapped as the type.</p>
 </div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
 <div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html" title="trait core::ops::Drop">Drop</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#51-58' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html" title="trait core::ops::Drop">Drop</a> for <a class="struct" href="../../chakracore/context/struct.Context.html" title="struct chakracore::context::Context">Context</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/chakracore/macros.rs.html#65-70' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>Decrements the reference&#39;s counter.</p>
+<div class='docblock'><p>Decrements the reference counter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

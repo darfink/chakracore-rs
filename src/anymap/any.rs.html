@@ -9,6 +9,7 @@
 
     <title>any.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -200,165 +201,165 @@
 <span id="156">156</span>
 <span id="157">157</span>
 <span id="158">158</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! The different types of `Any` for use in a map.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! This stuff is all based on `std::any`, but goes a little further, with `CloneAny` being a</span>
-<span class='doccomment'>//! cloneable `Any` and with the `Send` and `Sync` bounds possible on both `Any` and `CloneAny`.</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! The different types of `Any` for use in a map.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This stuff is all based on `std::any`, but goes a little further, with `CloneAny` being a</span>
+<span class="doccomment">//! cloneable `Any` and with the `Send` and `Sync` bounds possible on both `Any` and `CloneAny`.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>any</span>::<span class='ident'>Any</span> <span class='kw'>as</span> <span class='ident'>StdAny</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">Any</span> <span class="kw">as</span> <span class="ident">StdAny</span>;
 
-<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>CloneToAny</span> {
-    <span class='doccomment'>/// Clone `self` into a new `Box&lt;CloneAny&gt;` object.</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span><span class='op'>&gt;</span>;
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">CloneToAny</span> {
+    <span class="doccomment">/// Clone `self` into a new `Box&lt;CloneAny&gt;` object.</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span><span class="op">&gt;</span>;
 
-    <span class='doccomment'>/// Clone `self` into a new `Box&lt;CloneAny + Send&gt;` object.</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_send</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Send</span>;
+    <span class="doccomment">/// Clone `self` into a new `Box&lt;CloneAny + Send&gt;` object.</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_send</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Send</span>;
 
-    <span class='doccomment'>/// Clone `self` into a new `Box&lt;CloneAny + Sync&gt;` object.</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_sync</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Sync</span>;
+    <span class="doccomment">/// Clone `self` into a new `Box&lt;CloneAny + Sync&gt;` object.</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_sync</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sync</span>;
 
-    <span class='doccomment'>/// Clone `self` into a new `Box&lt;CloneAny + Send + Sync&gt;` object.</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_send_sync</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span>;
+    <span class="doccomment">/// Clone `self` into a new `Box&lt;CloneAny + Send + Sync&gt;` object.</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_send_sync</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>;
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>Clone</span><span class='op'>&gt;</span> <span class='ident'>CloneToAny</span> <span class='kw'>for</span> <span class='ident'>T</span> {
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span><span class='op'>&gt;</span> {
-        <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>clone</span>())
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">CloneToAny</span> <span class="kw">for</span> <span class="ident">T</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span><span class="op">&gt;</span> {
+        <span class="ident">Box</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">clone</span>())
     }
 
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_send</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Send</span> {
-        <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>clone</span>())
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_send</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Send</span> {
+        <span class="ident">Box</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">clone</span>())
     }
 
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_sync</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Sync</span> {
-        <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>clone</span>())
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_sync</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sync</span> {
+        <span class="ident">Box</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">clone</span>())
     }
 
-    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>clone_to_any_send_sync</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span> {
-        <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>clone</span>())
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">clone_to_any_send_sync</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {
+        <span class="ident">Box</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">clone</span>())
     }
 }
 
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>define</span> {
-    (<span class='ident'>CloneAny</span>) <span class='op'>=&gt;</span> {
-        <span class='doccomment'>/// A type to emulate dynamic typing.</span>
-        <span class='doccomment'>///</span>
-        <span class='doccomment'>/// Every type with no non-`&#39;static` references implements `Any`.</span>
-        <span class='macro'>define</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span> <span class='ident'>remainder</span>);
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">define</span> {
+    (<span class="ident">CloneAny</span>) <span class="op">=&gt;</span> {
+        <span class="doccomment">/// A type to emulate dynamic typing.</span>
+        <span class="doccomment">///</span>
+        <span class="doccomment">/// Every type with no non-`&#39;static` references implements `Any`.</span>
+        <span class="macro">define</span><span class="macro">!</span>(<span class="ident">CloneAny</span> <span class="ident">remainder</span>);
     };
-    (<span class='ident'>Any</span>) <span class='op'>=&gt;</span> {
-        <span class='doccomment'>/// A type to emulate dynamic typing with cloning.</span>
-        <span class='doccomment'>///</span>
-        <span class='doccomment'>/// Every type with no non-`&#39;static` references that implements `Clone` implements `Any`.</span>
-        <span class='macro'>define</span><span class='macro'>!</span>(<span class='ident'>Any</span> <span class='ident'>remainder</span>);
+    (<span class="ident">Any</span>) <span class="op">=&gt;</span> {
+        <span class="doccomment">/// A type to emulate dynamic typing with cloning.</span>
+        <span class="doccomment">///</span>
+        <span class="doccomment">/// Every type with no non-`&#39;static` references that implements `Clone` implements `Any`.</span>
+        <span class="macro">define</span><span class="macro">!</span>(<span class="ident">Any</span> <span class="ident">remainder</span>);
     };
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ident</span> <span class='ident'>remainder</span>) <span class='op'>=&gt;</span> {
-        <span class='doccomment'>/// See the [`std::any` documentation](https://doc.rust-lang.org/std/any/index.html) for</span>
-        <span class='doccomment'>/// more details on `Any` in general.</span>
-        <span class='doccomment'>///</span>
-        <span class='doccomment'>/// This trait is not `std::any::Any` but rather a type extending that for this library’s</span>
-        <span class='doccomment'>/// purposes so that it can be combined with marker traits like </span>
-        <span class='doccomment'>/// &lt;code&gt;&lt;a class=trait title=core::marker::Send</span>
-        <span class='doccomment'>/// href=http://doc.rust-lang.org/std/marker/trait.Send.html&gt;Send&lt;/a&gt;&lt;/code&gt; and</span>
-        <span class='doccomment'>/// &lt;code&gt;&lt;a class=trait title=core::marker::Sync</span>
-        <span class='doccomment'>/// href=http://doc.rust-lang.org/std/marker/trait.Sync.html&gt;Sync&lt;/a&gt;&lt;/code&gt;.</span>
-        <span class='doccomment'>///</span>
-        <span class='macro'>define</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span> <span class='kw'>trait</span>);
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span> <span class="ident">remainder</span>) <span class="op">=&gt;</span> {
+        <span class="doccomment">/// See the [`std::any` documentation](https://doc.rust-lang.org/std/any/index.html) for</span>
+        <span class="doccomment">/// more details on `Any` in general.</span>
+        <span class="doccomment">///</span>
+        <span class="doccomment">/// This trait is not `std::any::Any` but rather a type extending that for this library’s</span>
+        <span class="doccomment">/// purposes so that it can be combined with marker traits like </span>
+        <span class="doccomment">/// &lt;code&gt;&lt;a class=trait title=core::marker::Send</span>
+        <span class="doccomment">/// href=http://doc.rust-lang.org/std/marker/trait.Send.html&gt;Send&lt;/a&gt;&lt;/code&gt; and</span>
+        <span class="doccomment">/// &lt;code&gt;&lt;a class=trait title=core::marker::Sync</span>
+        <span class="doccomment">/// href=http://doc.rust-lang.org/std/marker/trait.Sync.html&gt;Sync&lt;/a&gt;&lt;/code&gt;.</span>
+        <span class="doccomment">///</span>
+        <span class="macro">define</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> <span class="kw">trait</span>);
     };
-    (<span class='ident'>CloneAny</span> <span class='kw'>trait</span>) <span class='op'>=&gt;</span> {
-        <span class='doccomment'>/// See also [`Any`](trait.Any.html) for a version without the `Clone` requirement.</span>
-        <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>CloneAny</span>: <span class='ident'>Any</span> <span class='op'>+</span> <span class='ident'>CloneToAny</span> { }
-        <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>StdAny</span> <span class='op'>+</span> <span class='ident'>Clone</span><span class='op'>&gt;</span> <span class='ident'>CloneAny</span> <span class='kw'>for</span> <span class='ident'>T</span> { }
+    (<span class="ident">CloneAny</span> <span class="kw">trait</span>) <span class="op">=&gt;</span> {
+        <span class="doccomment">/// See also [`Any`](trait.Any.html) for a version without the `Clone` requirement.</span>
+        <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">CloneAny</span>: <span class="ident">Any</span> <span class="op">+</span> <span class="ident">CloneToAny</span> { }
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">StdAny</span> <span class="op">+</span> <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">CloneAny</span> <span class="kw">for</span> <span class="ident">T</span> { }
     };
-    (<span class='ident'>Any</span> <span class='kw'>trait</span>) <span class='op'>=&gt;</span> {
-        <span class='doccomment'>/// See also [`CloneAny`](trait.CloneAny.html) for a cloneable version of this trait.</span>
-        <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Any</span>: <span class='ident'>StdAny</span> { }
-        <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>StdAny</span><span class='op'>&gt;</span> <span class='ident'>Any</span> <span class='kw'>for</span> <span class='ident'>T</span> { }
+    (<span class="ident">Any</span> <span class="kw">trait</span>) <span class="op">=&gt;</span> {
+        <span class="doccomment">/// See also [`CloneAny`](trait.CloneAny.html) for a cloneable version of this trait.</span>
+        <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Any</span>: <span class="ident">StdAny</span> { }
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">StdAny</span><span class="op">&gt;</span> <span class="ident">Any</span> <span class="kw">for</span> <span class="ident">T</span> { }
     };
 }
 
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>impl_clone</span> {
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>method</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> {
-        <span class='kw'>impl</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&gt;</span> {
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span><span class='op'>&gt;</span> {
-                (<span class='op'>*</span><span class='op'>*</span><span class='self'>self</span>).<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>method</span>()
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_clone</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+        <span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&gt;</span> {
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&gt;</span> {
+                (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>()
             }
         }
     }
 }
 
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>missing_docs</span>)]</span>  <span class='comment'>// Bogus warning (it’s not public outside the crate), ☹</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>UncheckedAnyExt</span>: <span class='ident'>Any</span> {
-    <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_ref_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Any</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>T</span>;
-    <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_mut_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Any</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>T</span>;
-    <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Any</span><span class='op'>&gt;</span>(<span class='self'>self</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='self'>Self</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>;
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>  <span class="comment">// Bogus warning (it’s not public outside the crate), ☹</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">UncheckedAnyExt</span>: <span class="ident">Any</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_ref_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Any</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">T</span>;
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_mut_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Any</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>;
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Any</span><span class="op">&gt;</span>(<span class="self">self</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 }
 
-<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-<span class='doccomment'>/// A trait for the conversion of an object into a boxed trait object.</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='ident'>A</span>: ?<span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>UncheckedAnyExt</span><span class='op'>&gt;</span>: <span class='ident'>Any</span> {
-    <span class='doccomment'>/// Convert self into the appropriate boxed form.</span>
-    <span class='kw'>fn</span> <span class='ident'>into_box</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>;
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="doccomment">/// A trait for the conversion of an object into a boxed trait object.</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="question-mark">?</span><span class="ident">Sized</span> <span class="op">+</span> <span class="ident">UncheckedAnyExt</span><span class="op">&gt;</span>: <span class="ident">Any</span> {
+    <span class="doccomment">/// Convert self into the appropriate boxed form.</span>
+    <span class="kw">fn</span> <span class="ident">into_box</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>;
 }
 
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>implement</span> {
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span>:<span class='ident'>ident</span>, $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>:<span class='ident'>ident</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span> {
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
-                <span class='ident'>f</span>.<span class='ident'>pad</span>(<span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span>))
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">implement</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span>:<span class="ident">ident</span>, $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+        <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="op">*</span> {
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+                <span class="ident">f</span>.<span class="ident">pad</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="kw-2">*</span>))
             }
         }
 
-        <span class='kw'>impl</span> <span class='ident'>UncheckedAnyExt</span> <span class='kw'>for</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span> {
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_ref_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='lifetime'>&#39;static</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>T</span> {
-                <span class='kw-2'>&amp;</span><span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='self'>Self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>T</span>)
+        <span class="kw">impl</span> <span class="ident">UncheckedAnyExt</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="op">*</span> {
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_ref_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="lifetime">&#39;static</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">T</span> {
+                <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>)
             }
 
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_mut_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='lifetime'>&#39;static</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>T</span> {
-                <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>Self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>T</span>)
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_mut_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="lifetime">&#39;static</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span> {
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span>(<span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span>)
             }
 
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>downcast_unchecked</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='lifetime'>&#39;static</span><span class='op'>&gt;</span>(<span class='self'>self</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='self'>Self</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-                <span class='ident'>Box</span>::<span class='ident'>from_raw</span>(<span class='ident'>Box</span>::<span class='ident'>into_raw</span>(<span class='self'>self</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>T</span>)
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">downcast_unchecked</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="lifetime">&#39;static</span><span class="op">&gt;</span>(<span class="self">self</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+                <span class="ident">Box</span>::<span class="ident">from_raw</span>(<span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="self">self</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span>)
             }
         }
 
-        <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span><span class='op'>&gt;</span> <span class='ident'>IntoBox</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>T</span> {
-            <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-            <span class='kw'>fn</span> <span class='ident'>into_box</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>base</span> $(<span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>bounds</span>)<span class='op'>*</span><span class='op'>&gt;</span> {
-                <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='self'>self</span>)
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">IntoBox</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">T</span> {
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">fn</span> <span class="ident">into_box</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">base</span> $(<span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">bounds</span>)<span class="kw-2">*</span><span class="op">&gt;</span> {
+                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="self">self</span>)
             }
         }
     }
 }
 
-<span class='macro'>define</span><span class='macro'>!</span>(<span class='ident'>Any</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>Any</span>,);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>Any</span>, <span class='op'>+</span> <span class='ident'>Send</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>Any</span>, <span class='op'>+</span> <span class='ident'>Sync</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>Any</span>, <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>,);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>, <span class='op'>+</span> <span class='ident'>Send</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>, <span class='op'>+</span> <span class='ident'>Sync</span>);
-<span class='macro'>implement</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>, <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span>);
+<span class="macro">define</span><span class="macro">!</span>(<span class="ident">Any</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">Any</span>,);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">Any</span>, <span class="op">+</span> <span class="ident">Send</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">Any</span>, <span class="op">+</span> <span class="ident">Sync</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">Any</span>, <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">CloneAny</span>,);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">CloneAny</span>, <span class="op">+</span> <span class="ident">Send</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">CloneAny</span>, <span class="op">+</span> <span class="ident">Sync</span>);
+<span class="macro">implement</span><span class="macro">!</span>(<span class="ident">CloneAny</span>, <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>);
 
-<span class='macro'>define</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>);
-<span class='macro'>impl_clone</span><span class='macro'>!</span>(<span class='ident'>CloneAny</span>, <span class='ident'>clone_to_any</span>);
-<span class='macro'>impl_clone</span><span class='macro'>!</span>((<span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span>), <span class='ident'>clone_to_any_send</span>);
-<span class='macro'>impl_clone</span><span class='macro'>!</span>((<span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Sync</span>), <span class='ident'>clone_to_any_sync</span>);
-<span class='macro'>impl_clone</span><span class='macro'>!</span>((<span class='ident'>CloneAny</span> <span class='op'>+</span> <span class='ident'>Send</span> <span class='op'>+</span> <span class='ident'>Sync</span>), <span class='ident'>clone_to_any_send_sync</span>);
+<span class="macro">define</span><span class="macro">!</span>(<span class="ident">CloneAny</span>);
+<span class="macro">impl_clone</span><span class="macro">!</span>(<span class="ident">CloneAny</span>, <span class="ident">clone_to_any</span>);
+<span class="macro">impl_clone</span><span class="macro">!</span>((<span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span>), <span class="ident">clone_to_any_send</span>);
+<span class="macro">impl_clone</span><span class="macro">!</span>((<span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Sync</span>), <span class="ident">clone_to_any_sync</span>);
+<span class="macro">impl_clone</span><span class="macro">!</span>((<span class="ident">CloneAny</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>), <span class="ident">clone_to_any_send_sync</span>);
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
@@ -416,11 +417,8 @@
     <script>
         window.rootPath = "../../";
         window.currentCrate = "anymap";
-        window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

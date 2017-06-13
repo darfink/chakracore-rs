@@ -9,6 +9,7 @@
 
     <title>lib.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -145,108 +146,108 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! A macro for defining #[cfg] if-else statements.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! The macro provided by this crate, `cfg_if`, is similar to the `if/elif` C</span>
-<span class='doccomment'>//! preprocessor macro by allowing definition of a cascade of `#[cfg]` cases,</span>
-<span class='doccomment'>//! emitting the implementation which matches first.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! This allows you to conveniently provide a long list #[cfg]&#39;d blocks of code</span>
-<span class='doccomment'>//! without having to rewrite each clause multiple times.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! # Example</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! ```</span>
-<span class='doccomment'>//! #[macro_use]</span>
-<span class='doccomment'>//! extern crate cfg_if;</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! cfg_if! {</span>
-<span class='doccomment'>//!     if #[cfg(unix)] {</span>
-<span class='doccomment'>//!         fn foo() { /* unix specific functionality */ }</span>
-<span class='doccomment'>//!     } else if #[cfg(target_pointer_width = &quot;32&quot;)] {</span>
-<span class='doccomment'>//!         fn foo() { /* non-unix, 32-bit functionality */ }</span>
-<span class='doccomment'>//!     } else {</span>
-<span class='doccomment'>//!         fn foo() { /* fallback implementation */ }</span>
-<span class='doccomment'>//!     }</span>
-<span class='doccomment'>//! }</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! # fn main() {}</span>
-<span class='doccomment'>//! ```</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! A macro for defining #[cfg] if-else statements.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The macro provided by this crate, `cfg_if`, is similar to the `if/elif` C</span>
+<span class="doccomment">//! preprocessor macro by allowing definition of a cascade of `#[cfg]` cases,</span>
+<span class="doccomment">//! emitting the implementation which matches first.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This allows you to conveniently provide a long list #[cfg]&#39;d blocks of code</span>
+<span class="doccomment">//! without having to rewrite each clause multiple times.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! # Example</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//! #[macro_use]</span>
+<span class="doccomment">//! extern crate cfg_if;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! cfg_if! {</span>
+<span class="doccomment">//!     if #[cfg(unix)] {</span>
+<span class="doccomment">//!         fn foo() { /* unix specific functionality */ }</span>
+<span class="doccomment">//!     } else if #[cfg(target_pointer_width = &quot;32&quot;)] {</span>
+<span class="doccomment">//!         fn foo() { /* non-unix, 32-bit functionality */ }</span>
+<span class="doccomment">//!     } else {</span>
+<span class="doccomment">//!         fn foo() { /* fallback implementation */ }</span>
+<span class="doccomment">//!     }</span>
+<span class="doccomment">//! }</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! # fn main() {}</span>
+<span class="doccomment">//! ```</span>
 
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>no_std</span>]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">no_std</span>]</span>
 
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>doc</span>(<span class='ident'>html_root_url</span> <span class='op'>=</span> <span class='string'>&quot;http://alexcrichton.com/cfg-if&quot;</span>)]</span>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>deny</span>(<span class='ident'>missing_docs</span>)]</span>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>test</span>, <span class='ident'>deny</span>(<span class='ident'>warnings</span>))]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;http://alexcrichton.com/cfg-if&quot;</span>)]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">deny</span>(<span class="ident">warnings</span>))]</span>
 
-<span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>cfg_if</span> {
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_if</span> {
     ($(
-        <span class='kw'>if</span> <span class='attribute'>#[<span class='ident'>cfg</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>meta</span>:<span class='ident'>meta</span>),<span class='op'>*</span>)]</span> { $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>:<span class='ident'>item</span>)<span class='op'>*</span> }
-    ) <span class='kw'>else</span> <span class='op'>*</span> <span class='kw'>else</span> {
-        $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it2</span>:<span class='ident'>item</span>)<span class='op'>*</span>
-    }) <span class='op'>=&gt;</span> {
-        <span class='macro'>__cfg_if_items</span><span class='macro'>!</span> {
+        <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">meta</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>)]</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="op">*</span> }
+    ) <span class="kw">else</span> <span class="op">*</span> <span class="kw">else</span> {
+        $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it2</span>:<span class="ident">item</span>)<span class="op">*</span>
+    }) <span class="op">=&gt;</span> {
+        <span class="macro">__cfg_if_items</span><span class="macro">!</span> {
             () ;
-            $( ( ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>meta</span>),<span class='op'>*</span>) ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>)<span class='op'>*</span>) ), )<span class='op'>*</span>
-            ( () ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it2</span>)<span class='op'>*</span>) ),
+            $( ( ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">meta</span>),<span class="kw-2">*</span>) ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>)<span class="kw-2">*</span>) ), )<span class="op">*</span>
+            ( () ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it2</span>)<span class="kw-2">*</span>) ),
         }
     }
 }
 
-<span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
-<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>__cfg_if_items</span> {
-    (($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>not</span>:<span class='ident'>meta</span>,)<span class='op'>*</span>) ; ) <span class='op'>=&gt;</span> {};
-    (($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>not</span>:<span class='ident'>meta</span>,)<span class='op'>*</span>) ; ( ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>meta</span>),<span class='op'>*</span>) ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>:<span class='ident'>item</span>)<span class='op'>*</span>) ), $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro'>__cfg_if_apply</span><span class='macro'>!</span> { <span class='ident'>cfg</span>(<span class='ident'>all</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>,)<span class='op'>*</span> <span class='ident'>not</span>(<span class='ident'>any</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>not</span>),<span class='op'>*</span>)))), $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>)<span class='op'>*</span> }
-        <span class='macro'>__cfg_if_items</span><span class='macro'>!</span> { ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>not</span>,)<span class='op'>*</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>,)<span class='op'>*</span>) ; $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>)<span class='op'>*</span> }
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">__cfg_if_items</span> {
+    (($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ) <span class="op">=&gt;</span> {};
+    (($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ( ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>) ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) ), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+        <span class="macro">__cfg_if_apply</span><span class="macro">!</span> { <span class="ident">cfg</span>(<span class="ident">all</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>,)<span class="op">*</span> <span class="ident">not</span>(<span class="ident">any</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>),<span class="kw-2">*</span>)))), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>)<span class="op">*</span> }
+        <span class="macro">__cfg_if_items</span><span class="macro">!</span> { ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>,)<span class="op">*</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>,)<span class="kw-2">*</span>) ; $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>)<span class="op">*</span> }
     }
 }
 
-<span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
-<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>__cfg_if_apply</span> {
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>:<span class='ident'>meta</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>:<span class='ident'>item</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        $(<span class='attribute'>#[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>m</span>]</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>it</span>)<span class='op'>*</span>
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">__cfg_if_apply</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+        $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>)<span class="op">*</span>
     }
 }
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>tests</span> {
-    <span class='macro'>cfg_if</span><span class='macro'>!</span> {
-        <span class='kw'>if</span> <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span> {
-            <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>option</span>::<span class='prelude-ty'>Option</span> <span class='kw'>as</span> <span class='ident'>Option2</span>;
-            <span class='kw'>fn</span> <span class='ident'>works1</span>() <span class='op'>-&gt;</span> <span class='ident'>Option2</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span> { <span class='prelude-val'>Some</span>(<span class='number'>1</span>) }
-        } <span class='kw'>else</span> {
-            <span class='kw'>fn</span> <span class='ident'>works1</span>() <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span> { <span class='prelude-val'>None</span> }
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="macro">cfg_if</span><span class="macro">!</span> {
+        <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span> {
+            <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">option</span>::<span class="prelude-ty">Option</span> <span class="kw">as</span> <span class="ident">Option2</span>;
+            <span class="kw">fn</span> <span class="ident">works1</span>() <span class="op">-&gt;</span> <span class="ident">Option2</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> { <span class="prelude-val">Some</span>(<span class="number">1</span>) }
+        } <span class="kw">else</span> {
+            <span class="kw">fn</span> <span class="ident">works1</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> { <span class="prelude-val">None</span> }
         }
     }
 
-    <span class='macro'>cfg_if</span><span class='macro'>!</span> {
-        <span class='kw'>if</span> <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>foo</span>)]</span> {
-            <span class='kw'>fn</span> <span class='ident'>works2</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>false</span> }
-        } <span class='kw'>else</span> <span class='kw'>if</span> <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span> {
-            <span class='kw'>fn</span> <span class='ident'>works2</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>true</span> }
-        } <span class='kw'>else</span> {
-            <span class='kw'>fn</span> <span class='ident'>works2</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>false</span> }
+    <span class="macro">cfg_if</span><span class="macro">!</span> {
+        <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">foo</span>)]</span> {
+            <span class="kw">fn</span> <span class="ident">works2</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">false</span> }
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span> {
+            <span class="kw">fn</span> <span class="ident">works2</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
+        } <span class="kw">else</span> {
+            <span class="kw">fn</span> <span class="ident">works2</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">false</span> }
         }
     }
 
-    <span class='macro'>cfg_if</span><span class='macro'>!</span> {
-        <span class='kw'>if</span> <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>foo</span>)]</span> {
-            <span class='kw'>fn</span> <span class='ident'>works3</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>false</span> }
-        } <span class='kw'>else</span> {
-            <span class='kw'>fn</span> <span class='ident'>works3</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>true</span> }
+    <span class="macro">cfg_if</span><span class="macro">!</span> {
+        <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">foo</span>)]</span> {
+            <span class="kw">fn</span> <span class="ident">works3</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">false</span> }
+        } <span class="kw">else</span> {
+            <span class="kw">fn</span> <span class="ident">works3</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
         }
     }
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>it_works</span>() {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>works1</span>().<span class='ident'>is_some</span>());
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>works2</span>());
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>works3</span>());
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">it_works</span>() {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">works1</span>().<span class="ident">is_some</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">works2</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">works3</span>());
     }
 }
 </pre>
@@ -306,11 +307,8 @@
     <script>
         window.rootPath = "../../";
         window.currentCrate = "cfg_if";
-        window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
-    
     <script defer src="../../search-index.js"></script>
 </body>
 </html>

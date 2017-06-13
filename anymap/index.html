@@ -9,6 +9,7 @@
 
     <title>anymap - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'anymap', ty: 'mod', relpath: '../'};</script>
+        <p class='location'>Crate anymap</p><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'anymap', ty: 'mod', relpath: '../'};</script>
     </nav>
 
     <nav class="sub">
@@ -42,65 +43,65 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>anymap</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>anymap</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/anymap/lib.rs.html#1-525' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/anymap/lib.rs.html#1-525' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate provides the <code>AnyMap</code> type, a safe and convenient store for one value of each type.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='any/index.html'
-                                  title='anymap::any'>any</a></td>
-                           <td class='docblock short'>
+                           <td><a class="mod" href="any/index.html"
+                                  title='mod anymap::any'>any</a></td>
+                           <td class='docblock-short'>
                                 <p>The different types of <code>Any</code> for use in a map.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='raw/index.html'
-                                  title='anymap::raw'>raw</a></td>
-                           <td class='docblock short'>
+                           <td><a class="mod" href="raw/index.html"
+                                  title='mod anymap::raw'>raw</a></td>
+                           <td class='docblock-short'>
                                 <p>The raw form of a <code>Map</code>, allowing untyped access.</p>
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.Map.html'
-                                  title='anymap::Map'>Map</a></td>
-                           <td class='docblock short'>
+                           <td><a class="struct" href="struct.Map.html"
+                                  title='struct anymap::Map'>Map</a></td>
+                           <td class='docblock-short'>
                                 <p>A collection containing zero or one values for any given type and allowing convenient,
 type-safe access to those values.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.OccupiedEntry.html'
-                                  title='anymap::OccupiedEntry'>OccupiedEntry</a></td>
-                           <td class='docblock short'>
+                           <td><a class="struct" href="struct.OccupiedEntry.html"
+                                  title='struct anymap::OccupiedEntry'>OccupiedEntry</a></td>
+                           <td class='docblock-short'>
                                 <p>A view into a single occupied location in an <code>Map</code>.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.VacantEntry.html'
-                                  title='anymap::VacantEntry'>VacantEntry</a></td>
-                           <td class='docblock short'>
+                           <td><a class="struct" href="struct.VacantEntry.html"
+                                  title='struct anymap::VacantEntry'>VacantEntry</a></td>
+                           <td class='docblock-short'>
                                 <p>A view into a single empty location in an <code>Map</code>.</p>
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='enum' href='enum.Entry.html'
-                                  title='anymap::Entry'>Entry</a></td>
-                           <td class='docblock short'>
+                           <td><a class="enum" href="enum.Entry.html"
+                                  title='enum anymap::Entry'>Entry</a></td>
+                           <td class='docblock-short'>
                                 <p>A view into a single location in an <code>Map</code>, which may be vacant or occupied.</p>
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='type' href='type.AnyMap.html'
-                                  title='anymap::AnyMap'>AnyMap</a></td>
-                           <td class='docblock short'>
+                           <td><a class="type" href="type.AnyMap.html"
+                                  title='type anymap::AnyMap'>AnyMap</a></td>
+                           <td class='docblock-short'>
                                 <p>The most common type of <code>Map</code>: just using <code>Any</code>.</p>
                            </td>
                        </tr></table></section>
@@ -159,11 +160,8 @@ type-safe access to those values.</p>
     <script>
         window.rootPath = "../";
         window.currentCrate = "anymap";
-        window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

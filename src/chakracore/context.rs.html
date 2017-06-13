@@ -318,15 +318,74 @@
 <span id="273">273</span>
 <span id="274">274</span>
 <span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Execution contexts and sandboxing.</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>;
+<span class="kw">use</span> <span class="ident">boolinator</span>::<span class="ident">Boolinator</span>;
 <span class="kw">use</span> <span class="ident">anymap</span>::<span class="ident">AnyMap</span>;
-<span class="kw">use</span> <span class="ident">error</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">chakracore_sys</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">value</span>;
-<span class="kw">use</span> <span class="ident">Runtime</span>;
+<span class="kw">use</span> <span class="ident">error</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">util</span>::<span class="ident">jstry</span>;
+<span class="kw">use</span> {<span class="ident">value</span>, <span class="ident">Runtime</span>};
 
 <span class="doccomment">/// Used for holding context instance data.</span>
 <span class="kw">struct</span> <span class="ident">ContextData</span> {
@@ -337,11 +396,13 @@
 <span class="doccomment">/// A sandboxed execution context with its own set of built-in objects and</span>
 <span class="doccomment">/// functions.</span>
 <span class="doccomment">///</span>
+<span class="doccomment">/// The majority of APIs require an active context.</span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// In a browser or Node.JS environment, the task of executing promises is</span>
 <span class="doccomment">/// handled by the runtime. This is not the case with **ChakraCore**. To run</span>
 <span class="doccomment">/// promise chains, `execute_tasks` must be called at a regular interval. This</span>
 <span class="doccomment">/// is done using the `ContextGuard`.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Context</span>(<span class="ident">JsContextRef</span>);
 
 <span class="comment">// TODO: Should context lifetime explicitly depend on runtime?</span>
@@ -360,26 +421,16 @@
             }))<span class="question-mark">?</span>;
 
             <span class="comment">/* Promise continuation callback requires an active context */</span>
-            {
-                <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">make_current</span>();
-                <span class="macro">jstry</span><span class="macro">!</span>(<span class="ident">JsSetPromiseContinuationCallback</span>(
-                    <span class="prelude-val">Some</span>(<span class="self">Self</span>::<span class="ident">promise_handler</span>), <span class="ident">context</span>.<span class="ident">get_data</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _ <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _));
-            }
-
-            <span class="prelude-val">Ok</span>(<span class="ident">context</span>)
+            <span class="ident">context</span>.<span class="ident">exec_with</span>(<span class="op">|</span>_<span class="op">|</span> {
+                <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">get_data</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _ <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _;
+                <span class="ident">jstry</span>(<span class="ident">JsSetPromiseContinuationCallback</span>(<span class="prelude-val">Some</span>(<span class="self">Self</span>::<span class="ident">promise_handler</span>), <span class="ident">data</span>))
+            })
+            .<span class="ident">expect</span>(<span class="string">&quot;activating promise continuation callback&quot;</span>)
+            .<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">context</span>)
         }
     }
 
-    <span class="doccomment">/// Returns an object&#39;s associated context.</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_object</span>(<span class="ident">object</span>: <span class="kw-2">&amp;</span><span class="ident">value</span>::<span class="ident">Object</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Context</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reference</span> <span class="op">=</span> <span class="ident">JsContextRef</span>::<span class="ident">new</span>();
-        <span class="macro">jstry</span><span class="macro">!</span>(<span class="ident">JsGetContextOfObject</span>(<span class="ident">object</span>.<span class="ident">as_raw</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reference</span>));
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::<span class="ident">from_raw</span>(<span class="ident">reference</span>))
-    }
-
     <span class="doccomment">/// Binds the context to the current scope.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// The majority of APIs require an active context.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_current</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ContextGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
         <span class="comment">// Preserve the previous context so it can be restored later</span>
         <span class="kw">let</span> <span class="ident">current</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">Self</span>::<span class="ident">get_current</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">guard</span><span class="op">|</span> <span class="ident">guard</span>.<span class="ident">current</span>.<span class="ident">clone</span>()) };
@@ -394,39 +445,17 @@
         })
     }
 
-    <span class="doccomment">/// Set user data associated with the context.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// - Only one value per type.</span>
-    <span class="doccomment">/// - The internal implementation uses `AnyMap`.</span>
-    <span class="doccomment">/// - Returns a previous value if applicable.</span>
-    <span class="doccomment">/// - The data will live as long as the runtime keeps the context.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="lifetime">&#39;static</span> {
-        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">insert</span>(<span class="ident">value</span>) }
-    }
-
-    <span class="doccomment">/// Remove user data associated with the context.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="lifetime">&#39;static</span> {
-        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
-    }
-
-    <span class="doccomment">/// Get user data associated with the context.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="lifetime">&#39;static</span> {
-        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
-    }
-
-    <span class="doccomment">/// Get mutable user data associated with the context.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_user_data_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="lifetime">&#39;static</span> {
-        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">get_mut</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
-    }
-
     <span class="doccomment">/// Returns the active context in the current thread.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This is unsafe because there should be little reason to use it in</span>
-    <span class="doccomment">/// idiomatic code. Usage patterns should utilize `ContextGuard` instead.</span>
+    <span class="doccomment">/// idiomatic code.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Usage patterns should utilize `ContextGuard` or</span>
+    <span class="doccomment">/// `exec_with_current` instead.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This `ContextGuard` does not reset the current context upon destruction,</span>
     <span class="doccomment">/// in contrast to a normally allocated `ContextGuard`. This is merely a</span>
-    <span class="doccomment">/// reference.</span>
+    <span class="doccomment">/// hollow reference.</span>
     <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get_current</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ContextGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reference</span> <span class="op">=</span> <span class="ident">JsContextRef</span>::<span class="ident">new</span>();
         <span class="macro">jsassert</span><span class="macro">!</span>(<span class="ident">JsGetCurrentContext</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reference</span>));
@@ -440,44 +469,114 @@
         })
     }
 
+    <span class="doccomment">/// Binds the context to the closure&#39;s scope.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```c</span>
+    <span class="doccomment">/// let result = context.exec_with(|guard| script::eval(guard, &quot;1 + 1&quot;)).unwrap();</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">exec_with</span><span class="op">&lt;</span><span class="ident">Ret</span>, <span class="ident">T</span>: <span class="ident">FnOnce</span>(<span class="kw-2">&amp;</span><span class="ident">ContextGuard</span>) <span class="op">-&gt;</span> <span class="ident">Ret</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">callback</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Ret</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">make_current</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">guard</span><span class="op">|</span> <span class="ident">callback</span>(<span class="kw-2">&amp;</span><span class="ident">guard</span>))
+    }
+
+    <span class="doccomment">/// Executes a closure with the thread&#39;s active context.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is a safe alternative to `get_current`. It will either return the</span>
+    <span class="doccomment">/// closures result wrapped in `Some`, or `None`, if no context is currently</span>
+    <span class="doccomment">/// active.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">exec_with_current</span><span class="op">&lt;</span><span class="ident">Ret</span>, <span class="ident">T</span>: <span class="ident">FnOnce</span>(<span class="kw-2">&amp;</span><span class="ident">ContextGuard</span>) <span class="op">-&gt;</span> <span class="ident">Ret</span><span class="op">&gt;</span>(<span class="ident">callback</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Ret</span><span class="op">&gt;</span> {
+        <span class="kw">unsafe</span> { <span class="self">Self</span>::<span class="ident">get_current</span>().<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">callback</span>) }
+    }
+
+    <span class="doccomment">/// Executes a closure with a value&#39;s associated context.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// - The active context will only be changed if it differs from the value&#39;s.</span>
+    <span class="doccomment">/// - If the switch fails, an error will be returned.</span>
+    <span class="doccomment">/// - Due to the fact that this relies on `from_recyclable`, it suffers from</span>
+    <span class="doccomment">///   the same limitations and should be avoided.</span>
+    <span class="doccomment">/// - If the value has no associated context, `None` will be returned.</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">exec_with_value</span><span class="op">&lt;</span><span class="ident">Ret</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">value</span>::<span class="ident">Value</span>, <span class="ident">callback</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Ret</span><span class="op">&gt;&gt;</span>
+            <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">FnOnce</span>(<span class="kw-2">&amp;</span><span class="ident">ContextGuard</span>) <span class="op">-&gt;</span> <span class="ident">Ret</span> {
+        <span class="ident">Context</span>::<span class="ident">from_recyclable</span>(<span class="ident">value</span>).<span class="ident">map_or</span>(<span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>), <span class="op">|</span><span class="ident">context</span><span class="op">|</span> <span class="kw">unsafe</span> {
+            <span class="comment">// In case there is no active context, or if it differs from the</span>
+            <span class="comment">// value&#39;s context, temporarily change the context.</span>
+            <span class="kw">let</span> <span class="ident">guard</span> <span class="op">=</span> <span class="ident">Context</span>::<span class="ident">get_current</span>()
+                .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">guard</span><span class="op">|</span> (<span class="ident">guard</span>.<span class="ident">context</span>() <span class="op">==</span> <span class="ident">context</span>).<span class="ident">as_some</span>(<span class="ident">guard</span>))
+                .<span class="ident">map_or_else</span>(<span class="op">||</span> <span class="ident">context</span>.<span class="ident">make_current</span>(), <span class="prelude-val">Ok</span>);
+            <span class="ident">guard</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">guard</span><span class="op">|</span> <span class="prelude-val">Some</span>(<span class="ident">callback</span>(<span class="kw-2">&amp;</span><span class="ident">guard</span>)))
+        })
+    }
+
+    <span class="doccomment">/// Set user data associated with the context.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// - Only one value per type.</span>
+    <span class="doccomment">/// - The internal implementation uses `AnyMap`.</span>
+    <span class="doccomment">/// - Returns a previous value if applicable.</span>
+    <span class="doccomment">/// - The data will live as long as the runtime keeps the context.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">insert</span>(<span class="ident">value</span>) }
+    }
+
+    <span class="doccomment">/// Remove user data associated with the context.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">remove_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
+    }
+
+    <span class="doccomment">/// Get user data associated with the context.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_user_data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">get</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
+    }
+
+    <span class="doccomment">/// Get mutable user data associated with the context.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_user_data_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+        <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">get_data</span>().<span class="ident">user_data</span>.<span class="ident">get_mut</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() }
+    }
+
+    <span class="doccomment">/// Returns a recyclable value&#39;s associated context.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is unreliable, because types that have an associated context is</span>
+    <span class="doccomment">/// implementation defined (by the underlying runtime), based on whether they</span>
+    <span class="doccomment">/// are recyclable or not, therefore it should be avoided.</span>
+    <span class="kw">fn</span> <span class="ident">from_recyclable</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">value</span>::<span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Context</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reference</span> <span class="op">=</span> <span class="ident">JsContextRef</span>::<span class="ident">new</span>();
+        <span class="kw">unsafe</span> {
+            <span class="ident">jstry</span>(<span class="ident">JsGetContextOfObject</span>(<span class="ident">value</span>.<span class="ident">as_raw</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reference</span>))
+                .<span class="ident">ok</span>()
+                .<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="self">Self</span>::<span class="ident">from_raw</span>(<span class="ident">reference</span>))
+        }
+    }
+
     <span class="doccomment">/// Sets the internal data of the context.</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">set_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">data</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ContextData</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">jstry</span><span class="macro">!</span>(<span class="ident">JsSetContextData</span>(<span class="self">self</span>.<span class="ident">as_raw</span>(), <span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="ident">data</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _));
-        <span class="prelude-val">Ok</span>(())
+        <span class="ident">jstry</span>(<span class="ident">JsSetContextData</span>(<span class="self">self</span>.<span class="ident">as_raw</span>(), <span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="ident">data</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _))
     }
 
     <span class="doccomment">/// Gets the internal data of the context.</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get_data</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">ContextData</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">ptr</span>::<span class="ident">null_mut</span>();
         <span class="macro">jsassert</span><span class="macro">!</span>(<span class="ident">JsGetContextData</span>(<span class="self">self</span>.<span class="ident">as_raw</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">data</span>));
-        (<span class="ident">data</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _).<span class="ident">as_mut</span>().<span class="ident">unwrap</span>()
-    }
-
-    <span class="doccomment">/// Returns the underlying raw pointer.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">JsContextRef</span> {
-        <span class="self">self</span>.<span class="number">0</span>
+        (<span class="ident">data</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _)
+            .<span class="ident">as_mut</span>()
+            .<span class="ident">expect</span>(<span class="string">&quot;retrieving context data&quot;</span>)
     }
 
     <span class="doccomment">/// Sets the current context.</span>
     <span class="kw">fn</span> <span class="ident">enter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">jstry</span><span class="macro">!</span>(<span class="kw">unsafe</span> { <span class="ident">JsSetCurrentContext</span>(<span class="self">self</span>.<span class="ident">as_raw</span>()) });
-        <span class="prelude-val">Ok</span>(())
+        <span class="ident">jstry</span>(<span class="kw">unsafe</span> { <span class="ident">JsSetCurrentContext</span>(<span class="self">self</span>.<span class="ident">as_raw</span>()) })
     }
 
     <span class="doccomment">/// Unsets the current context.</span>
     <span class="kw">fn</span> <span class="ident">exit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">previous</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Context</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">jstry</span><span class="macro">!</span>(<span class="kw">unsafe</span> {
+        <span class="ident">jstry</span>(<span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">previous</span>
                 .<span class="ident">map</span>(<span class="op">|</span><span class="ident">context</span><span class="op">|</span> <span class="ident">context</span>.<span class="ident">as_raw</span>())
-                .<span class="ident">unwrap_or</span>(<span class="ident">JsValueRef</span>::<span class="ident">new</span>());
+                .<span class="ident">unwrap_or_else</span>(<span class="ident">JsValueRef</span>::<span class="ident">new</span>);
             <span class="ident">JsSetCurrentContext</span>(<span class="ident">next</span>)
-        });
-        <span class="prelude-val">Ok</span>(())
+        })
     }
 
     <span class="doccomment">/// A promise handler, triggered whenever a promise method is used.</span>
     <span class="kw">unsafe</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span> <span class="ident">promise_handler</span>(<span class="ident">task</span>: <span class="ident">JsValueRef</span>, <span class="ident">data</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> ::<span class="ident">libc</span>::<span class="ident">c_void</span>) {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> (<span class="ident">data</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ContextData</span>).<span class="ident">as_mut</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> (<span class="ident">data</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ContextData</span>).<span class="ident">as_mut</span>().<span class="ident">expect</span>(<span class="string">&quot;retrieving promise handler stack&quot;</span>);
         <span class="ident">data</span>.<span class="ident">promise_queue</span>.<span class="ident">push</span>(<span class="ident">value</span>::<span class="ident">Function</span>::<span class="ident">from_raw</span>(<span class="ident">task</span>));
     }
 
@@ -519,7 +618,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">execute_tasks</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">current</span>.<span class="ident">get_data</span>() };
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">task</span>) <span class="op">=</span> <span class="ident">data</span>.<span class="ident">promise_queue</span>.<span class="ident">pop</span>() {
-            <span class="ident">task</span>.<span class="ident">call</span>(<span class="self">self</span>, <span class="kw-2">&amp;</span>[]).<span class="ident">unwrap</span>();
+            <span class="ident">task</span>.<span class="ident">call</span>(<span class="self">self</span>, <span class="kw-2">&amp;</span>[]).<span class="ident">expect</span>(<span class="string">&quot;executing promise task&quot;</span>);
         }
     }
 }
@@ -558,18 +657,35 @@
     <span class="kw">fn</span> <span class="ident">stack</span>() {
         <span class="kw">let</span> (<span class="ident">runtime</span>, <span class="ident">context</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">setup_env</span>();
         {
-            <span class="kw">let</span> <span class="ident">get_current_raw</span> <span class="op">=</span> <span class="op">||</span> <span class="kw">unsafe</span> { <span class="ident">Context</span>::<span class="ident">get_current</span>().<span class="ident">unwrap</span>().<span class="ident">context</span>().<span class="ident">as_raw</span>() };
+            <span class="kw">let</span> <span class="ident">get_current</span> <span class="op">=</span> <span class="op">||</span> <span class="kw">unsafe</span> { <span class="ident">Context</span>::<span class="ident">get_current</span>().<span class="ident">unwrap</span>().<span class="ident">context</span>() };
             <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">make_current</span>().<span class="ident">unwrap</span>();
 
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current_raw</span>(), <span class="ident">context</span>.<span class="ident">as_raw</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current</span>(), <span class="ident">context</span>);
             {
                 <span class="kw">let</span> <span class="ident">inner_context</span> <span class="op">=</span> <span class="ident">Context</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">runtime</span>).<span class="ident">unwrap</span>();
                 <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="ident">inner_context</span>.<span class="ident">make_current</span>().<span class="ident">unwrap</span>();
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current_raw</span>(), <span class="ident">inner_context</span>.<span class="ident">as_raw</span>());
+                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current</span>(), <span class="ident">inner_context</span>);
             }
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current_raw</span>(), <span class="ident">context</span>.<span class="ident">as_raw</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_current</span>(), <span class="ident">context</span>);
         }
         <span class="macro">assert</span><span class="macro">!</span>(<span class="kw">unsafe</span> { <span class="ident">Context</span>::<span class="ident">get_current</span>() }.<span class="ident">is_none</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">user_data</span>() {
+        <span class="ident">test</span>::<span class="ident">run_with_context</span>(<span class="op">|</span><span class="ident">guard</span><span class="op">|</span> {
+            <span class="kw">type</span> <span class="ident">Data</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>;
+            <span class="kw">let</span> <span class="ident">context</span> <span class="op">=</span> <span class="ident">guard</span>.<span class="ident">context</span>();
+
+            <span class="kw">let</span> <span class="ident">data</span>: <span class="ident">Data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">10</span>, <span class="number">20</span>];
+            <span class="ident">context</span>.<span class="ident">insert_user_data</span>(<span class="ident">data</span>);
+
+            <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">context</span>.<span class="ident">get_user_data</span>::<span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">data</span>.<span class="ident">as_slice</span>(), [<span class="number">10</span>, <span class="number">20</span>]);
+
+            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">context</span>.<span class="ident">remove_user_data</span>::<span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span>().<span class="ident">is_some</span>());
+            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">context</span>.<span class="ident">get_user_data</span>::<span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span>().<span class="ident">is_none</span>());
+        });
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Object","A JavaScript object."]]});

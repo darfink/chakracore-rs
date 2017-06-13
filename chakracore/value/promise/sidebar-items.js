@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Executor","A JavaScript promise executor."],["Promise","A JavaScript promise."]]});
