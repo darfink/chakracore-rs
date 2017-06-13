@@ -214,22 +214,23 @@ impl Value {
 impl PartialEq for Value {
     /// Use sparingly (prefer `equals`), this relies on an implicitly active context.
     fn eq(&self, other: &Value) -> bool {
-        let guard = unsafe { Context::get_current().unwrap() };
-        self.strict_equals(&guard, other)
+        Context::exec_with_current(|guard| self.strict_equals(guard, other))
+            .expect("comparison to have an active context")
     }
 }
 
 impl fmt::Debug for Value {
     /// Only use for debugging, it relies on an implicitly active context.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let guard = unsafe { Context::get_current().unwrap() };
-        let output = self.to_string(&guard);
+        Context::exec_with_current(|guard| {
+            let output = self.to_string(&guard);
 
-        let value_type = self.get_type();
-        match value_type {
-            JsValueType::String => write!(f, "Value({:?}: '{}')", value_type, output),
-            _ => write!(f, "Value({:?}: {})", value_type, output),
-        }
+            let value_type = self.get_type();
+            match value_type {
+                JsValueType::String => write!(f, "Value({:?}: '{}')", value_type, output),
+                _ => write!(f, "Value({:?}: {})", value_type, output),
+            }
+        }).expect("value debug output without an active context")
     }
 }
 

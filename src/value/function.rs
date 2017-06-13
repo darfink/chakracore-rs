@@ -133,25 +133,25 @@ impl Function {
         let callback = data as *mut Box<FunctionCallback>;
 
         // There is always an active context in callbacks
-        let guard = Context::get_current().unwrap();
+        Context::exec_with_current(|guard| {
+            // Construct the callback information object
+            let arguments = slice::from_raw_parts_mut(arguments, len as usize);
+            let info = CallbackInfo {
+                is_construct_call: is_construct_call,
+                arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
+                callee: Value::from_raw(callee),
+                this: Value::from_raw(arguments[0]),
+            };
 
-        // Construct the callback information object
-        let arguments = slice::from_raw_parts_mut(arguments, len as usize);
-        let info = CallbackInfo {
-            is_construct_call: is_construct_call,
-            arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
-            callee: Value::from_raw(callee),
-            this: Value::from_raw(arguments[0]),
-        };
-
-        // Call the user supplied callback
-        match (*callback)(&guard, info) {
-            Ok(value) => value.as_raw(),
-            Err(error) => {
-                jsassert!(JsSetException(error.as_raw()));
-                error.as_raw()
+            // Call the user supplied callback
+            match (*callback)(&guard, info) {
+                Ok(value) => value.as_raw(),
+                Err(error) => {
+                    jsassert!(JsSetException(error.as_raw()));
+                    error.as_raw()
+                }
             }
-        }
+        }).expect("executing function callback")
     }
 }
 

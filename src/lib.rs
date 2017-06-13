@@ -6,8 +6,9 @@ extern crate matches;
 
 #[macro_use]
 extern crate error_chain;
-extern crate chakracore_sys;
 extern crate anymap;
+extern crate boolinator;
+extern crate chakracore_sys;
 extern crate libc;
 
 pub use context::Context;
@@ -36,8 +37,7 @@ mod test {
 
     pub fn run_with_context<T: FnOnce(&context::ContextGuard)>(callback: T) {
         let (_runtime, context) = setup_env();
-        let guard = context.make_current().unwrap();
-        callback(&guard);
+        context.exec_with(callback).unwrap();
     }
 }
 

@@ -8,23 +8,12 @@ macro_rules! reference {
             /// Decrements the reference counter if the object is recyclable.
             fn drop(&mut self) {
                 use {util, Context};
-
-                // Only recyclable values should be released
-                if let Some(context) = Context::from_recyclable(self) {
-                    let mut _guard = unsafe { Context::get_current() };
-
-                    // In case there is no active context, or if it differs from
-                    // the value's context, it must be changed, so the reference
-                    // counter can be updated (it requires an active context).
-                    if _guard.map_or(true, |guard| guard.context() != context) {
-                        _guard = Some(context.make_current().unwrap());
-                    }
-
-                    // This requires that the active context is the same one
-                    // that the value was created with (this is not mentioned at
-                    // all in the ChakraCore documentation).
+                Context::exec_with_value(self, |_| {
+                    // This requires that the active context is the same as the
+                    // one it was created with (this is not mentioned whatsoever
+                    // in the ChakraCore documentation).
                     util::release_reference(self.as_raw());
-                }
+                }).expect("changing active context for release");
             }
         }
     }

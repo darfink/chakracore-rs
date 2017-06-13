@@ -3,6 +3,7 @@ use chakracore_sys::*;
 use context::{Context, ContextGuard};
 
 /// A property identifier used with objects.
+#[derive(PartialEq)]
 pub struct Property(JsPropertyIdRef);
 
 impl Property {
@@ -27,12 +28,13 @@ impl Property {
 }
 
 impl fmt::Debug for Property {
-    /// Only use for debugging, it relies on an implicit active context and uses
-    /// several unwraps.
+    /// Only use for debugging, it relies on an implicit active context and
+    /// panics otherwise.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let guard = unsafe { Context::get_current().unwrap() };
-        let output = self.to_string(&guard);
-        write!(f, "Property('{}')", output)
+        Context::exec_with_current(|guard| {
+            let output = self.to_string(&guard);
+            write!(f, "Property('{}')", output)
+        }).expect("property debug output without an active context")
     }
 }
 

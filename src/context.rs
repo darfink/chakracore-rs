@@ -1,6 +1,7 @@
 //! Execution contexts and sandboxing.
 use std::marker::PhantomData;
 use std::ptr;
+use boolinator::Boolinator;
 use anymap::AnyMap;
 use chakracore_sys::*;
 use error::*;
@@ -15,6 +16,8 @@ struct ContextData {
 
 /// A sandboxed execution context with its own set of built-in objects and
 /// functions.
+///
+/// The majority of APIs require an active context.
 ///
 /// In a browser or Node.JS environment, the task of executing promises is
 /// handled by the runtime. This is not the case with **ChakraCore**. To run
@@ -39,33 +42,16 @@ impl Context {
             }))?;
 
             /* Promise continuation callback requires an active context */
-            {
-                let _guard = context.make_current();
-                jstry!(JsSetPromiseContinuationCallback(
-                    Some(Self::promise_handler), context.get_data() as *mut _ as *mut _));
-            }
-
-            Ok(context)
-        }
-    }
-
-    /// Returns a recyclable value's associated context.
-    ///
-    /// This is unreliable, because types that have an associated context is
-    /// implementation defined (by the underlying runtime), based on whether they
-    /// are recyclable or not, therefore it should be avoided.
-    pub fn from_recyclable(object: &value::Value) -> Option<Context> {
-        let mut reference = JsContextRef::new();
-        unsafe {
-            jstry(JsGetContextOfObject(object.as_raw(), &mut reference))
-                .ok()
-                .map(|_| Self::from_raw(reference))
+            context.exec_with(|_| {
+                let data = context.get_data() as *mut _ as *mut _;
+                jstry(JsSetPromiseContinuationCallback(Some(Self::promise_handler), data))
+            })
+            .expect("activating promise continuation callback")
+            .map(|_| context)
         }
     }
 
     /// Binds the context to the current scope.
-    ///
-    /// The majority of APIs require an active context.
     pub fn make_current<'a>(&'a self) -> Result<ContextGuard<'a>> {
         // Preserve the previous context so it can be restored later
         let current = unsafe { Self::get_current().map(|guard| guard.current.clone()) };
@@ -80,39 +66,17 @@ impl Context {
         })
     }
 
-    /// Set user data associated with the context.
-    ///
-    /// - Only one value per type.
-    /// - The internal implementation uses `AnyMap`.
-    /// - Returns a previous value if applicable.
-    /// - The data will live as long as the runtime keeps the context.
-    pub fn insert_user_data<T>(&self, value: T) -> Option<T> where T: 'static {
-        unsafe { self.get_data().user_data.insert(value) }
-    }
-
-    /// Remove user data associated with the context.
-    pub fn remove_user_data<T>(&self) -> Option<T> where T: 'static {
-        unsafe { self.get_data().user_data.remove::<T>() }
-    }
-
-    /// Get user data associated with the context.
-    pub fn get_user_data<T>(&self) -> Option<&T> where T: 'static {
-        unsafe { self.get_data().user_data.get::<T>() }
-    }
-
-    /// Get mutable user data associated with the context.
-    pub fn get_user_data_mut<T>(&self) -> Option<&mut T> where T: 'static {
-        unsafe { self.get_data().user_data.get_mut::<T>() }
-    }
-
     /// Returns the active context in the current thread.
     ///
     /// This is unsafe because there should be little reason to use it in
-    /// idiomatic code. Usage patterns should utilize `ContextGuard` instead.
+    /// idiomatic code.
+    ///
+    /// Usage patterns should utilize `ContextGuard` or
+    /// `exec_with_current` instead.
     ///
     /// This `ContextGuard` does not reset the current context upon destruction,
     /// in contrast to a normally allocated `ContextGuard`. This is merely a
-    /// reference.
+    /// hollow reference.
     pub unsafe fn get_current<'a>() -> Option<ContextGuard<'a>> {
         let mut reference = JsContextRef::new();
         jsassert!(JsGetCurrentContext(&mut reference));
@@ -124,6 +88,82 @@ impl Context {
             phantom: PhantomData,
             drop: false,
         })
+    }
+
+    /// Binds the context to the closure's scope.
+    ///
+    /// ```c
+    /// let result = context.exec_with(|guard| script::eval(guard, "1 + 1")).unwrap();
+    /// ```
+    pub fn exec_with<Ret, T: FnOnce(&ContextGuard) -> Ret>(&self, callback: T) -> Result<Ret> {
+        self.make_current().map(|guard| callback(&guard))
+    }
+
+    /// Executes a closure with the thread's active context.
+    ///
+    /// This is a safe alternative to `get_current`. It will either return the
+    /// closures result wrapped in `Some`, or `None`, if no context is currently
+    /// active.
+    pub fn exec_with_current<Ret, T: FnOnce(&ContextGuard) -> Ret>(callback: T) -> Option<Ret> {
+        unsafe { Self::get_current().as_ref().map(callback) }
+    }
+
+    /// Executes a closure with a value's associated context.
+    ///
+    /// - The active context will only be changed if it differs from the value's.
+    /// - If the switch fails, an error will be returned.
+    /// - Due to the fact that this relies on `from_recyclable`, it suffers from
+    ///   the same limitations and should be avoided.
+    /// - If the value has no associated context, `None` will be returned.
+    pub(crate) fn exec_with_value<Ret, T>(value: &value::Value, callback: T) -> Result<Option<Ret>>
+            where T: FnOnce(&ContextGuard) -> Ret {
+        Context::from_recyclable(value).map_or(Ok(None), |context| unsafe {
+            // In case there is no active context, or if it differs from the
+            // value's context, temporarily change the context.
+            let guard = Context::get_current()
+                .and_then(|guard| (guard.context() == context).as_some(guard))
+                .map_or_else(|| context.make_current(), Ok);
+            guard.map(|guard| Some(callback(&guard)))
+        })
+    }
+
+    /// Set user data associated with the context.
+    ///
+    /// - Only one value per type.
+    /// - The internal implementation uses `AnyMap`.
+    /// - Returns a previous value if applicable.
+    /// - The data will live as long as the runtime keeps the context.
+    pub fn insert_user_data<T>(&self, value: T) -> Option<T> where T: Send + 'static {
+        unsafe { self.get_data().user_data.insert(value) }
+    }
+
+    /// Remove user data associated with the context.
+    pub fn remove_user_data<T>(&self) -> Option<T> where T: Send + 'static {
+        unsafe { self.get_data().user_data.remove::<T>() }
+    }
+
+    /// Get user data associated with the context.
+    pub fn get_user_data<T>(&self) -> Option<&T> where T: Send + 'static {
+        unsafe { self.get_data().user_data.get::<T>() }
+    }
+
+    /// Get mutable user data associated with the context.
+    pub fn get_user_data_mut<T>(&self) -> Option<&mut T> where T: Send + 'static {
+        unsafe { self.get_data().user_data.get_mut::<T>() }
+    }
+
+    /// Returns a recyclable value's associated context.
+    ///
+    /// This is unreliable, because types that have an associated context is
+    /// implementation defined (by the underlying runtime), based on whether they
+    /// are recyclable or not, therefore it should be avoided.
+    fn from_recyclable(value: &value::Value) -> Option<Context> {
+        let mut reference = JsContextRef::new();
+        unsafe {
+            jstry(JsGetContextOfObject(value.as_raw(), &mut reference))
+                .ok()
+                .map(|_| Self::from_raw(reference))
+        }
     }
 
     /// Sets the internal data of the context.
@@ -150,14 +190,14 @@ impl Context {
         jstry(unsafe {
             let next = previous
                 .map(|context| context.as_raw())
-                .unwrap_or(JsValueRef::new());
+                .unwrap_or_else(JsValueRef::new);
             JsSetCurrentContext(next)
         })
     }
 
     /// A promise handler, triggered whenever a promise method is used.
     unsafe extern "system" fn promise_handler(task: JsValueRef, data: *mut ::libc::c_void) {
-        let data = (data as *mut ContextData).as_mut().unwrap();
+        let data = (data as *mut ContextData).as_mut().expect("retrieving promise handler stack");
         data.promise_queue.push(value::Function::from_raw(task));
     }
 
@@ -199,7 +239,7 @@ impl<'a> ContextGuard<'a> {
     pub fn execute_tasks(&self) {
         let data = unsafe { self.current.get_data() };
         while let Some(task) = data.promise_queue.pop() {
-            task.call(self, &[]).unwrap();
+            task.call(self, &[]).expect("executing promise task");
         }
     }
 }
@@ -238,18 +278,35 @@ mod tests {
     fn stack() {
         let (runtime, context) = test::setup_env();
         {
-            let get_current_raw = || unsafe { Context::get_current().unwrap().context().as_raw() };
+            let get_current = || unsafe { Context::get_current().unwrap().context() };
             let _guard = context.make_current().unwrap();
 
-            assert_eq!(get_current_raw(), context.as_raw());
+            assert_eq!(get_current(), context);
             {
                 let inner_context = Context::new(&runtime).unwrap();
                 let _guard = inner_context.make_current().unwrap();
-                assert_eq!(get_current_raw(), inner_context.as_raw());
+                assert_eq!(get_current(), inner_context);
             }
-            assert_eq!(get_current_raw(), context.as_raw());
+            assert_eq!(get_current(), context);
         }
         assert!(unsafe { Context::get_current() }.is_none());
+    }
+
+    #[test]
+    fn user_data() {
+        test::run_with_context(|guard| {
+            type Data = Vec<i32>;
+            let context = guard.context();
+
+            let data: Data = vec![10, 20];
+            context.insert_user_data(data);
+
+            let data = context.get_user_data::<Data>().unwrap();
+            assert_eq!(data.as_slice(), [10, 20]);
+
+            assert!(context.remove_user_data::<Data>().is_some());
+            assert!(context.get_user_data::<Data>().is_none());
+        });
     }
 
     #[test]
