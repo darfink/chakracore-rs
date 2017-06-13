@@ -25,7 +25,7 @@ pub type CallbackResult = ::std::result::Result<Value, Value>;
 
 /// Callback type for functions.
 pub type FunctionCallback =
-    Fn(&ContextGuard, CallbackInfo) -> CallbackResult + 'static;
+    Fn(&ContextGuard, CallbackInfo) -> CallbackResult + Send;
 
 /// A JavaScript function object.
 pub struct Function(JsValueRef);
@@ -47,7 +47,7 @@ impl Function {
     }
 
     /// Returns whether the object is an instance of this `Function` or not.
-    pub fn instance_of(&self, _guard: &ContextGuard, object: super::Object) -> bool {
+    pub fn instance_of(&self, _guard: &ContextGuard, object: &Object) -> bool {
         let mut result = false;
         unsafe {
             jsassert!(JsInstanceOf(object.as_raw(), self.as_raw(), &mut result));
@@ -223,7 +223,7 @@ mod tests {
                 .unwrap()
                 .into_object()
                 .unwrap();
-            assert!(function.instance_of(guard, result));
+            assert!(function.instance_of(guard, &result));
         });
     }
 }
