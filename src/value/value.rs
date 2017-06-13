@@ -217,7 +217,8 @@ impl Value {
 }
 
 impl PartialEq for Value {
-    /// Use sparingly (prefer `equals`), this relies on an implicitly active context.
+    /// Use carefully (prefer `strict_equals`), this relies on an implicitly
+    /// active context.
     fn eq(&self, other: &Value) -> bool {
         Context::exec_with_current(|guard| self.strict_equals(guard, other))
             .expect("comparison to have an active context")

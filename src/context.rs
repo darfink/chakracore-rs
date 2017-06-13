@@ -41,7 +41,7 @@ impl Context {
                 user_data: AnyMap::new(),
             }))?;
 
-            /* Promise continuation callback requires an active context */
+            // Promise continuation callback requires an active context
             context.exec_with(|_| {
                 let data = context.get_data() as *mut _ as *mut _;
                 jstry(JsSetPromiseContinuationCallback(Some(Self::promise_handler), data))
@@ -112,12 +112,12 @@ impl Context {
     ///
     /// - The active context will only be changed if it differs from the value's.
     /// - If the switch fails, an error will be returned.
-    /// - Due to the fact that this relies on `from_recyclable`, it suffers from
+    /// - Due to the fact that this relies on `from_value`, it suffers from
     ///   the same limitations and should be avoided.
     /// - If the value has no associated context, `None` will be returned.
     pub(crate) fn exec_with_value<Ret, T>(value: &value::Value, callback: T) -> Result<Option<Ret>>
             where T: FnOnce(&ContextGuard) -> Ret {
-        Context::from_recyclable(value).map_or(Ok(None), |context| unsafe {
+        Context::from_value(value).map_or(Ok(None), |context| unsafe {
             // In case there is no active context, or if it differs from the
             // value's context, temporarily change the context.
             let guard = Context::get_current()
@@ -157,7 +157,7 @@ impl Context {
     /// This is unreliable, because types that have an associated context is
     /// implementation defined (by the underlying runtime), based on whether they
     /// are recyclable or not, therefore it should be avoided.
-    fn from_recyclable(value: &value::Value) -> Option<Context> {
+    fn from_value(value: &value::Value) -> Option<Context> {
         let mut reference = JsContextRef::new();
         unsafe {
             jstry(JsGetContextOfObject(value.as_raw(), &mut reference))
@@ -329,5 +329,17 @@ mod tests {
                 .to_integer(guard);
             assert_eq!(value, 2);
         });
+    }
+
+    #[test]
+    fn shared_objects() {
+        let (runtime, context) = test::setup_env();
+        let context2 = Context::new(&runtime).unwrap();
+
+        let guard1 = context.make_current().unwrap();
+        let object = script::eval(&guard1, "({ foo: 1337 })").unwrap();
+
+        let guard2 = context2.make_current().unwrap();
+        assert_eq!(object.to_json(&guard2).unwrap(), r#"{"foo":1337}"#);
     }
 }
