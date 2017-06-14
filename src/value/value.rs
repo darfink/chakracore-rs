@@ -1,7 +1,8 @@
 use std::{fmt, mem};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
-use value;
+use error::*;
+use {util, value};
 
 macro_rules! downcast {
     ($predicate:ident, $predicate_doc:expr, $target:ident) => {
@@ -165,13 +166,19 @@ impl Value {
                 value);
 
     /// Converts the value to a native string, containing the value's JSON representation.
-    pub fn to_json(&self, guard: &ContextGuard) -> ::error::Result<String> {
+    pub fn to_json(&self, guard: &ContextGuard) -> Result<String> {
         // TODO: Use native functionality when implemented
-        let stringify = ::script::eval(guard, "JSON.stringify")
-            .expect("retrieving JSON.stringify function")
-            .into_function()
-            .expect("converting JSON.stringify to function");
+        let stringify = util::jsfunc(guard, "JSON.stringify")
+            .expect("retrieving JSON.stringify function");
         stringify.call(guard, &[self]).map(|v| v.to_string(guard))
+    }
+
+    /// Parses JSON and returns it represented as a JavaScript value.
+    pub fn from_json(guard: &ContextGuard, json: &str) -> Result<Value> {
+        let parse = util::jsfunc(guard, "JSON.parse")
+            .expect("retrieving JSON.parse function");
+        let json = value::String::new(guard, json);
+        parse.call(guard, &[&json])
     }
 
     // Casts a value to the JavaScript expression of another type
@@ -250,8 +257,17 @@ mod tests {
     fn json_conversion() {
         test::run_with_context(|guard| {
             let object = value::Object::new(guard);
-            object.set(guard, &Property::new(guard, "foo"), &value::Number::new(guard, 1337));
-            assert_eq!(object.to_json(guard).unwrap(), r#"{"foo":1337}"#);
+            let property = Property::new(guard, "foo");
+            object.set(guard, &property, &value::Number::new(guard, 1337));
+
+            let json = object.to_json(guard).unwrap();
+            assert_eq!(json, r#"{"foo":1337}"#);
+
+            let object = value::Value::from_json(guard, &json)
+                .unwrap()
+                .into_object()
+                .unwrap();
+            assert_eq!(object.get(guard, &property).to_integer(guard), 1337);
         });
     }
 }

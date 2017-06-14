@@ -2,7 +2,7 @@ use chakracore_sys::*;
 use context::ContextGuard;
 use super::{Value, Object, Function};
 use error::*;
-use Context;
+use {util, Context};
 
 /// A JavaScript promise executor.
 pub struct Executor {
@@ -49,10 +49,8 @@ impl Promise {
         // There is no straight foward way to do this with the current API.
         value.clone().into_object().map_or(false, |object| {
             Context::exec_with_value(&object, |guard| {
-                let promise = ::script::eval(guard, "Promise")
-                    .expect("retrieving Promise constructor")
-                    .into_function()
-                    .expect("converting Promise to function");
+                let promise = util::jsfunc(guard, "Promise")
+                    .expect("retrieving Promise constructor");
                 promise.instance_of(guard, &object)
             })
             .expect("changing active context for Promise comparison")

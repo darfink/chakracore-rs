@@ -26,6 +26,14 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
     }
 }
 
+/// Returns a script result as a `Function`.
+///
+/// This is useful for functionality that the underlying JSRT API does not
+/// provide, such as JSON methods, or `RegExp` constructor.
+pub fn jsfunc(guard: &ContextGuard, function: &str) -> Option<value::Function> {
+    ::script::eval(guard, function).ok().and_then(|val| val.into_function())
+}
+
 /// Decrements a reference counter and asserts its value.
 pub fn release_reference(reference: JsRef) {
     let mut count = 0;
