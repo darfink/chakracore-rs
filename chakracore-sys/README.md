@@ -1,4 +1,7 @@
 # `chakracore-sys`
+[![crates.io version][crate-shield]][crate]
+[![Language (Rust)][rust-shield]][rust]
+[![Documentation][docs-shield]][docs]
 
 This is a library for the [JavaScript Runtime (JSRT)](https://goo.gl/1F6Gi1), an
 API used for embedding Microsoft's ChakraCore, the core part of the Chakra
@@ -46,7 +49,9 @@ well.
 
 #### Windows
 
-* Visual Studio 2013 or 2015 with C++ support.
+* Visual Studio 2013/2015/2017 with:
+  - Windows SDK 8.1
+  - C++ support
 * `clang-3.8` or later. Downloads can be found
   [here](http://llvm.org/releases/download.html).  
   Remember to add LLVM directories to `PATH` during installation.
@@ -118,3 +123,11 @@ In case you find yourself stuck in the build process, open an
 
 This library has been built on `macOS 10.12 x86_64`, `Ubuntu 16.10 x86_64` and
 `Windows 10 x86_x64`.
+
+<!-- Links -->
+[crate-shield]: https://img.shields.io/crates/v/chakracore-sys.svg?style=flat-square
+[crate]: https://crates.io/crates/chakracore-sys
+[rust-shield]: https://img.shields.io/badge/powered%20by-rust-blue.svg?style=flat-square
+[rust]: https://www.rust-lang.org
+[docs-shield]: https://img.shields.io/badge/docs-github-green.svg?style=flat-square
+[docs]: https://darfink.github.io/chakracore-rs/chakracore_sys/index.html
