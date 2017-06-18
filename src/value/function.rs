@@ -4,7 +4,7 @@ use libc::{c_void, c_ushort};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
-use util;
+use util::jstry;
 use super::{Value, Object};
 
 /// The information passed to `FunctionCallback` closures.
@@ -75,7 +75,7 @@ impl Function {
 
     /// Invokes a function and returns the result.
     fn invoke(&self,
-              guard: &ContextGuard,
+              _guard: &ContextGuard,
               this: &Value,
               arguments: &[&Value],
               constructor: bool)
@@ -93,11 +93,11 @@ impl Function {
 
         unsafe {
             let mut result = JsValueRef::new();
-            let code = api(self.0,
-                           forward.as_mut_ptr(),
-                           forward.len() as c_ushort,
-                           &mut result);
-            util::handle_exception(guard, code).map(|_| Value::from_raw(result))
+            jstry(api(self.0,
+                      forward.as_mut_ptr(),
+                      forward.len() as c_ushort,
+                      &mut result))
+                .map(|_| Value::from_raw(result))
         }
     }
 

@@ -28,7 +28,7 @@ use std::slice;
 use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
-use util::{self, jstry};
+use util::jstry;
 use value;
 
 /// Evaluates code directly.
@@ -38,10 +38,7 @@ pub fn eval(guard: &ContextGuard, code: &str) -> Result<value::Value> {
 
 /// Evaluates code and associates it with a name.
 pub fn eval_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<value::Value> {
-    let (code, result) = process_code(guard, name, code, CodeAction::Execute);
-    unsafe {
-        util::handle_exception(guard, code).map(|_| value::Value::from_raw(result))
-    }
+    process_code(guard, name, code, CodeAction::Execute)
 }
 
 /// Parses code and returns it as a function.
@@ -51,8 +48,10 @@ pub fn parse(guard: &ContextGuard, code: &str) -> Result<value::Function> {
 
 /// Parses code and associates it with a name, returns it as a function.
 pub fn parse_with_name(guard: &ContextGuard, name: &str, code: &str) -> Result<value::Function> {
-    let (code, result) = process_code(guard, name, code, CodeAction::Parse);
-    jstry(code).map(|_| unsafe { value::Function::from_raw(result) })
+    process_code(guard, name, code, CodeAction::Parse)
+        .map(|value| value
+            .into_function()
+            .expect("converting parsing result to function"))
 }
 
 /// Used for processing code.
@@ -63,7 +62,7 @@ enum CodeAction {
 }
 
 /// Either parses or executes a script.
-fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction) -> (JsErrorCode, JsValueRef) {
+fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction) -> Result<value::Value> {
     let name = value::String::new(guard, name);
     let buffer = create_code_buffer(guard, code);
 
@@ -74,12 +73,12 @@ fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction
 
     unsafe {
         let mut result = JsValueRef::new();
-        let code = api(buffer.as_raw(),
-                        generate_source_context(),
-                        name.as_raw(),
-                        JsParseScriptAttributeNone,
-                        &mut result);
-        (code, result)
+        jstry(api(buffer.as_raw(),
+                  generate_source_context(),
+                  name.as_raw(),
+                  JsParseScriptAttributeNone,
+                  &mut result))
+            .map(|_| value::Value::from_raw(result))
     }
 }
 
