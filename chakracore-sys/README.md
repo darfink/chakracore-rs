@@ -35,9 +35,9 @@ This script has not been tested with the `--embed-icu` option.
 
 ### Static/Shared
 
-By default, this library links ChakraCore dynamically. There is a feature called
-`static` that builds it by linking to the three generated archives instead. On
-windows, only shared library builds are available as of this time. See
+By default, this library links ChakraCore dynamically. There is a feature
+called `static` that builds it by linking to the generated archive instead.
+On windows, only shared library builds are available as of this time. See
 [#279](https://github.com/Microsoft/ChakraCore/issues/279)
 
 ### Prerequisites
@@ -107,14 +107,6 @@ possible solutions to this.
   ```
   # cargo test -vv [--features static]
   ```
-
-In case you use a custom ChakraCore build using `CHAKRA_SOURCE/BUILD`, remember
-that if an environment variable is changed *after* running the build script, you
-need to recompile it:
-
-```
-# cargo clean -p chakracore-sys && cargo build [--features static]
-```
 
 In case you find yourself stuck in the build process, open an
 [issue](https://github.com/darfink/chakracore-rs/issues/new).

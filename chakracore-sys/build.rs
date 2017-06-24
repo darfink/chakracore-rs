@@ -20,6 +20,9 @@ macro_rules! log {
 }
 
 fn main() {
+    println!("cargo:rerun-if-env-changed=CHAKRA_SOURCE");
+    println!("cargo:rerun-if-env-changed=CHAKRA_BUILD");
+
     if util::has_target("windows") {
         if cfg!(feature = "static") {
           // This is related to ChakraCore (see #279)
@@ -27,7 +30,7 @@ fn main() {
         }
 
         if !util::has_target("msvc") {
-            // The runtime errors are very subtle, so be explicit
+            // The runtime errors are very cryptic, so be explicit
             panic!("Only MSVC toolchain is compatible with ChakraCore");
         }
     } else {
