@@ -7,16 +7,14 @@ keywords = ["jrst", "javascript", "js", "ecmascript", "chakracore"]
 license = "MIT"
 name = "chakracore"
 repository = "https://github.com/darfink/chakracore-rs"
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies]
 anymap = "0.12.1"
 boolinator = "2.4.0"
+chakracore-sys = "0.2"
 error-chain = "0.10.0"
 libc = "0.2"
-
-[dependencies.chakracore-sys]
-path = "chakracore-sys"
 
 [dev-dependencies]
 matches = "0.1"
