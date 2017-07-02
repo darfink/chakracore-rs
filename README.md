@@ -20,7 +20,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-chakracore = "0.1.0"
+chakracore = "0.2.0"
 ```
 
 ... and this to your crate root:

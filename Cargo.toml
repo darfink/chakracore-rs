@@ -1,9 +1,9 @@
 [package]
 authors = ["Elliott Linder <elliott.darfink@gmail.com>"]
-description = "High-level bindings to JRST, the ChakraCore API"
+description = "High-level bindings to JSRT, the ChakraCore API"
 documentation = "https://docs.rs/chakracore"
 homepage = "https://github.com/darfink/chakracore-rs"
-keywords = ["jrst", "javascript", "js", "ecmascript", "chakracore"]
+keywords = ["jsrt", "javascript", "js", "ecmascript", "chakracore"]
 license = "MIT"
 name = "chakracore"
 repository = "https://github.com/darfink/chakracore-rs"
