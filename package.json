@@ -1,0 +1,6 @@
+{
+  "name": "chakracore-rs",
+  "dependencies": {
+    "typescript": "^2.5.2"
+  }
+}
