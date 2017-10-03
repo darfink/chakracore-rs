@@ -15,7 +15,8 @@ fn main() {
     file.read_to_string(&mut contents).expect("unable to read the file");
     chakracore::script::eval(&guard, &contents).expect("invalid JavaScript code");
 
-    call_create_node(&guard)
+    call_create_node(&guard);
+    call_create_node(&guard);
 }
 
 fn call_create_node<'a>(guard: &'a chakracore::context::ContextGuard<'a>){
@@ -36,4 +37,5 @@ fn call_create_node<'a>(guard: &'a chakracore::context::ContextGuard<'a>){
     // verify that the node kind is 3
     let kind = node.get(&guard, &chakracore::Property::new(guard, "kind"));
     println!("kind: {:?}", kind);
+    println!("kind: {:?}", kind.into_number().unwrap().value());
 }

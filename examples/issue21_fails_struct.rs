@@ -2,9 +2,12 @@ extern crate chakracore;
 
 use std::io::prelude::*;
 use std::fs::File;
+use std::marker::PhantomData;
+use chakracore::context::ContextGuard;
 
 pub struct Js<'a> {
     guard: &'a chakracore::context::ContextGuard<'a>,
+    phantom: PhantomData<&'a ContextGuard<'a>>,
 }
 
 impl<'a> Js<'a> {
@@ -15,7 +18,7 @@ impl<'a> Js<'a> {
         let mut contents = String::new();
         file.read_to_string(&mut contents).expect("unable to read the file");
         chakracore::script::eval(&guard, &contents).expect("invalid JavaScript code");
-        Js { guard: guard }
+        Js { guard: guard, phantom: PhantomData }
     }
 }
 
@@ -35,6 +38,8 @@ fn main() {
     // it appears to get the function
     let function = ts.get(js.guard, &chakracore::Property::new(js.guard, "createNode")).into_function().unwrap();
     println!("got function createNode");
+
+    function.ca
 
     // call createNode, this fails:
     let rv = function.call_with_this(js.guard, &ts, &[
