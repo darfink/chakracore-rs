@@ -1,7 +1,7 @@
 [package]
 authors = ["Elliott Linder <elliott.darfink@gmail.com>"]
 name = "chakracore-sys"
-version = "0.2.2"
+version = "0.2.3"
 build = "build.rs"
 description = "Low-level bindings to JSRT, the ChakraCore API"
 documentation = "https://docs.rs/chakracore-sys"
