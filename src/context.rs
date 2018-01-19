@@ -175,7 +175,7 @@ impl Context {
     unsafe fn get_data<'a>(&'a self) -> &'a mut ContextData {
         let mut data = ptr::null_mut();
         jsassert!(JsGetContextData(self.as_raw(), &mut data));
-        (data as *mut _)
+        (data as *mut ContextData)
             .as_mut()
             .expect("retrieving context data")
     }
