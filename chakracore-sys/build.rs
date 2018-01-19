@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 const LIBRARY: &'static str = "ChakraCore";
 const REPOSITORY: &'static str = "https://github.com/Microsoft/ChakraCore.git";
-const VERSION: &'static str = "1.5.1";
+const VERSION: &'static str = "1.7.6";
 const LIBS: [(&'static str, &'static str); 1] = [
     ("lib", "ChakraCoreStatic"),
 ];
