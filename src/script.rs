@@ -24,7 +24,6 @@
 //! let result = add.call(&guard, &[]).unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```
-use std::slice;
 use chakracore_sys::*;
 use error::*;
 use context::ContextGuard;
@@ -61,10 +60,11 @@ enum CodeAction {
     Parse,
 }
 
+// TODO: Should `JavascriptExternalArrayBuffer` be supported? Lifetime issues.
 /// Either parses or executes a script.
 fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction) -> Result<value::Value> {
     let name = value::String::new(guard, name);
-    let buffer = create_code_buffer(guard, code);
+    let buffer = value::String::new(guard, code);
 
     let api = match action {
         CodeAction::Execute => JsRun,
@@ -79,16 +79,6 @@ fn process_code(guard: &ContextGuard, name: &str, code: &str, action: CodeAction
                   JsParseScriptAttributeNone,
                   &mut result))
             .map(|_| value::Value::from_raw(result))
-    }
-}
-
-/// Creates an array buffer from immutable data (JSRT does not modify it internally).
-fn create_code_buffer(guard: &ContextGuard, code: &str) -> value::ArrayBuffer {
-    let bytes = code.as_bytes();
-    unsafe {
-        // It's assumed that the JSRT implementation does not modify the code buffer
-        let slice = slice::from_raw_parts_mut(bytes.as_ptr() as *mut u8, bytes.len());
-        value::ArrayBuffer::from_slice(guard, slice)
     }
 }
 
