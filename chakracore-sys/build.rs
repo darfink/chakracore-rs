@@ -116,16 +116,20 @@ mod build {
     /// Builds the ChakraCore project.
     pub fn compile(src_dir: &Path) -> PathBuf {
         let arch = util::get_arch(&get!("TARGET"));
+
+        let is_debug = util::is_debug();
+        let config = if is_debug { "Debug" } else { "Test" };
+
         if util::has_target("windows") {
             // This requires `vcvars` to be sourced
             util::run_command("msbuild", &[
                 "/m",
-                "/p:Configuration=Test",
+                &format!("/p:Configuration={}", config),
                 &format!("/p:Platform={:?}", arch),
                 r"Build\Chakra.Core.sln",
             ], Some(&src_dir));
 
-            src_dir.join(format!("Build/VcBuild/bin/{:?}_test", arch))
+            src_dir.join(format!("Build/VcBuild/bin/{:?}_{}", arch, config))
         } else {
             // The ICU directory must be configued using pkg-config
             let icu_include = pkg_config::get_variable("icu-i18n", "includedir")
@@ -138,7 +142,7 @@ mod build {
             let mut arguments = vec![
                 #[cfg(feature = "static")]
                 "--static",
-                "--test-build",
+                if is_debug { "--debug" } else { "--test-build" },
                 &arg_jobs,
                 &arg_icu,
             ];
@@ -153,7 +157,7 @@ mod build {
             util::run_command("./build.sh", &arguments, Some(&src_dir));
 
             // Hopefully this directory won't change
-            src_dir.join("out/Test")
+            src_dir.join(format!("out/{}", config))
         }
     }
 
@@ -412,5 +416,12 @@ mod util {
 
     pub fn has_target(target: &str) -> bool {
         env::var("TARGET").expect("No $TARGET specified").contains(target)
+    }
+
+    pub fn is_debug() -> bool {
+        match &env::var("PROFILE").expect("No $PROFILE specified")[..] {
+            "bench" | "release" => false,
+            _ => true,
+        }
     }
 }
