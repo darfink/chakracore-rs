@@ -4,7 +4,7 @@ use context::ContextGuard;
 use error::*;
 use util::jstry;
 use Property;
-use super::{Value, Array};
+use super::{Value, Array, Function};
 
 /// Callback type for collector.
 type BeforeCollectCallback = Fn(&Value);
@@ -118,6 +118,19 @@ impl Object {
         }
     }
 
+    /// Returns whether the object is an instance of this `Function` or not.
+    ///
+    /// This must only be used on values that exists within the same context as
+    /// the constructor, otherwise the result will always be `false`.
+    pub fn instance_of(&self, _guard: &ContextGuard, constructor: &Function) -> bool {
+        let mut result = false;
+        // TODO: #[cfg(debug_assertions)] validate same context
+        unsafe {
+            jsassert!(JsInstanceOf(self.as_raw(), constructor.as_raw(), &mut result));
+            result
+        }
+    }
+
     /// Makes an object non-extensible.
     pub fn prevent_extension(&self) {
         jsassert!(unsafe { JsPreventExtension(self.as_raw()) });
@@ -169,7 +182,7 @@ inherit!(Object, Value);
 
 #[cfg(test)]
 mod tests {
-    use {test, value, Property};
+    use {test, value, script, Runtime, Context, Property};
 
     #[test]
     fn properties() {
@@ -199,5 +212,39 @@ mod tests {
             object.delete(guard, &prop_foo);
             assert!(!object.has(guard, &prop_foo));
         });
+    }
+
+    #[test]
+    fn instance_of() {
+        test::run_with_context(|guard| {
+            let constructor = value::Function::new(guard, Box::new(move |_, info| {
+                assert!(info.is_construct_call);
+                Ok(info.this)
+            }));
+
+            let global = guard.global();
+            let property = Property::new(guard, "FooBar");
+            global.set(guard, &property, &constructor);
+
+            let foo_bar = script::eval(guard, "new FooBar()")
+                .unwrap()
+                .into_object()
+                .unwrap();
+            assert!(foo_bar.instance_of(guard, &constructor));
+        });
+    }
+
+    #[test]
+    fn instance_of_cross_contexts() {
+        let runtime = Runtime::new().unwrap();
+        let c1 = Context::new(&runtime).unwrap();
+        let c2 = Context::new(&runtime).unwrap();
+
+        let g1 = c1.make_current().unwrap();
+        let p1 = script::eval(&g1, "new Promise(() => true)").ok().and_then(|v| v.into_object()).unwrap();
+
+        let g2 = c2.make_current().unwrap();
+        let p2 = script::eval(&g1, "Promise").ok().and_then(|v| v.into_function()).unwrap();
+        assert!(p1.instance_of(&g2, &p2));
     }
 }
