@@ -115,7 +115,7 @@ impl Context {
     /// - Due to the fact that this relies on `from_value`, it suffers from
     ///   the same limitations and should be avoided.
     /// - If the value has no associated context, `None` will be returned.
-    pub(crate) fn exec_with_value<Ret, T>(value: &value::Value, callback: T) -> Result<Option<Ret>>
+    pub(crate) fn exec_with_value<T, Ret>(value: &value::Value, callback: T) -> Result<Option<Ret>>
             where T: FnOnce(&ContextGuard) -> Ret {
         Context::from_value(value).map_or(Ok(None), |context| unsafe {
             // In case there is no active context, or if it differs from the

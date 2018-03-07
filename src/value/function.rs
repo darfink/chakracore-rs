@@ -49,7 +49,7 @@ impl Function {
     /// Calls a function and returns the result. The context (i.e `this`) will
     /// be the global object associated with the `ContextGuard`.
     pub fn call(&self, guard: &ContextGuard, arguments: &[&Value]) -> Result<Value> {
-        self.call_with_this(guard, &guard.global().into(), arguments)
+        self.call_with_this(guard, &guard.global(), arguments)
     }
 
     /// Calls a function, with a context, and returns the result.
@@ -172,7 +172,7 @@ mod tests {
 
             let result = function.call(guard, &[
                 &value::Number::new(guard, 5).into(),
-                &value::Number::from_double(guard, 10.5).into()
+                &value::Number::from_double(guard, 10.5).into(),
             ]).unwrap();
 
             assert_eq!(result.to_integer(guard), 20);

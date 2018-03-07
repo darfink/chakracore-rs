@@ -196,7 +196,7 @@ mod tests {
             object.set(guard, &prop_foo, &value::Number::new(guard, 10));
             object.set(guard, &prop_bar, &value::null(guard));
 
-            // Ensure the fields have been created with the designated value
+            // Ensure the fields have been created with the assigned values
             assert_eq!(object.get(guard, &prop_foo).to_integer(guard), 10);
             assert!(object.get(guard, &prop_bar).is_null());
 

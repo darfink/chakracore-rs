@@ -148,7 +148,7 @@ impl Builder {
             jstry!(unsafe { JsSetRuntimeMemoryLimit(handle, limit) });
         }
 
-        let collect = self.collect_callback.map(|callback| unsafe {
+        let callback = self.collect_callback.map(|callback| unsafe {
             let wrapper = Box::into_raw(Box::new(callback));
             jsassert!(JsSetRuntimeBeforeCollectCallback(
                 handle,
@@ -160,8 +160,8 @@ impl Builder {
         Ok(Runtime {
             last_idle: None,
             last_idle_tick: None,
-            handle: handle,
-            callback: collect,
+            handle,
+            callback,
         })
     }
 }

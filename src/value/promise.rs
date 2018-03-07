@@ -51,7 +51,7 @@ impl Promise {
             Context::exec_with_value(&object, |guard| {
                 let promise = util::jsfunc(guard, "Promise")
                     .expect("retrieving Promise constructor");
-                promise.instance_of(guard, &object)
+                object.instance_of(guard, &promise)
             })
             .expect("changing active context for Promise comparison")
             .expect("missing associated context for Promise comparison")
@@ -73,9 +73,8 @@ mod tests {
             let (promise, executor) = value::Promise::new(guard);
             executor.resolve(guard, &[&value::Number::new(guard, 10)]).unwrap();
 
-            let global = guard.global();
             let property = Property::new(guard, "promise");
-            global.set(guard, &property, &promise);
+            guard.global().set(guard, &property, &promise);
 
             let result = script::eval(guard, "
                 var result = {};
