@@ -6,7 +6,7 @@ use chakracore_sys::*;
 use util::jstry;
 
 /// A callback triggered before objects are collected.
-pub type CollectCallback = Fn() + Send;
+pub type CollectCallback = dyn Fn() + Send;
 
 /// A builder for the runtime type.
 pub struct Builder {

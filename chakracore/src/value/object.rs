@@ -7,7 +7,7 @@ use Property;
 use super::{Value, Array, Function};
 
 /// Callback type for collector.
-type BeforeCollectCallback = Fn(&Value);
+type BeforeCollectCallback = dyn Fn(&Value);
 
 /// A JavaScript object.
 pub struct Object(JsValueRef);

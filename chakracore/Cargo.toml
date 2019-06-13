@@ -17,7 +17,7 @@ error-chain = "0.10.0"
 libc = "0.2"
 
 [dev-dependencies]
-matches = "0.1"
+matches = "0.1.8"
 
 [features]
 static = ["chakracore-sys/static"]

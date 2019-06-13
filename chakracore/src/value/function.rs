@@ -25,7 +25,7 @@ pub type CallbackResult = ::std::result::Result<Value, Value>;
 
 /// Callback type for functions.
 pub type FunctionCallback =
-    Fn(&ContextGuard, CallbackInfo) -> CallbackResult + Send;
+    dyn Fn(&ContextGuard, CallbackInfo) -> CallbackResult + Send;
 
 /// A JavaScript function object.
 pub struct Function(JsValueRef);
