@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 const LIBRARY: &'static str = "ChakraCore";
 const REPOSITORY: &'static str = "https://github.com/Microsoft/ChakraCore.git";
-const VERSION: &'static str = "1.10.2";
+const VERSION: &'static str = "1.11.10";
 const LIBS: [(&'static str, &'static str); 1] = [
     ("lib", "ChakraCoreStatic"),
 ];
@@ -320,7 +320,7 @@ mod binding {
         // that initializes the handle with a null pointer.
         regex_replace(&mut content, r"pub type (?P<name>\w+).+(?P<type>\*mut.+c_void);", &[
             "#[repr(C)]",
-            "#[derive(Eq, PartialEq, Copy, Clone, Debug)]",
+            "#[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]",
             "pub struct $name(pub $type);",
             "impl $name {",
                 "pub fn new() -> Self { $name(::std::ptr::null_mut()) }",
