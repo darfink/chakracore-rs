@@ -149,12 +149,12 @@ impl Builder {
         }
 
         let callback = self.collect_callback.map(|callback| unsafe {
-            let wrapper = Box::into_raw(Box::new(callback));
+            let mut wrapper = Box::new(callback);
             jsassert!(JsSetRuntimeBeforeCollectCallback(
                 handle,
-                wrapper as *mut _,
+                &mut *wrapper as *mut _ as *mut _,
                 Some(Runtime::before_collect)));
-            Box::from_raw(wrapper)
+            wrapper
         });
 
         Ok(Runtime {
