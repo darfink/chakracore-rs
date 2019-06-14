@@ -78,10 +78,10 @@ mod bench {
 
         let guard = context.make_current().unwrap();
         let object = value::Object::new(&guard);
-        object.set(&guard, &Property::new(&guard, "test"), &value::Number::new(&guard, 10));
+        object.set(&guard, Property::new(&guard, "test"), value::Number::new(&guard, 10));
 
         bench.iter(|| {
-            (0..10000).fold(0, |acc, _| acc + object.get(&guard, &Property::new(&guard, "test")).to_integer(&guard));
+            (0..10000).fold(0, |acc, _| acc + object.get(&guard, Property::new(&guard, "test")).to_integer(&guard));
         });
     }
 }

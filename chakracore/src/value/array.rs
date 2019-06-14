@@ -141,7 +141,7 @@ mod tests {
             let array = value::Array::new(guard, length);
 
             for i in 0..length {
-                array.set_index(guard, i, &value::Number::new(guard, i as i32));
+                array.set_index(guard, i, value::Number::new(guard, i as i32));
             }
 
             assert_eq!(array.len(guard), 10);

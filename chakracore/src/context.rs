@@ -263,8 +263,8 @@ mod tests {
             let global = guard.global();
             let dirname = Property::new(guard, "__dirname");
 
-            global.set(guard, &dirname, &value::String::new(guard, "FooBar"));
-            global.set_index(guard, 2, &value::Number::new(guard, 1337));
+            global.set(guard, &dirname, value::String::new(guard, "FooBar"));
+            global.set_index(guard, 2, value::Number::new(guard, 1337));
 
             let result1 = script::eval(guard, "__dirname").unwrap();
             let result2 = script::eval(guard, "this[2]").unwrap();
@@ -325,7 +325,7 @@ mod tests {
             let value = result
                 .into_object()
                 .unwrap()
-                .get(guard, &Property::new(guard, "val"))
+                .get(guard, Property::new(guard, "val"))
                 .to_integer(guard);
             assert_eq!(value, 2);
         });

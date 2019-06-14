@@ -25,8 +25,7 @@ impl Error {
 
     /// Returns the error's message.
     pub fn message(&self, guard: &ContextGuard) -> String {
-        let property = Property::new(guard, "message");
-        self.get(guard, &property).to_string(guard)
+        self.get(guard, Property::new(guard, "message")).to_string(guard)
     }
 
     is_same!(Error, "Returns true if the value is an `Error`.");

@@ -27,6 +27,12 @@ macro_rules! subtype {
                 unsafe { ::std::mem::transmute(child) }
             }
         }
+
+        impl AsRef<$parent> for $child {
+            fn as_ref(&self) -> &$parent {
+                unsafe { ::std::mem::transmute(self) }
+            }
+        }
     }
 }
 
@@ -49,8 +55,8 @@ macro_rules! inherit {
 macro_rules! is_same {
     ($target:ident, $target_doc:expr) => {
         #[doc=$target_doc]
-        pub fn is_same(value: &Value) -> bool {
-            value.get_type() == JsValueType::$target
+        pub fn is_same<V: AsRef<Value>>(value: V) -> bool {
+            value.as_ref().get_type() == JsValueType::$target
         }
     };
 }

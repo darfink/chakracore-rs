@@ -24,21 +24,25 @@ impl Object {
     }
 
     /// Sets an object's property's value.
-    pub fn set(&self, _guard: &ContextGuard, key: &Property, value: &Value) {
-        jsassert!(unsafe { JsSetProperty(self.as_raw(), key.as_raw(), value.as_raw(), false) });
+    pub fn set<P, V>(&self, _guard: &ContextGuard, key: P, value: V)
+    where
+        P: AsRef<Property>,
+        V: AsRef<Value>,
+    {
+        jsassert!(unsafe { JsSetProperty(self.as_raw(), key.as_ref().as_raw(), value.as_ref().as_raw(), false) });
     }
 
     /// Sets an object's index value.
-    pub fn set_index(&self, guard: &ContextGuard, index: u32, value: &Value) {
+    pub fn set_index<V: AsRef<Value>>(&self, guard: &ContextGuard, index: u32, value: V) {
         let index = super::Number::new(guard, index as i32);
-        jsassert!(unsafe { JsSetIndexedProperty(self.as_raw(), index.as_raw(), value.as_raw()) });
+        jsassert!(unsafe { JsSetIndexedProperty(self.as_raw(), index.as_raw(), value.as_ref().as_raw()) });
     }
 
     /// Returns an object's property's value.
-    pub fn get(&self, _guard: &ContextGuard, key: &Property) -> Value {
+    pub fn get<P: AsRef<Property>>(&self, _guard: &ContextGuard, key: P) -> Value {
         let mut result = JsValueRef::new();
         unsafe {
-            jsassert!(JsGetProperty(self.as_raw(), key.as_raw(), &mut result));
+            jsassert!(JsGetProperty(self.as_raw(), key.as_ref().as_raw(), &mut result));
             Value::from_raw(result)
         }
     }
@@ -54,10 +58,10 @@ impl Object {
     }
 
     /// Deletes an object's property.
-    pub fn delete(&self, _guard: &ContextGuard, key: &Property) -> bool {
+    pub fn delete<P: AsRef<Property>>(&self, _guard: &ContextGuard, key: P) -> bool {
         let mut result = JsValueRef::new();
         unsafe {
-            jsassert!(JsDeleteProperty(self.as_raw(), key.as_raw(), false, &mut result));
+            jsassert!(JsDeleteProperty(self.as_raw(), key.as_ref().as_raw(), false, &mut result));
             super::Boolean::from_raw(result).value()
         }
     }
@@ -69,9 +73,9 @@ impl Object {
     }
 
     /// Determines whether an object has a property.
-    pub fn has(&self, _guard: &ContextGuard, key: &Property) -> bool {
+    pub fn has<P: AsRef<Property>>(&self, _guard: &ContextGuard, key: P) -> bool {
         let mut result = false;
-        jsassert!(unsafe { JsHasProperty(self.as_raw(), key.as_raw(), &mut result) });
+        jsassert!(unsafe { JsHasProperty(self.as_raw(), key.as_ref().as_raw(), &mut result) });
         result
     }
 
@@ -86,18 +90,22 @@ impl Object {
     /// Defines or modifies a property directly on an object.
     ///
     /// This is equivalent to `Object.defineProperty()`.
-    pub fn define_property(&self, _guard: &ContextGuard, key: &Property, desc: &Object) -> bool {
+    pub fn define_property<P, O>(&self, _guard: &ContextGuard, key: P, desc: O) -> bool
+    where
+        P: AsRef<Property>,
+        O: AsRef<Object>,
+    {
         let mut result = false;
         jsassert!(unsafe {
-            JsDefineProperty(self.as_raw(), key.as_raw(), desc.as_raw(), &mut result)
+            JsDefineProperty(self.as_raw(), key.as_ref().as_raw(), desc.as_ref().as_raw(), &mut result)
         });
         result
     }
 
     /// Sets the object's prototype. This will result in an error if it's called
     /// on the context's global object.
-    pub fn set_prototype(&self, _guard: &ContextGuard, prototype: &Value) -> Result<()> {
-        unsafe { jstry(JsSetPrototype(self.as_raw(), prototype.as_raw())) }
+    pub fn set_prototype<V: AsRef<Value>>(&self, _guard: &ContextGuard, prototype: V) -> Result<()> {
+        unsafe { jstry(JsSetPrototype(self.as_raw(), prototype.as_ref().as_raw())) }
     }
 
     /// Returns the object's prototype.
@@ -122,11 +130,11 @@ impl Object {
     ///
     /// This must only be used on values that exists within the same context as
     /// the constructor, otherwise the result will always be `false`.
-    pub fn instance_of(&self, _guard: &ContextGuard, constructor: &Function) -> bool {
+    pub fn instance_of<F: AsRef<Function>>(&self, _guard: &ContextGuard, constructor: F) -> bool {
         let mut result = false;
         // TODO: #[cfg(debug_assertions)] validate same context
         unsafe {
-            jsassert!(JsInstanceOf(self.as_raw(), constructor.as_raw(), &mut result));
+            jsassert!(JsInstanceOf(self.as_raw(), constructor.as_ref().as_raw(), &mut result));
             result
         }
     }
@@ -157,8 +165,8 @@ impl Object {
     }
 
     /// Returns true if the value is an `Object`.
-    pub fn is_same(value: &Value) -> bool {
-        match value.get_type() {
+    pub fn is_same<V: AsRef<Value>>(value: V) -> bool {
+        match value.as_ref().get_type() {
             JsValueType::Object      |
             JsValueType::Function    |
             JsValueType::Error       |
@@ -193,8 +201,8 @@ mod tests {
             let prop_foo = Property::new(guard, "foo");
             let prop_bar = Property::new(guard, "bar");
 
-            object.set(guard, &prop_foo, &value::Number::new(guard, 10));
-            object.set(guard, &prop_bar, &value::null(guard));
+            object.set(guard, &prop_foo, value::Number::new(guard, 10));
+            object.set(guard, &prop_bar, value::null(guard));
 
             // Ensure the fields have been created with the assigned values
             assert_eq!(object.get(guard, &prop_foo).to_integer(guard), 10);
@@ -224,7 +232,7 @@ mod tests {
 
             let global = guard.global();
             let property = Property::new(guard, "FooBar");
-            global.set(guard, &property, &constructor);
+            global.set(guard, property, &constructor);
 
             let foo_bar = script::eval(guard, "new FooBar()")
                 .unwrap()

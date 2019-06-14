@@ -45,6 +45,12 @@ macro_rules! reference_base {
             }
         }
 
+        impl AsRef<Self> for $typ {
+            fn as_ref(&self) -> &Self {
+                self
+            }
+        }
+
         impl Clone for $typ {
             /// Duplicates a reference counted type.
             ///

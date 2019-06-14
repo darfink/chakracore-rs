@@ -62,7 +62,7 @@ macro_rules! representation {
 /// ChakraCore value.
 ///
 /// This type implements the `Debug` trait, but it should be used carefully. It
-/// assumes there is an active context (the same context that the value was
+/// assumes there is an active context (the same context other the value was
 /// created with).
 ///
 /// Do not get intimidated by all the conversion methods. They are very easy to
@@ -209,16 +209,16 @@ impl Value {
     }
 
     /// Compare two values for equality (`==`).
-    pub fn equals(&self, _guard: &ContextGuard, that: &Value) -> bool {
+    pub fn equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
         let mut result = false;
-        jsassert!(unsafe { JsEquals(self.as_raw(), that.as_raw(), &mut result) });
+        jsassert!(unsafe { JsEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
         result
     }
 
     /// Compare two values for strict equality (`===`).
-    pub fn strict_equals(&self, _guard: &ContextGuard, that: &Value) -> bool {
+    pub fn strict_equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
         let mut result = false;
-        jsassert!(unsafe { JsStrictEquals(self.as_raw(), that.as_raw(), &mut result) });
+        jsassert!(unsafe { JsStrictEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
         result
     }
 }
@@ -258,7 +258,7 @@ mod tests {
         test::run_with_context(|guard| {
             let object = value::Object::new(guard);
             let property = Property::new(guard, "foo");
-            object.set(guard, &property, &value::Number::new(guard, 1337));
+            object.set(guard, &property, value::Number::new(guard, 1337));
 
             let json = object.to_json(guard).unwrap();
             assert_eq!(json, r#"{"foo":1337}"#);

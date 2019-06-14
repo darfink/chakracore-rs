@@ -49,8 +49,8 @@ impl External {
     }
 
     /// Returns true if the value is an `External`.
-    pub fn is_same(value: &Value) -> bool {
-        value.get_type() == JsValueType::Object && Self::has_external_data(value)
+    pub fn is_same<V: AsRef<Value>>(value: V) -> bool {
+        value.as_ref().get_type() == JsValueType::Object && Self::has_external_data(value.as_ref())
     }
 
     /// Returns whether the value has external data or not.

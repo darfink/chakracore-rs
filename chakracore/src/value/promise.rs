@@ -44,10 +44,10 @@ impl Promise {
     }
 
     /// Returns true if the value is a `Promise`.
-    pub fn is_same(value: &Value) -> bool {
+    pub fn is_same<V: AsRef<Value>>(value: V) -> bool {
         // See: https://github.com/Microsoft/ChakraCore/issues/135
         // There is no straight foward way to do this with the current API.
-        value.clone().into_object().map_or(false, |object| {
+        value.as_ref().clone().into_object().map_or(false, |object| {
             Context::exec_with_value(&object, |guard| {
                 let promise = util::jsfunc(guard, "Promise")
                     .expect("retrieving Promise constructor");
@@ -74,7 +74,7 @@ mod tests {
             executor.resolve(guard, &[&value::Number::new(guard, 10)]).unwrap();
 
             let property = Property::new(guard, "promise");
-            guard.global().set(guard, &property, &promise);
+            guard.global().set(guard, property, promise);
 
             let result = script::eval(guard, "
                 var result = {};
@@ -84,7 +84,7 @@ mod tests {
                 .into_object()
                 .unwrap();
             guard.execute_tasks();
-            assert_eq!(result.get(guard, &Property::new(guard, "val")).to_integer(guard), 10);
+            assert_eq!(result.get(guard, Property::new(guard, "val")).to_integer(guard), 10);
         });
     }
 

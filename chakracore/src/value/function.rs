@@ -53,27 +53,27 @@ impl Function {
     }
 
     /// Calls a function, with a context, and returns the result.
-    pub fn call_with_this(&self, _guard: &ContextGuard, this: &Value, arguments: &[&Value]) -> Result<Value> {
+    pub fn call_with_this<V: AsRef<Value>>(&self, _guard: &ContextGuard, this: V, arguments: &[&Value]) -> Result<Value> {
         self.invoke(_guard, this, arguments, false)
     }
 
     /// Calls a function as a constructor and returns the result.
-    pub fn construct(&self, _guard: &ContextGuard, this: &Value, args: &[&Value]) -> Result<Value> {
+    pub fn construct<V: AsRef<Value>>(&self, _guard: &ContextGuard, this: V, args: &[&Value]) -> Result<Value> {
         self.invoke(_guard, this, args, true)
     }
 
     is_same!(Function, "Returns true if the value is a `Function`.");
 
     /// Invokes a function and returns the result.
-    fn invoke(&self,
+    fn invoke<V: AsRef<Value>>(&self,
               _guard: &ContextGuard,
-              this: &Value,
+              this: V,
               arguments: &[&Value],
               constructor: bool)
               -> Result<Value> {
         // Combine the context with the arguments
         let mut forward = Vec::with_capacity(arguments.len() + 1);
-        forward.push(this.as_raw());
+        forward.push(this.as_ref().as_raw());
         forward.extend(arguments.iter().map(|value| value.as_raw()));
 
         let api = if constructor {
@@ -189,7 +189,7 @@ mod tests {
 
             let global = guard.global();
             let property = Property::new(guard, "test");
-            global.set(guard, &property, &function);
+            global.set(guard, property, function);
 
             let result = script::eval(guard,
                 "try { test(); } catch (ex) { ex.message; }").unwrap();
