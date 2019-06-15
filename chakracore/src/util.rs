@@ -52,13 +52,13 @@ pub fn jstry(code: JsErrorCode) -> Result<()> {
                 let message = exception.to_string(guard);
 
                 Err(if code == JsErrorCode::ScriptException {
-                    ErrorKind::ScriptException(message).into()
+                    Error::ScriptException(message)
                 } else {
-                    ErrorKind::ScriptCompile(message).into()
+                    Error::ScriptCompilation(message)
                 })
             }).expect("active context in result handler")
         },
-        error @ _ => Err(format!("JSRT call failed with: {:?}", error).into()),
+        error @ _ => Err(Error::JsrtCall(error)),
     }
 }
 

@@ -23,24 +23,23 @@
 #[macro_use]
 extern crate matches;
 
-#[macro_use]
-extern crate error_chain;
 extern crate anymap;
 extern crate boolinator;
 extern crate chakracore_sys;
 extern crate libc;
 
 pub use context::Context;
-pub use runtime::Runtime;
+pub use error::{Error, Result};
 pub use property::Property;
+pub use runtime::Runtime;
 
 #[macro_use]
 mod macros;
+mod error;
 mod property;
 mod util;
 pub mod runtime;
 pub mod context;
-pub mod error;
 pub mod script;
 pub mod value;
 

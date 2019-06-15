@@ -90,7 +90,7 @@ fn generate_source_context() -> JsSourceContext {
 
 #[cfg(test)]
 mod tests {
-    use {test, error, script};
+    use {test, Error, script};
 
     #[test]
     fn execute_exception() {
@@ -98,7 +98,7 @@ mod tests {
             let error = script::eval(guard, "null[0] = 3;").unwrap_err();
             let result = script::eval(guard, "5 + 5").unwrap();
 
-            assert_matches!(error.kind(), &error::ErrorKind::ScriptException(_));
+            assert_matches!(error, Error::ScriptException(_));
             assert_eq!(result.to_integer(guard), 10);
         });
     }
@@ -110,7 +110,7 @@ mod tests {
             let result = script::eval(guard, "5 + 5").unwrap();
 
             assert_eq!(result.to_integer(guard), 10);
-            assert_matches!(error.kind(), &error::ErrorKind::ScriptCompile(_));
+            assert_matches!(error, Error::ScriptCompilation(_));
         });
     }
 
