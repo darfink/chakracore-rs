@@ -1,56 +1,55 @@
-use std::{fmt, mem};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
+use std::{fmt, mem};
 use {util, value};
 
 macro_rules! downcast {
-    ($predicate:ident, $predicate_doc:expr, $target:ident) => {
-        #[doc=$predicate_doc]
-        pub fn $predicate(&self) -> bool {
-            value::$target::is_same(self)
-        }
-    };
+  ($predicate:ident, $predicate_doc:expr, $target:ident) => {
+    #[doc=$predicate_doc]
+    pub fn $predicate(&self) -> bool {
+      value::$target::is_same(self)
+    }
+  };
 
-    ($predicate:ident, $predicate_doc:expr,
+  ($predicate:ident, $predicate_doc:expr,
      $conversion:ident, $conversion_doc:expr, $result:ident) => {
-        downcast!($predicate, $predicate_doc, $result);
+    downcast!($predicate, $predicate_doc, $result);
 
-        #[doc=$conversion_doc]
-        pub fn $conversion(self) -> Option<super::$result> {
-            if self.$predicate() {
-                Some(unsafe { mem::transmute(self) })
-            } else {
-                None
-            }
-        }
-    };
+    #[doc=$conversion_doc]
+    pub fn $conversion(self) -> Option<super::$result> {
+      if self.$predicate() {
+        Some(unsafe { mem::transmute(self) })
+      } else {
+        None
+      }
+    }
+  };
 }
 
 macro_rules! nativecast {
-    ($name:ident, $name_doc:expr, $result:ident, $into:ident, $represent:ident, $native:ident) => {
-        #[doc=$name_doc]
-        pub fn $name(&self, _guard: &ContextGuard) -> $result {
-            match self.clone().$into() {
-                None => self.$represent(_guard),
-                Some(value) => value,
-            }.$native()
-        }
+  ($name:ident, $name_doc:expr, $result:ident, $into:ident, $represent:ident, $native:ident) => {
+    #[doc=$name_doc]
+    pub fn $name(&self, _guard: &ContextGuard) -> $result {
+      match self.clone().$into() {
+        None => self.$represent(_guard),
+        Some(value) => value,
+      }.$native()
     }
+  }
 }
 
 macro_rules! representation {
-    ($name:ident, $name_doc:expr, $result:ident, $function:ident) => {
-        #[doc=$name_doc]
-        pub fn $name(&self, _guard: &ContextGuard) -> super::$result {
-            let mut value = JsValueRef::new();
-            unsafe {
-                jsassert!($function(self.as_raw(), &mut value));
-                super::$result::from_raw(value)
-            }
-        }
-
+  ($name:ident, $name_doc:expr, $result:ident, $function:ident) => {
+    #[doc=$name_doc]
+    pub fn $name(&self, _guard: &ContextGuard) -> super::$result {
+      let mut value = JsValueRef::new();
+      unsafe {
+        jsassert!($function(self.as_raw(), &mut value));
+        super::$result::from_raw(value)
+      }
     }
+  }
 }
 
 /// A JavaScript value, base class for all types.
@@ -81,193 +80,230 @@ macro_rules! representation {
 ///
 /// > `to_*`
 /// >> These are utility functions to easily retrieve a native representation of
-/// the internal value. The chain of actions performed is the following: `into_*() ->
-/// [*_representation()] -> value()`. A call to `*_representation` is only
-/// performed if required (i.e a string is not redundantly converted to a
-/// string).
+/// the internal value. The chain of actions performed is the following:
+/// `into_*() -> [*_representation()] -> value()`. A call to `*_representation`
+/// is only performed if required (i.e a string is not redundantly converted to
+/// a string).
 pub struct Value(JsValueRef);
 
 impl Value {
-    // Transforms a value to another custom type
-    downcast!(is_undefined,
-              "Returns true if this value is `undefined`.",
-              Undefined);
-    downcast!(is_null, "Returns true if this value is `null`.", Null);
-    downcast!(is_number,
-              "Returns true if this value is a `Number`.",
-              into_number,
-              "Represent the value as a `Number`. Does not affect the underlying value.",
-              Number);
-    downcast!(is_string,
-              "Returns true if this value is a `String`.",
-              into_string,
-              "Represent the value as a `String`. Does not affect the underlying value.",
-              String);
-    downcast!(is_boolean,
-              "Returns true if this value is a `Boolean`.",
-              into_boolean,
-              "Represent the value as a `Boolean`. Does not affect the underlying value.",
-              Boolean);
-    downcast!(is_object,
-              "Returns true if this value is an `Object`.",
-              into_object,
-              "Represent the value as an `Object`. Does not affect the underlying value.",
-              Object);
-    downcast!(is_external,
-              "Returns true if this value is an `External`.",
-              into_external,
-              "Represent the value as an `External`. Does not affect the underlying value.",
-              External);
-    downcast!(is_function,
-              "Returns true if this value is a `Function`.",
-              into_function,
-              "Represent the value as a `Function`. Does not affect the underlying value.",
-              Function);
-    downcast!(is_array,
-              "Returns true if this value is an `Array`.",
-              into_array,
-              "Represent the value as an `Array`. Does not affect the underlying value.",
-              Array);
-    downcast!(is_array_buffer,
-              "Returns true if this value is an `ArrayBuffer`.",
-              into_array_buffer,
-              "Represent the value as an `ArrayBuffer`. Does not affect the underlying value.",
-              ArrayBuffer);
-    downcast!(is_promise,
-              "Returns true if this value is a `Promise`.",
-              into_promise,
-              "Represent the value as a `Promise`. Does not affect the underlying value.",
-              Promise);
+  // Transforms a value to another custom type
+  downcast!(
+    is_undefined,
+    "Returns true if this value is `undefined`.",
+    Undefined
+  );
+  downcast!(is_null, "Returns true if this value is `null`.", Null);
+  downcast!(
+    is_number,
+    "Returns true if this value is a `Number`.",
+    into_number,
+    "Represent the value as a `Number`. Does not affect the underlying value.",
+    Number
+  );
+  downcast!(
+    is_string,
+    "Returns true if this value is a `String`.",
+    into_string,
+    "Represent the value as a `String`. Does not affect the underlying value.",
+    String
+  );
+  downcast!(
+    is_boolean,
+    "Returns true if this value is a `Boolean`.",
+    into_boolean,
+    "Represent the value as a `Boolean`. Does not affect the underlying value.",
+    Boolean
+  );
+  downcast!(
+    is_object,
+    "Returns true if this value is an `Object`.",
+    into_object,
+    "Represent the value as an `Object`. Does not affect the underlying value.",
+    Object
+  );
+  downcast!(
+    is_external,
+    "Returns true if this value is an `External`.",
+    into_external,
+    "Represent the value as an `External`. Does not affect the underlying value.",
+    External
+  );
+  downcast!(
+    is_function,
+    "Returns true if this value is a `Function`.",
+    into_function,
+    "Represent the value as a `Function`. Does not affect the underlying value.",
+    Function
+  );
+  downcast!(
+    is_array,
+    "Returns true if this value is an `Array`.",
+    into_array,
+    "Represent the value as an `Array`. Does not affect the underlying value.",
+    Array
+  );
+  downcast!(
+    is_array_buffer,
+    "Returns true if this value is an `ArrayBuffer`.",
+    into_array_buffer,
+    "Represent the value as an `ArrayBuffer`. Does not affect the underlying value.",
+    ArrayBuffer
+  );
+  downcast!(
+    is_promise,
+    "Returns true if this value is a `Promise`.",
+    into_promise,
+    "Represent the value as a `Promise`. Does not affect the underlying value.",
+    Promise
+  );
 
-    // Converts a value to a native type
-    nativecast!(to_string,
-                "Converts the value to a native string, containing the value's string representation.",
-                String,
-                into_string,
-                string_representation,
-                value);
-    nativecast!(to_integer,
-                "Converts the value to a native integer, containing the value's integer representation.",
-                i32,
-                into_number,
-                number_representation,
-                value);
-    nativecast!(to_double,
-                "Converts the value to a native double, containing the value's floating point representation.",
-                f64,
-                into_number,
-                number_representation,
-                value_double);
-    nativecast!(to_bool,
-                "Converts the value to a native boolean, containing the value's bool representation.",
-                bool,
-                into_boolean,
-                boolean_representation,
-                value);
+  // Converts a value to a native type
+  nativecast!(
+    to_string,
+    "Converts the value to a native string, containing the value's string representation.",
+    String,
+    into_string,
+    string_representation,
+    value
+  );
+  nativecast!(
+    to_integer,
+    "Converts the value to a native integer, containing the value's integer representation.",
+    i32,
+    into_number,
+    number_representation,
+    value
+  );
+  nativecast!(
+    to_double,
+    "Converts the value to a native double, containing the value's floating point representation.",
+    f64,
+    into_number,
+    number_representation,
+    value_double
+  );
+  nativecast!(
+    to_bool,
+    "Converts the value to a native boolean, containing the value's bool representation.",
+    bool,
+    into_boolean,
+    boolean_representation,
+    value
+  );
 
-    /// Converts the value to a native string, containing the value's JSON representation.
-    pub fn to_json(&self, guard: &ContextGuard) -> Result<String> {
-        // TODO: Use native functionality when implemented
-        let stringify = util::jsfunc(guard, "JSON.stringify")
-            .expect("retrieving JSON.stringify function");
-        stringify.call(guard, &[self]).map(|v| v.to_string(guard))
-    }
+  /// Converts the value to a native string, containing the value's JSON
+  /// representation.
+  pub fn to_json(&self, guard: &ContextGuard) -> Result<String> {
+    // TODO: Use native functionality when implemented
+    let stringify =
+      util::jsfunc(guard, "JSON.stringify").expect("retrieving JSON.stringify function");
+    stringify.call(guard, &[self]).map(|v| v.to_string(guard))
+  }
 
-    /// Parses JSON and returns it represented as a JavaScript value.
-    pub fn from_json(guard: &ContextGuard, json: &str) -> Result<Value> {
-        let parse = util::jsfunc(guard, "JSON.parse")
-            .expect("retrieving JSON.parse function");
-        let json = value::String::new(guard, json);
-        parse.call(guard, &[&json])
-    }
+  /// Parses JSON and returns it represented as a JavaScript value.
+  pub fn from_json(guard: &ContextGuard, json: &str) -> Result<Value> {
+    let parse = util::jsfunc(guard, "JSON.parse").expect("retrieving JSON.parse function");
+    let json = value::String::new(guard, json);
+    parse.call(guard, &[&json])
+  }
 
-    // Casts a value to the JavaScript expression of another type
-    representation!(boolean_representation,
-                    "Creates a new boolean with this value represented as `Boolean`.",
-                    Boolean,
-                    JsConvertValueToBoolean);
-    representation!(number_representation,
-                    "Creates a new number with this value represented as `Number`.",
-                    Number,
-                    JsConvertValueToNumber);
-    representation!(object_representation,
-                    "Creates a new object with this value represented as `Object`.",
-                    Object,
-                    JsConvertValueToObject);
-    representation!(string_representation,
-                    "Creates a new string with this value represented as `String`.",
-                    String,
-                    JsConvertValueToString);
+  // Casts a value to the JavaScript expression of another type
+  representation!(
+    boolean_representation,
+    "Creates a new boolean with this value represented as `Boolean`.",
+    Boolean,
+    JsConvertValueToBoolean
+  );
+  representation!(
+    number_representation,
+    "Creates a new number with this value represented as `Number`.",
+    Number,
+    JsConvertValueToNumber
+  );
+  representation!(
+    object_representation,
+    "Creates a new object with this value represented as `Object`.",
+    Object,
+    JsConvertValueToObject
+  );
+  representation!(
+    string_representation,
+    "Creates a new string with this value represented as `String`.",
+    String,
+    JsConvertValueToString
+  );
 
-    /// Returns the type of the value. This method should be used with
-    /// consideration. It does not keep track of custom types, such as
-    /// `External`. It only returns the runtime's definition of a type.
-    pub fn get_type(&self) -> JsValueType {
-        let mut value_type = JsValueType::Undefined;
-        jsassert!(unsafe { JsGetValueType(self.as_raw(), &mut value_type) });
-        value_type
-    }
+  /// Returns the type of the value. This method should be used with
+  /// consideration. It does not keep track of custom types, such as
+  /// `External`. It only returns the runtime's definition of a type.
+  pub fn get_type(&self) -> JsValueType {
+    let mut value_type = JsValueType::Undefined;
+    jsassert!(unsafe { JsGetValueType(self.as_raw(), &mut value_type) });
+    value_type
+  }
 
-    /// Compare two values for equality (`==`).
-    pub fn equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
-        let mut result = false;
-        jsassert!(unsafe { JsEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
-        result
-    }
+  /// Compare two values for equality (`==`).
+  pub fn equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
+    let mut result = false;
+    jsassert!(unsafe { JsEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
+    result
+  }
 
-    /// Compare two values for strict equality (`===`).
-    pub fn strict_equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
-        let mut result = false;
-        jsassert!(unsafe { JsStrictEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
-        result
-    }
+  /// Compare two values for strict equality (`===`).
+  pub fn strict_equals<V: AsRef<Value>>(&self, _guard: &ContextGuard, other: V) -> bool {
+    let mut result = false;
+    jsassert!(unsafe { JsStrictEquals(self.as_raw(), other.as_ref().as_raw(), &mut result) });
+    result
+  }
 }
 
 impl PartialEq for Value {
-    /// Use carefully (prefer `strict_equals`), this relies on an implicitly
-    /// active context.
-    fn eq(&self, other: &Value) -> bool {
-        Context::exec_with_current(|guard| self.strict_equals(guard, other))
-            .expect("comparison to have an active context")
-    }
+  /// Use carefully (prefer `strict_equals`), this relies on an implicitly
+  /// active context.
+  fn eq(&self, other: &Value) -> bool {
+    Context::exec_with_current(|guard| self.strict_equals(guard, other))
+      .expect("comparison to have an active context")
+  }
 }
 
 impl fmt::Debug for Value {
-    /// Only use for debugging, it relies on an implicitly active context.
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Context::exec_with_current(|guard| {
-            let output = self.to_string(&guard);
+  /// Only use for debugging, it relies on an implicitly active context.
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    Context::exec_with_current(|guard| {
+      let output = self.to_string(&guard);
 
-            let value_type = self.get_type();
-            match value_type {
-                JsValueType::String => write!(f, "Value({:?}: '{}')", value_type, output),
-                _ => write!(f, "Value({:?}: {})", value_type, output),
-            }
-        }).expect("value debug output without an active context")
-    }
+      let value_type = self.get_type();
+      match value_type {
+        JsValueType::String => write!(f, "Value({:?}: '{}')", value_type, output),
+        _ => write!(f, "Value({:?}: {})", value_type, output),
+      }
+    })
+    .expect("value debug output without an active context")
+  }
 }
 
 reference!(Value);
 
 #[cfg(test)]
 mod tests {
-    use {test, value, Property};
+  use {test, value, Property};
 
-    #[test]
-    fn json_conversion() {
-        test::run_with_context(|guard| {
-            let object = value::Object::new(guard);
-            let property = Property::new(guard, "foo");
-            object.set(guard, &property, value::Number::new(guard, 1337));
+  #[test]
+  fn json_conversion() {
+    test::run_with_context(|guard| {
+      let object = value::Object::new(guard);
+      let property = Property::new(guard, "foo");
+      object.set(guard, &property, value::Number::new(guard, 1337));
 
-            let json = object.to_json(guard).unwrap();
-            assert_eq!(json, r#"{"foo":1337}"#);
+      let json = object.to_json(guard).unwrap();
+      assert_eq!(json, r#"{"foo":1337}"#);
 
-            let object = value::Value::from_json(guard, &json)
-                .unwrap()
-                .into_object()
-                .unwrap();
-            assert_eq!(object.get(guard, &property).to_integer(guard), 1337);
-        });
-    }
+      let object = value::Value::from_json(guard, &json)
+        .unwrap()
+        .into_object()
+        .unwrap();
+      assert_eq!(object.get(guard, &property).to_integer(guard), 1337);
+    });
+  }
 }

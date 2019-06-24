@@ -19,8 +19,8 @@
 //! All created values are tied to a specific context. Because of this a
 //! `ContextGuard` is required whenever creating new values, and they should
 //! not be passed between different contexts.
-use context::ContextGuard;
 use chakracore_sys::*;
+use context::ContextGuard;
 
 // TODO: Add typed arrays and buffer view.
 pub use self::array::*;
@@ -38,56 +38,60 @@ pub use self::value::Value;
 mod macros;
 
 // Modules
-pub mod function;
-pub mod promise;
-mod object;
 mod array;
 mod boolean;
 mod error;
 mod external;
+pub mod function;
 mod number;
+mod object;
+pub mod promise;
 mod string;
 mod value;
 
 /// Creates a `false` value.
 pub fn false_(_guard: &ContextGuard) -> Value {
-    let mut value = JsValueRef::new();
-    unsafe {
-        jsassert!(JsGetFalseValue(&mut value));
-        Value::from_raw(value)
-    }
+  let mut value = JsValueRef::new();
+  unsafe {
+    jsassert!(JsGetFalseValue(&mut value));
+    Value::from_raw(value)
+  }
 }
 
 /// Creates a `true` value.
 pub fn true_(_guard: &ContextGuard) -> Value {
-    let mut value = JsValueRef::new();
-    unsafe {
-        jsassert!(JsGetTrueValue(&mut value));
-        Value::from_raw(value)
-    }
+  let mut value = JsValueRef::new();
+  unsafe {
+    jsassert!(JsGetTrueValue(&mut value));
+    Value::from_raw(value)
+  }
 }
 
 /// Creates a `null` value.
 pub fn null(_guard: &ContextGuard) -> Value {
-    let mut value = JsValueRef::new();
-    unsafe {
-        jsassert!(JsGetNullValue(&mut value));
-        Value::from_raw(value)
-    }
+  let mut value = JsValueRef::new();
+  unsafe {
+    jsassert!(JsGetNullValue(&mut value));
+    Value::from_raw(value)
+  }
 }
 
 /// Creates an `undefined` value.
 pub fn undefined(_guard: &ContextGuard) -> Value {
-    let mut value = JsValueRef::new();
-    unsafe {
-        jsassert!(JsGetUndefinedValue(&mut value));
-        Value::from_raw(value)
-    }
+  let mut value = JsValueRef::new();
+  unsafe {
+    jsassert!(JsGetUndefinedValue(&mut value));
+    Value::from_raw(value)
+  }
 }
 
 // These are hidden and exists merely for the `is_same` functionality.
 struct Null;
 struct Undefined;
 
-impl Null { is_same!(Null, "Returns true if the value is `null`"); }
-impl Undefined { is_same!(Undefined, "Returns true if the value is `undefined`"); }
+impl Null {
+  is_same!(Null, "Returns true if the value is `null`");
+}
+impl Undefined {
+  is_same!(Undefined, "Returns true if the value is `undefined`");
+}

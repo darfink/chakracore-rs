@@ -1,149 +1,167 @@
 //! A JavaScript function and associated types.
-use std::slice;
-use libc::{c_void, c_ushort};
+use super::{Object, Value};
 use chakracore_sys::*;
 use context::{Context, ContextGuard};
 use error::*;
+use libc::{c_ushort, c_void};
+use std::slice;
 use util::jstry;
-use super::{Value, Object};
 
 /// The information passed to `FunctionCallback` closures.
 #[derive(Clone, Debug)]
 pub struct CallbackInfo {
-    /// Whether it's a constructor call or not.
-    pub is_construct_call: bool,
-    /// Arguments supplied by the caller.
-    pub arguments: Vec<Value>,
-    /// The source of this function call.
-    pub callee: Value,
-    /// The function's `this` context.
-    pub this: Value,
+  /// Whether it's a constructor call or not.
+  pub is_construct_call: bool,
+  /// Arguments supplied by the caller.
+  pub arguments: Vec<Value>,
+  /// The source of this function call.
+  pub callee: Value,
+  /// The function's `this` context.
+  pub this: Value,
 }
 
 /// The result returned from a function callback.
 pub type CallbackResult = ::std::result::Result<Value, Value>;
 
 /// Callback type for functions.
-pub type FunctionCallback =
-    dyn Fn(&ContextGuard, CallbackInfo) -> CallbackResult + Send;
+pub type FunctionCallback = dyn Fn(&ContextGuard, CallbackInfo) -> CallbackResult + Send;
 
 /// A JavaScript function object.
 pub struct Function(JsValueRef);
 
 impl Function {
-    /// Creates an anonymous function
-    pub fn new(_guard: &ContextGuard, callback: Box<FunctionCallback>) -> Self {
-        Self::create(callback, |context, reference| unsafe {
-            JsCreateFunction(Some(Self::callback), context, reference)
-        })
+  /// Creates an anonymous function
+  pub fn new(_guard: &ContextGuard, callback: Box<FunctionCallback>) -> Self {
+    Self::create(callback, |context, reference| unsafe {
+      JsCreateFunction(Some(Self::callback), context, reference)
+    })
+  }
+
+  /// Creates a named function
+  pub fn with_name(guard: &ContextGuard, name: &str, callback: Box<FunctionCallback>) -> Self {
+    Self::create(callback, |context, reference| unsafe {
+      let name = super::String::new(guard, name);
+      JsCreateNamedFunction(name.as_raw(), Some(Self::callback), context, reference)
+    })
+  }
+
+  /// Calls a function and returns the result. The context (i.e `this`) will
+  /// be the global object associated with the `ContextGuard`.
+  pub fn call(&self, guard: &ContextGuard, arguments: &[&Value]) -> Result<Value> {
+    self.call_with_this(guard, &guard.global(), arguments)
+  }
+
+  /// Calls a function, with a context, and returns the result.
+  pub fn call_with_this<V: AsRef<Value>>(
+    &self,
+    _guard: &ContextGuard,
+    this: V,
+    arguments: &[&Value],
+  ) -> Result<Value> {
+    self.invoke(_guard, this, arguments, false)
+  }
+
+  /// Calls a function as a constructor and returns the result.
+  pub fn construct<V: AsRef<Value>>(
+    &self,
+    _guard: &ContextGuard,
+    this: V,
+    args: &[&Value],
+  ) -> Result<Value> {
+    self.invoke(_guard, this, args, true)
+  }
+
+  is_same!(Function, "Returns true if the value is a `Function`.");
+
+  /// Invokes a function and returns the result.
+  fn invoke<V: AsRef<Value>>(
+    &self,
+    _guard: &ContextGuard,
+    this: V,
+    arguments: &[&Value],
+    constructor: bool,
+  ) -> Result<Value> {
+    // Combine the context with the arguments
+    let mut forward = Vec::with_capacity(arguments.len() + 1);
+    forward.push(this.as_ref().as_raw());
+    forward.extend(arguments.iter().map(|value| value.as_raw()));
+
+    let api = if constructor {
+      JsConstructObject
+    } else {
+      JsCallFunction
+    };
+
+    unsafe {
+      let mut result = JsValueRef::new();
+      jstry(api(
+        self.0,
+        forward.as_mut_ptr(),
+        forward.len() as c_ushort,
+        &mut result,
+      ))
+      .map(|_| Value::from_raw(result))
     }
+  }
 
-    /// Creates a named function
-    pub fn with_name(guard: &ContextGuard, name: &str, callback: Box<FunctionCallback>) -> Self {
-        Self::create(callback, |context, reference| unsafe {
-            let name = super::String::new(guard, name);
-            JsCreateNamedFunction(name.as_raw(), Some(Self::callback), context, reference)
-        })
+  /// Prevents boilerplate code in constructors.
+  fn create<T>(callback: Box<FunctionCallback>, initialize: T) -> Self
+  where
+    T: FnOnce(*mut c_void, &mut JsValueRef) -> JsErrorCode,
+  {
+    // Because a boxed callback can be a fat pointer, it needs to be wrapped
+    // in an additional Box to ensure it fits in a single pointer.
+    let wrapper = Box::into_raw(Box::new(callback));
+
+    unsafe {
+      let mut reference = JsValueRef::new();
+      jsassert!(initialize(wrapper as *mut _, &mut reference));
+      let function = Self::from_raw(reference);
+
+      // Ensure the heap objects are freed
+      function.set_collect_callback(Box::new(move |_| {
+        Box::from_raw(wrapper);
+      }));
+      function
     }
+  }
 
-    /// Calls a function and returns the result. The context (i.e `this`) will
-    /// be the global object associated with the `ContextGuard`.
-    pub fn call(&self, guard: &ContextGuard, arguments: &[&Value]) -> Result<Value> {
-        self.call_with_this(guard, &guard.global(), arguments)
-    }
+  /// A function callback, triggered on call.
+  unsafe extern "system" fn callback(
+    callee: JsValueRef,
+    is_construct_call: bool,
+    arguments: *mut JsValueRef,
+    len: c_ushort,
+    data: *mut c_void,
+  ) -> JsRef {
+    // This memory is cleaned up during object collection
+    let callback = data as *mut Box<FunctionCallback>;
 
-    /// Calls a function, with a context, and returns the result.
-    pub fn call_with_this<V: AsRef<Value>>(&self, _guard: &ContextGuard, this: V, arguments: &[&Value]) -> Result<Value> {
-        self.invoke(_guard, this, arguments, false)
-    }
+    // There is always an active context in callbacks
+    Context::exec_with_current(|guard| {
+      // Construct the callback information object
+      let arguments = slice::from_raw_parts_mut(arguments, len as usize);
+      let info = CallbackInfo {
+        is_construct_call,
+        arguments: arguments[1..]
+          .iter()
+          .map(|value| Value::from_raw(*value))
+          .collect(),
+        callee: Value::from_raw(callee),
+        this: Value::from_raw(arguments[0]),
+      };
 
-    /// Calls a function as a constructor and returns the result.
-    pub fn construct<V: AsRef<Value>>(&self, _guard: &ContextGuard, this: V, args: &[&Value]) -> Result<Value> {
-        self.invoke(_guard, this, args, true)
-    }
-
-    is_same!(Function, "Returns true if the value is a `Function`.");
-
-    /// Invokes a function and returns the result.
-    fn invoke<V: AsRef<Value>>(&self,
-              _guard: &ContextGuard,
-              this: V,
-              arguments: &[&Value],
-              constructor: bool)
-              -> Result<Value> {
-        // Combine the context with the arguments
-        let mut forward = Vec::with_capacity(arguments.len() + 1);
-        forward.push(this.as_ref().as_raw());
-        forward.extend(arguments.iter().map(|value| value.as_raw()));
-
-        let api = if constructor {
-            JsConstructObject
-        } else {
-            JsCallFunction
-        };
-
-        unsafe {
-            let mut result = JsValueRef::new();
-            jstry(api(self.0,
-                      forward.as_mut_ptr(),
-                      forward.len() as c_ushort,
-                      &mut result))
-                .map(|_| Value::from_raw(result))
-        }
-    }
-
-    /// Prevents boilerplate code in constructors.
-    fn create<T>(callback: Box<FunctionCallback>, initialize: T) -> Self
-        where T: FnOnce(*mut c_void, &mut JsValueRef) -> JsErrorCode
-    {
-        // Because a boxed callback can be a fat pointer, it needs to be wrapped
-        // in an additional Box to ensure it fits in a single pointer.
-        let wrapper = Box::into_raw(Box::new(callback));
-
-        unsafe {
-            let mut reference = JsValueRef::new();
-            jsassert!(initialize(wrapper as *mut _, &mut reference));
-            let function = Self::from_raw(reference);
-
-            // Ensure the heap objects are freed
-            function.set_collect_callback(Box::new(move |_| {
-                Box::from_raw(wrapper);
-            }));
-            function
-        }
-    }
-
-    /// A function callback, triggered on call.
-    unsafe extern "system" fn callback(callee: JsValueRef,
-                                       is_construct_call: bool,
-                                       arguments: *mut JsValueRef,
-                                       len: c_ushort,
-                                       data: *mut c_void)
-                                       -> JsRef {
-        // This memory is cleaned up during object collection
-        let callback = data as *mut Box<FunctionCallback>;
-
-        // There is always an active context in callbacks
-        Context::exec_with_current(|guard| {
-            // Construct the callback information object
-            let arguments = slice::from_raw_parts_mut(arguments, len as usize);
-            let info = CallbackInfo {
-                is_construct_call: is_construct_call,
-                arguments: arguments[1..].iter().map(|value| Value::from_raw(*value)).collect(),
-                callee: Value::from_raw(callee),
-                this: Value::from_raw(arguments[0]),
-            };
-
-            // Call the user supplied callback
-            match (*callback)(&guard, info) {
-                Ok(value) => value.as_raw(),
-                Err(error) => {
-                    jsassert!(JsSetException(error.as_raw()));
-                    error.as_raw()
-                }
-            }
-        }).expect("executing function callback")
-    }
+      // Call the user supplied callback
+      match (*callback)(&guard, info) {
+        Ok(value) => value.as_raw(),
+        Err(error) => {
+          jsassert!(JsSetException(error.as_raw()));
+          error.as_raw()
+        },
+      }
+    })
+    .expect("executing function callback")
+  }
 }
 
 reference!(Function);
@@ -152,49 +170,57 @@ subtype!(Function, Value);
 
 #[cfg(test)]
 mod tests {
-    use {test, value, script, Property};
+  use {script, test, value, Property};
 
-    #[test]
-    fn multiply() {
-        test::run_with_context(|guard| {
-            let captured_variable = 5.0;
-            let function = value::Function::new(guard, Box::new(move |guard, info| {
-                // Ensure the defaults are sensible
-                assert_eq!(info.is_construct_call, false);
-                assert_eq!(info.arguments.len(), 2);
-                assert_eq!(captured_variable, 5.0);
+  #[test]
+  fn multiply() {
+    test::run_with_context(|guard| {
+      let captured_variable = 5.0;
+      let function = value::Function::new(
+        guard,
+        Box::new(move |guard, info| {
+          // Ensure the defaults are sensible
+          assert_eq!(info.is_construct_call, false);
+          assert_eq!(info.arguments.len(), 2);
+          assert_eq!(captured_variable, 5.0);
 
-                let result = info.arguments[0].to_double(guard)
-                           + info.arguments[1].to_double(guard)
-                           + captured_variable;
-                Ok(value::Number::from_double(guard, result).into())
-            }));
+          let result = info.arguments[0].to_double(guard)
+            + info.arguments[1].to_double(guard)
+            + captured_variable;
+          Ok(value::Number::from_double(guard, result).into())
+        }),
+      );
 
-            let result = function.call(guard, &[
-                &value::Number::new(guard, 5).into(),
-                &value::Number::from_double(guard, 10.5).into(),
-            ]).unwrap();
+      let result = function
+        .call(
+          guard,
+          &[
+            &value::Number::new(guard, 5).into(),
+            &value::Number::from_double(guard, 10.5).into(),
+          ],
+        )
+        .unwrap();
 
-            assert_eq!(result.to_integer(guard), 20);
-            assert_eq!(result.to_double(guard), 20.5);
-        });
-    }
+      assert_eq!(result.to_integer(guard), 20);
+      assert_eq!(result.to_double(guard), 20.5);
+    });
+  }
 
-    #[test]
-    fn exception() {
-        test::run_with_context(|guard| {
-            let function = value::Function::new(guard, Box::new(move |guard, _| {
-                Err(value::Error::new(guard, "Exception").into())
-            }));
+  #[test]
+  fn exception() {
+    test::run_with_context(|guard| {
+      let function = value::Function::new(
+        guard,
+        Box::new(move |guard, _| Err(value::Error::new(guard, "Exception").into())),
+      );
 
-            let global = guard.global();
-            let property = Property::new(guard, "test");
-            global.set(guard, property, function);
+      let global = guard.global();
+      let property = Property::new(guard, "test");
+      global.set(guard, property, function);
 
-            let result = script::eval(guard,
-                "try { test(); } catch (ex) { ex.message; }").unwrap();
+      let result = script::eval(guard, "try { test(); } catch (ex) { ex.message; }").unwrap();
 
-            assert_eq!(result.to_string(guard), "Exception");
-        });
-    }
+      assert_eq!(result.to_string(guard), "Exception");
+    });
+  }
 }

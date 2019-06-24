@@ -35,52 +35,61 @@ pub use runtime::Runtime;
 
 #[macro_use]
 mod macros;
+pub mod context;
 mod error;
 mod property;
-mod util;
 pub mod runtime;
-pub mod context;
 pub mod script;
+mod util;
 pub mod value;
 
 #[cfg(test)]
 mod test {
-    use super::*;
+  use super::*;
 
-    pub fn setup_env() -> (Runtime, Context) {
-        let runtime = Runtime::new().unwrap();
-        let context = Context::new(&runtime).unwrap();
-        (runtime, context)
-    }
+  pub fn setup_env() -> (Runtime, Context) {
+    let runtime = Runtime::new().unwrap();
+    let context = Context::new(&runtime).unwrap();
+    (runtime, context)
+  }
 
-    pub fn run_with_context<T: FnOnce(&context::ContextGuard)>(callback: T) {
-        let (_runtime, context) = setup_env();
-        context.exec_with(callback).unwrap();
-    }
+  pub fn run_with_context<T: FnOnce(&context::ContextGuard)>(callback: T) {
+    let (_runtime, context) = setup_env();
+    context.exec_with(callback).unwrap();
+  }
 }
 
 #[cfg(all(feature = "unstable", test))]
 mod bench {
-    extern crate test;
-    use self::test::Bencher;
-    use super::*;
+  extern crate test;
+  use self::test::Bencher;
+  use super::*;
 
-    fn setup_env() -> (Runtime, Context) {
-        let runtime = Runtime::new().unwrap();
-        let context = Context::new(&runtime).unwrap();
-        (runtime, context)
-    }
+  fn setup_env() -> (Runtime, Context) {
+    let runtime = Runtime::new().unwrap();
+    let context = Context::new(&runtime).unwrap();
+    (runtime, context)
+  }
 
-    #[bench]
-    fn property_bench(bench: &mut Bencher) {
-        let (_runtime, context) = setup_env();
+  #[bench]
+  fn property_bench(bench: &mut Bencher) {
+    let (_runtime, context) = setup_env();
 
-        let guard = context.make_current().unwrap();
-        let object = value::Object::new(&guard);
-        object.set(&guard, Property::new(&guard, "test"), value::Number::new(&guard, 10));
+    let guard = context.make_current().unwrap();
+    let object = value::Object::new(&guard);
+    object.set(
+      &guard,
+      Property::new(&guard, "test"),
+      value::Number::new(&guard, 10),
+    );
 
-        bench.iter(|| {
-            (0..10000).fold(0, |acc, _| acc + object.get(&guard, Property::new(&guard, "test")).to_integer(&guard));
-        });
-    }
+    bench.iter(|| {
+      (0..10000).fold(0, |acc, _| {
+        acc
+          + object
+            .get(&guard, Property::new(&guard, "test"))
+            .to_integer(&guard)
+      });
+    });
+  }
 }
