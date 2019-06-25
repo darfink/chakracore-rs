@@ -1,6 +1,6 @@
-use super::Value;
+use crate::context::ContextGuard;
+use crate::value::Value;
 use chakracore_sys::*;
-use context::ContextGuard;
 
 /// A JavaScript boolean.
 pub struct Boolean(JsValueRef);

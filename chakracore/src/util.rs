@@ -1,8 +1,6 @@
+use crate::{value, Context, ContextGuard, Error, Result};
 use chakracore_sys::*;
-use context::{Context, ContextGuard};
-use error::*;
 use std::ptr;
-use value;
 
 /// Type for `JsCreateString` & `JsCreatePropertyId`
 pub type StringCall = unsafe extern "system" fn(JsRef, *mut i8, usize, *mut usize) -> JsErrorCode;
@@ -32,7 +30,7 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
 pub fn release_reference(reference: JsRef) {
   let mut count = 0;
   jsassert!(unsafe { JsRelease(reference, &mut count) });
-  debug_assert!(count < ::libc::c_uint::max_value());
+  debug_assert!(count < libc::c_uint::max_value());
 }
 
 /// Returns a script result as a `Function`.
@@ -40,7 +38,7 @@ pub fn release_reference(reference: JsRef) {
 /// This is useful for functionality that the underlying JSRT API does not
 /// provide, such as JSON methods, or `RegExp` constructor.
 pub fn jsfunc(guard: &ContextGuard, function: &str) -> Option<value::Function> {
-  ::script::eval(guard, function)
+  crate::script::eval(guard, function)
     .ok()
     .and_then(|val| val.into_function())
 }

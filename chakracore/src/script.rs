@@ -24,11 +24,9 @@
 //! let result = add.call(&guard, &[]).unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```
+use crate::context::ContextGuard;
+use crate::{util::jstry, value, Result};
 use chakracore_sys::*;
-use context::ContextGuard;
-use error::*;
-use util::jstry;
-use value;
 
 /// Evaluates code directly.
 pub fn eval(guard: &ContextGuard, code: &str) -> Result<value::Value> {
@@ -98,7 +96,8 @@ fn generate_source_context() -> JsSourceContext {
 
 #[cfg(test)]
 mod tests {
-  use {script, test, Error};
+  use crate::{script, test, Error};
+  use matches::assert_matches;
 
   #[test]
   fn execute_exception() {

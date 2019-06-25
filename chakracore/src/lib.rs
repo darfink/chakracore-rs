@@ -19,23 +19,14 @@
 //!
 //! *NOTE: During pre-release (0.X.X) stability may vary.*
 
-#[cfg(test)]
-#[macro_use]
-extern crate matches;
-
-extern crate anymap;
-extern crate boolinator;
-extern crate chakracore_sys;
-extern crate libc;
-
-pub use context::Context;
+pub use context::{Context, ContextGuard};
 pub use error::{Error, Result};
 pub use property::Property;
 pub use runtime::Runtime;
 
 #[macro_use]
 mod macros;
-pub mod context;
+mod context;
 mod error;
 mod property;
 pub mod runtime;

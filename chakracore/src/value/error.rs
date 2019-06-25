@@ -1,7 +1,6 @@
-use super::{Object, Value};
+use crate::value::{Object, Value};
+use crate::{context::ContextGuard, Property};
 use chakracore_sys::*;
-use context::ContextGuard;
-use Property;
 
 macro_rules! ctor {
   ($name:ident, $errtype:ident, $doc:expr) => {
@@ -52,7 +51,7 @@ subtype!(Error, Value);
 
 #[cfg(test)]
 mod tests {
-  use {test, value};
+  use crate::{test, value};
 
   #[test]
   fn string_conversion() {

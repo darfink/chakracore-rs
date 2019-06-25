@@ -7,7 +7,7 @@ macro_rules! reference {
     impl Drop for $typ {
       /// Decrements the reference counter if the object is recyclable.
       fn drop(&mut self) {
-        use {util, Context};
+        use crate::{util, Context};
         Context::exec_with_value(self, |_| {
           // This requires that the active context is the same as the
           // one it was created with (this is not mentioned whatsoever

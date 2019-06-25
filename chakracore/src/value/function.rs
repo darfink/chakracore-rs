@@ -1,11 +1,9 @@
 //! A JavaScript function and associated types.
-use super::{Object, Value};
+use crate::value::{Object, Value};
+use crate::{util::jstry, Context, ContextGuard, Result};
 use chakracore_sys::*;
-use context::{Context, ContextGuard};
-use error::*;
 use libc::{c_ushort, c_void};
 use std::slice;
-use util::jstry;
 
 /// The information passed to `FunctionCallback` closures.
 #[derive(Clone, Debug)]
@@ -170,7 +168,7 @@ subtype!(Function, Value);
 
 #[cfg(test)]
 mod tests {
-  use {script, test, value, Property};
+  use crate::{script, test, value, Property};
 
   #[test]
   fn multiply() {

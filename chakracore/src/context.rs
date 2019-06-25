@@ -1,12 +1,9 @@
 //! Execution contexts and sandboxing.
+use crate::{util::jstry, value, Result, Runtime};
 use anymap::AnyMap;
 use boolinator::Boolinator;
 use chakracore_sys::*;
-use error::*;
-use std::marker::PhantomData;
-use std::ptr;
-use util::jstry;
-use {value, Runtime};
+use std::{marker::PhantomData, ptr};
 
 /// Used for holding context instance data.
 struct ContextData {
@@ -280,7 +277,7 @@ impl<'a> Drop for ContextGuard<'a> {
 
 #[cfg(test)]
 mod tests {
-  use {script, test, value, Context, Property};
+  use crate::{script, test, value, Context, Property};
 
   #[test]
   fn global() {

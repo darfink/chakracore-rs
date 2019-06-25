@@ -1,10 +1,8 @@
-use super::{Array, Function, Value};
+use crate::context::ContextGuard;
+use crate::value::{Array, Function, Value};
+use crate::{util::jstry, Property, Result};
 use chakracore_sys::*;
-use context::ContextGuard;
-use error::*;
 use libc::c_void;
-use util::jstry;
-use Property;
 
 /// Callback type for collector.
 type BeforeCollectCallback = dyn Fn(&Value);
@@ -223,7 +221,7 @@ inherit!(Object, Value);
 
 #[cfg(test)]
 mod tests {
-  use {script, test, value, Context, Property, Runtime};
+  use crate::{script, test, value, Context, Property, Runtime};
 
   #[test]
   fn properties() {

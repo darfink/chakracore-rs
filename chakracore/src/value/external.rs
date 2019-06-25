@@ -1,6 +1,6 @@
-use super::{Object, Value};
+use crate::context::ContextGuard;
+use crate::value::{Object, Value};
 use chakracore_sys::*;
-use context::ContextGuard;
 use libc::c_void;
 use std::ptr;
 
@@ -72,7 +72,7 @@ subtype!(External, Value);
 
 #[cfg(test)]
 mod tests {
-  use {test, value};
+  use crate::{test, value};
 
   #[test]
   fn destructor() {

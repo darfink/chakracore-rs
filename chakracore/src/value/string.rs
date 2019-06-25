@@ -1,6 +1,6 @@
-use super::Value;
+use crate::value::Value;
+use crate::{context::ContextGuard, util};
 use chakracore_sys::*;
-use context::ContextGuard;
 
 /// A JavaScript string.
 pub struct String(JsValueRef);
@@ -28,7 +28,7 @@ impl String {
 
   /// Converts a JavaScript string to a native string.
   pub fn value(&self) -> ::std::string::String {
-    ::util::to_string_impl(self.as_raw(), JsCopyString).expect("converting string to native")
+    util::to_string_impl(self.as_raw(), JsCopyString).expect("converting string to native")
   }
 
   is_same!(String, "Returns true if the value is a `String`.");

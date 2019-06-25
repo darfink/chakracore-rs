@@ -1,9 +1,8 @@
 //! Runtime and builder.
+use crate::{util::jstry, Result};
 use chakracore_sys::*;
-use error::*;
 use libc::c_void;
 use std::time::{Duration, Instant};
-use util::jstry;
 
 /// A callback triggered before objects are collected.
 pub type CollectCallback = dyn Fn() + Send;
@@ -183,9 +182,11 @@ impl Builder {
 
 #[cfg(test)]
 mod tests {
-  use std::sync::{Arc, Mutex};
-  use std::thread;
-  use {script, test, Context, Runtime};
+  use crate::{script, test, Context, Runtime};
+  use std::{
+    sync::{Arc, Mutex},
+    thread,
+  };
 
   #[test]
   fn minimal() {

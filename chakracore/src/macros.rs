@@ -1,7 +1,7 @@
 /// Equivalent to the normal `try!` macro for JSRT function calls.
 macro_rules! jstry {
   ($e: expr) => {
-    ::util::jstry($e)?;
+    crate::util::jstry($e)?;
   };
 }
 
@@ -78,7 +78,7 @@ macro_rules! reference {
     impl Drop for $typ {
       /// Decrements the reference counter.
       fn drop(&mut self) {
-        ::util::release_reference(self.as_raw());
+        crate::util::release_reference(self.as_raw());
       }
     }
   };

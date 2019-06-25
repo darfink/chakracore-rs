@@ -1,8 +1,6 @@
+use crate::{util, value, Context, ContextGuard, Result};
 use chakracore_sys::*;
-use context::{Context, ContextGuard};
-use error::*;
 use std::{fmt, mem};
-use {util, value};
 
 macro_rules! downcast {
   ($predicate:ident, $predicate_doc:expr, $target:ident) => {
@@ -287,7 +285,7 @@ reference!(Value);
 
 #[cfg(test)]
 mod tests {
-  use {test, value, Property};
+  use crate::{test, value, Property};
 
   #[test]
   fn json_conversion() {

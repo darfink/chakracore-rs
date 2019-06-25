@@ -1,8 +1,7 @@
-use super::{Function, Object, Value};
+use crate::context::ContextGuard;
+use crate::value::{Function, Object, Value};
+use crate::{util, Context, Result};
 use chakracore_sys::*;
-use context::ContextGuard;
-use error::*;
-use {util, Context};
 
 /// A JavaScript promise executor.
 pub struct Executor {
@@ -72,7 +71,7 @@ subtype!(Promise, Value);
 
 #[cfg(test)]
 mod tests {
-  use {script, test, value, Property};
+  use crate::{script, test, value, Property};
 
   #[test]
   fn resolve() {

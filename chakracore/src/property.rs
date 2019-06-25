@@ -1,5 +1,5 @@
+use crate::{Context, ContextGuard};
 use chakracore_sys::*;
-use context::{Context, ContextGuard};
 use std::fmt;
 
 /// A property identifier used with objects.
@@ -26,7 +26,8 @@ impl Property {
 
   /// Converts a JavaScript property to a native string.
   pub fn to_string(&self, _guard: &ContextGuard) -> String {
-    ::util::to_string_impl(self.as_raw(), JsCopyPropertyId).expect("converting property to string")
+    crate::util::to_string_impl(self.as_raw(), JsCopyPropertyId)
+      .expect("converting property to string")
   }
 }
 
@@ -46,7 +47,7 @@ reference!(Property);
 
 #[cfg(test)]
 mod tests {
-  use {test, Property};
+  use crate::{test, Property};
 
   #[test]
   fn string_conversion() {

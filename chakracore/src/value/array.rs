@@ -1,10 +1,9 @@
-use super::{Object, Value};
+use crate::value::{Object, Value};
+use crate::{context::ContextGuard, Property};
 use boolinator::Boolinator;
 use chakracore_sys::*;
-use context::ContextGuard;
 use libc::c_void;
 use std::{mem, ptr, slice};
-use Property;
 
 /// A JavaScript array.
 pub struct Array(JsValueRef);
@@ -143,7 +142,7 @@ subtype!(ArrayBuffer, Value);
 
 #[cfg(test)]
 mod tests {
-  use {test, value};
+  use crate::{test, value};
 
   #[test]
   fn iterator() {

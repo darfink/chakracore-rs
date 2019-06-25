@@ -8,6 +8,7 @@ license = "MIT"
 name = "chakracore"
 repository = "https://github.com/darfink/chakracore-rs"
 version = "0.2.0"
+edition = "2018"
 
 [dependencies]
 anymap = "0.12.1"
