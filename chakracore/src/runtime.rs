@@ -57,7 +57,7 @@ impl Runtime {
 
     if should_idle {
       let mut ticks = 0;
-      jstry!(unsafe { JsIdle(&mut ticks) });
+      jstry(unsafe { JsIdle(&mut ticks) })?;
 
       self.last_idle_tick = Some(Duration::from_millis(ticks as u64));
       self.last_idle = Some(Instant::now());
@@ -155,10 +155,10 @@ impl Builder {
   /// Creates the runtime object with associated settings.
   pub fn build(self) -> Result<Runtime> {
     let mut handle = JsRuntimeHandle::new();
-    jstry!(unsafe { JsCreateRuntime(self.attributes, None, &mut handle) });
+    jstry(unsafe { JsCreateRuntime(self.attributes, None, &mut handle) })?;
 
     if let Some(limit) = self.memory_limit {
-      jstry!(unsafe { JsSetRuntimeMemoryLimit(handle, limit) });
+      jstry(unsafe { JsSetRuntimeMemoryLimit(handle, limit) })?;
     }
 
     let callback = self.collect_callback.map(|callback| unsafe {

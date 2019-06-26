@@ -1,6 +1,5 @@
-use crate::context::ContextGuard;
 use crate::value::{Function, Object, Value};
-use crate::{util, Context, Result};
+use crate::{util::jsfunc, Context, ContextGuard, Result};
 use chakracore_sys::*;
 
 /// A JavaScript promise executor.
@@ -36,13 +35,12 @@ impl Promise {
 
     unsafe {
       jsassert!(JsCreatePromise(&mut reference, &mut resolve, &mut reject));
-      (
-        Self::from_raw(reference),
-        Executor {
-          resolve: Function::from_raw(resolve),
-          reject: Function::from_raw(reject),
-        },
-      )
+      let executor = Executor {
+        resolve: Function::from_raw(resolve),
+        reject: Function::from_raw(reject),
+      };
+
+      (Self::from_raw(reference), executor)
     }
   }
 
@@ -56,7 +54,7 @@ impl Promise {
       .into_object()
       .map_or(false, |object| {
         Context::exec_with_value(&object, |guard| {
-          let promise = util::jsfunc(guard, "Promise").expect("retrieving Promise constructor");
+          let promise = jsfunc(guard, "Promise").expect("retrieving Promise constructor");
           object.instance_of(guard, &promise)
         })
         .expect("changing active context for Promise comparison")

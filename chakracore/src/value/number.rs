@@ -1,5 +1,4 @@
-use crate::context::ContextGuard;
-use crate::value::Value;
+use crate::{value::Value, ContextGuard};
 use chakracore_sys::*;
 
 /// A JavaScript number.

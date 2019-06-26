@@ -1,5 +1,5 @@
-use crate::context::ContextGuard;
 use crate::value::{Object, Value};
+use crate::ContextGuard;
 use chakracore_sys::*;
 use libc::c_void;
 use std::ptr;

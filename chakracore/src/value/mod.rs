@@ -19,7 +19,7 @@
 //! All created values are tied to a specific context. Because of this a
 //! `ContextGuard` is required whenever creating new values, and they should
 //! not be passed between different contexts.
-use crate::context::ContextGuard;
+use crate::ContextGuard;
 use chakracore_sys::*;
 
 // TODO: Add typed arrays and buffer view.

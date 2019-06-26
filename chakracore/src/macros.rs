@@ -1,10 +1,3 @@
-/// Equivalent to the normal `try!` macro for JSRT function calls.
-macro_rules! jstry {
-  ($e: expr) => {
-    crate::util::jstry($e)?;
-  };
-}
-
 /// Asserts the return value of a JSRT function call.
 macro_rules! jsassert {
   ($e: expr, $name: expr) => {

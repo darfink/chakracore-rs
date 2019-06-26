@@ -1,6 +1,5 @@
-use crate::context::ContextGuard;
 use crate::value::{Array, Function, Value};
-use crate::{util::jstry, Property, Result};
+use crate::{util::jstry, ContextGuard, Property, Result};
 use chakracore_sys::*;
 use libc::c_void;
 

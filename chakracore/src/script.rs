@@ -24,8 +24,7 @@
 //! let result = add.call(&guard, &[]).unwrap();
 //! assert_eq!(result.to_integer(&guard), 20);
 //! ```
-use crate::context::ContextGuard;
-use crate::{util::jstry, value, Result};
+use crate::{util::jstry, value, ContextGuard, Result};
 use chakracore_sys::*;
 
 /// Evaluates code directly.

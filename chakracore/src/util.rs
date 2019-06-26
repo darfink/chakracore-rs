@@ -10,16 +10,16 @@ pub fn to_string_impl(reference: JsRef, callback: StringCall) -> Result<String> 
   let mut size = 0;
   unsafe {
     // Determine how large the string representation is
-    jstry!(callback(reference, ptr::null_mut(), 0, &mut size));
+    jstry(callback(reference, ptr::null_mut(), 0, &mut size))?;
 
     // Allocate an appropriate buffer and retrieve the string
     let mut buffer: Vec<u8> = vec![0; size];
-    jstry!(callback(
+    jstry(callback(
       reference,
       buffer.as_mut_ptr() as _,
       buffer.len(),
-      ptr::null_mut()
-    ));
+      ptr::null_mut(),
+    ))?;
 
     // Assume the result is valid UTF-8
     Ok(String::from_utf8_unchecked(buffer))

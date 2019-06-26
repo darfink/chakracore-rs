@@ -29,12 +29,12 @@ impl Context {
   pub fn new(runtime: &Runtime) -> Result<Context> {
     let mut reference = JsContextRef::new();
     unsafe {
-      jstry!(JsCreateContext(runtime.as_raw(), &mut reference));
-      jstry!(JsSetObjectBeforeCollectCallback(
+      jstry(JsCreateContext(runtime.as_raw(), &mut reference))?;
+      jstry(JsSetObjectBeforeCollectCallback(
         reference,
         ptr::null_mut(),
-        Some(Self::collect)
-      ));
+        Some(Self::collect),
+      ))?;
 
       let context = Self::from_raw(reference);
       context.set_data(Box::new(ContextData {
