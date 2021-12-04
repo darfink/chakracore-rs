@@ -1,7 +1,14 @@
+## NOTE: This project is not currently maintained, due to ChakraCore itself is no longer being actively developed.
+
+<div align="center">
+
 # `chakracore-rs`
+
 [![crates.io version][crate-shield]][crate]
 [![Documentation][docs-shield]][docs]
 [![Language (Rust)][rust-shield]][rust]
+
+</div>
 
 **chakracore-rs is an iditiomatic wrapper for
 [ChakraCore](https://github.com/Microsoft/ChakraCore), written in Rust.**
